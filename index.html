@@ -18,7 +18,6 @@ body{
 header{
   background:#111;
   padding:15px;
-  font-size:20px;
   display:flex;
   justify-content:space-between;
 }
@@ -49,6 +48,7 @@ video{
   border-radius:15px;
   font-size:14px;
   position:relative;
+  cursor:pointer;
 }
 
 .my-message{
@@ -70,21 +70,25 @@ video{
   text-align:right;
 }
 
-.seen{
-  font-size:11px;
-  opacity:0.7;
-  text-align:right;
-}
-
-.reactions{
+.reaction-display{
   margin-top:5px;
   font-size:16px;
-  cursor:pointer;
 }
 
-.reaction-buttons span{
+.reaction-picker{
+  position:absolute;
+  bottom:100%;
+  background:#1f1f1f;
+  padding:5px 8px;
+  border-radius:20px;
+  display:flex;
+  gap:6px;
+  box-shadow:0 0 10px rgba(0,0,0,0.5);
+}
+
+.reaction-picker span{
   cursor:pointer;
-  margin-right:5px;
+  font-size:18px;
 }
 
 .chat-input{
@@ -147,57 +151,16 @@ var firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 var db = firebase.database();
-var video = document.getElementById("video");
 
-// حضور آنلاین
-var userId = Math.random().toString(36).substr(2,9);
-var userRef = db.ref("onlineUsers/" + userId);
+// آنلاین
+var userId=Math.random().toString(36).substr(2,9);
+var userRef=db.ref("onlineUsers/"+userId);
 userRef.set(true);
 userRef.onDisconnect().remove();
 
-db.ref("onlineUsers").on("value", snap=>{
-  document.getElementById("onlineCount").innerText =
-    "Online: " + snap.numChildren();
-});
-
-// ذخیره اسم
-if(localStorage.getItem("username")){
-  document.getElementById("username").value =
-    localStorage.getItem("username");
-}
-document.getElementById("username").addEventListener("input",function(){
-  localStorage.setItem("username",this.value);
-});
-
-// ویدیو سینک
-function loadVideo(){
-  db.ref("video/link").set(
-    document.getElementById("movieLink").value
-  );
-}
-
-db.ref("video/link").on("value",snap=>{
-  if(snap.val()) video.src = snap.val();
-});
-
-video.onplay=()=>{
-  db.ref("video/state").set({
-    playing:true,
-    time:video.currentTime
-  });
-};
-
-video.onpause=()=>{
-  db.ref("video/state").set({
-    playing:false,
-    time:video.currentTime
-  });
-};
-
-db.ref("video/state").on("value",snap=>{
-  if(!snap.val()) return;
-  video.currentTime = snap.val().time;
-  snap.val().playing ? video.play() : video.pause();
+db.ref("onlineUsers").on("value",snap=>{
+  document.getElementById("onlineCount").innerText=
+    "Online: "+snap.numChildren();
 });
 
 // ارسال پیام
@@ -214,7 +177,6 @@ function sendMessage(){
     user:name,
     text:msg,
     time:time,
-    seen:false,
     reactions:{}
   });
 
@@ -227,10 +189,6 @@ db.ref("chat").on("child_added",snap=>{
   var key=snap.key;
   var currentUser=document.getElementById("username").value;
 
-  if(data.user!==currentUser){
-    db.ref("chat/"+key+"/seen").set(true);
-  }
-
   var div=document.createElement("div");
   div.className="message "+
     (data.user===currentUser?"my-message":"other-message");
@@ -238,19 +196,10 @@ db.ref("chat").on("child_added",snap=>{
   div.innerHTML=`
     <div>${data.text}</div>
     <div class="time">${data.time}</div>
-    <div class="seen">
-      ${data.user===currentUser?
-        (data.seen?"✔✔ Seen":"✔ Sent"):""}
-    </div>
-    <div class="reactions" id="react-${key}"></div>
-    <div class="reaction-buttons">
-      <span onclick="react('${key}','😍')">😍</span>
-      <span onclick="react('${key}','😎')">😎</span>
-      <span onclick="react('${key}','🤣')">🤣</span>
-      <span onclick="react('${key}','❤️')">❤️</span>
-      <span onclick="react('${key}','👌')">👌</span>
-    </div>
+    <div class="reaction-display" id="react-${key}"></div>
   `;
+
+  div.onclick=()=>showPicker(div,key);
 
   document.getElementById("chat").appendChild(div);
   document.getElementById("chat").scrollTop=
@@ -267,8 +216,35 @@ db.ref("chat").on("child_added",snap=>{
   });
 });
 
-// ری‌اکشن
-function react(key,emoji){
+// باز شدن پنل ایموجی
+function showPicker(messageDiv,key){
+  if(messageDiv.querySelector(".reaction-picker")) return;
+
+  var picker=document.createElement("div");
+  picker.className="reaction-picker";
+
+  ["😍","😎","🤣","❤️","👌"].forEach(emoji=>{
+    var span=document.createElement("span");
+    span.innerText=emoji;
+    span.onclick=(e)=>{
+      e.stopPropagation();
+      addReaction(key,emoji);
+      picker.remove();
+    };
+    picker.appendChild(span);
+  });
+
+  messageDiv.appendChild(picker);
+
+  setTimeout(()=>{
+    document.addEventListener("click",()=>{
+      picker.remove();
+    },{once:true});
+  },10);
+}
+
+// ثبت ری‌اکشن
+function addReaction(key,emoji){
   var id=Math.random().toString(36).substr(2,9);
   db.ref("chat/"+key+"/reactions/"+id).set(emoji);
 }
