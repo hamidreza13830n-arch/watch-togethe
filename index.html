@@ -9,151 +9,183 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <style>
-body{
-  margin:0;
-  background:#0f0f0f;
-  font-family:Arial;
-  color:white;
-  height:100vh;
-  display:flex;
-  flex-direction:column;
-}
+  body{
+    margin:0;
+    background:#0f0f0f;
+    font-family:Arial;
+    color:white;
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
 
-header{
-  background:#111;
-  padding:12px;
-  text-align:center;
-  font-weight:bold;
-}
+  header{
+    background:#111;
+    padding:12px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-weight:bold;
+  }
 
-.main{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-}
+  .main{ flex:1; display:flex; flex-direction:column; }
 
-/* 🎬 فیلم بزرگ‌تر */
-.video-container{
-  flex:1.35;
-  background:black;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  padding:10px;
-}
+  /* 🎬 فیلم بزرگ‌تر */
+  .video-container{
+    flex:1.35;
+    background:black;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    padding:10px;
+  }
 
-/* 🔗 نوار لینک (جمع‌وجور و موبایل‌پسند) */
-.link-bar{
-  display:flex;
-  gap:8px;
-}
+  .link-bar{
+    display:flex;
+    gap:8px;
+  }
 
-.link-bar input{
-  flex:1;
-  padding:10px 12px;
-  border-radius:18px;
-  border:none;
-  outline:none;
-}
+  .link-bar input{
+    flex:1;
+    padding:10px 12px;
+    border-radius:18px;
+    border:none;
+    outline:none;
+  }
 
-.link-bar button{
-  padding:10px 14px;
-  border:none;
-  border-radius:18px;
-  background:#e50914;
-  color:white;
-  cursor:pointer;
-  font-weight:bold;
-  white-space:nowrap;
-}
+  .link-bar button{
+    padding:10px 14px;
+    border:none;
+    border-radius:18px;
+    background:#e50914;
+    color:white;
+    cursor:pointer;
+    font-weight:bold;
+    white-space:nowrap;
+  }
 
-/* ویدیو */
-video{
-  width:100%;
-  height:100%;
-  border-radius:12px;
-  object-fit:contain;
-  background:#000;
-}
+  video{
+    width:100%;
+    height:100%;
+    border-radius:12px;
+    object-fit:contain;
+    background:#000;
+  }
 
-/* 💬 چت کوچیک‌تر */
-.chat-container{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  padding:12px 15px 25px 15px;
-}
+  /* 💬 چت کوچیک‌تر */
+  .chat-container{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    padding:12px 15px 25px 15px;
+  }
 
-.chat-box{
-  flex:1;
-  overflow-y:auto;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
+  .chat-box{
+    flex:1;
+    overflow-y:auto;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
 
-.message{
-  max-width:75%;
-  padding:10px 14px;
-  border-radius:15px;
-  font-size:14px;
-}
+  .message{
+    max-width:78%;
+    padding:10px 14px;
+    border-radius:15px;
+    font-size:14px;
+    position:relative;
+    cursor:pointer;
+    word-break:break-word;
+  }
 
-.my-message{
-  align-self:flex-end;
-  background:#0088cc;
-  border-bottom-right-radius:4px;
-}
+  .my-message{
+    align-self:flex-end;
+    background:#0088cc;
+    border-bottom-right-radius:4px;
+  }
 
-.other-message{
-  align-self:flex-start;
-  background:#262626;
-  border-bottom-left-radius:4px;
-}
+  .other-message{
+    align-self:flex-start;
+    background:#262626;
+    border-bottom-left-radius:4px;
+  }
 
-.time{
-  font-size:11px;
-  opacity:0.7;
-  margin-top:4px;
-  text-align:right;
-}
+  .meta-row{
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+    margin-top:4px;
+    font-size:11px;
+    opacity:0.75;
+  }
 
-/* ✨ کادر ارسال کمی بالاتر */
-.input-area{
-  display:flex;
-  gap:8px;
-  margin-top:10px;
-  margin-bottom:10px;
-}
+  .reactions{
+    margin-top:6px;
+    font-size:16px;
+    opacity:0.95;
+  }
 
-.input-area input{
-  flex:1;
-  padding:10px;
-  border-radius:20px;
-  border:none;
-  outline:none;
-}
+  /* تلگرام‌طور: پنل ری‌اکشن روی پیام */
+  .reaction-picker{
+    position:absolute;
+    bottom:100%;
+    right:0;
+    background:#1f1f1f;
+    padding:6px 10px;
+    border-radius:18px;
+    display:flex;
+    gap:8px;
+    box-shadow:0 0 10px rgba(0,0,0,0.55);
+    z-index:10;
+  }
+  .other-message .reaction-picker{ right:auto; left:0; }
 
-.input-area button{
-  padding:10px 16px;
-  border:none;
-  border-radius:20px;
-  background:#e50914;
-  color:white;
-  cursor:pointer;
-}
+  .reaction-picker span{
+    cursor:pointer;
+    font-size:18px;
+    line-height:1;
+  }
 
-/* حالت افقی */
-@media (orientation: landscape){
-  .main{ flex-direction:row; }
-  .video-container{ flex:1.45; }
-  .chat-container{ flex:1; }
-}
+  /* ✨ کادر ارسال کمی بالاتر */
+  .input-area{
+    display:flex;
+    gap:8px;
+    margin-top:10px;
+    margin-bottom:10px;
+  }
+
+  .input-area input{
+    flex:1;
+    padding:10px;
+    border-radius:20px;
+    border:none;
+    outline:none;
+  }
+
+  .input-area button{
+    padding:10px 16px;
+    border:none;
+    border-radius:20px;
+    background:#e50914;
+    color:white;
+    cursor:pointer;
+    font-weight:bold;
+  }
+
+  @media (orientation: landscape){
+    .main{ flex-direction:row; }
+    .video-container{ flex:1.45; }
+    .chat-container{ flex:1; }
+  }
 </style>
 </head>
+
 <body>
 
-<header>🎬 با هم تماشا کنید</header>
+<header>
+  <span>🎬 با هم تماشا کنید</span>
+  <span id="onlineCount">Online: 1</span>
+</header>
 
 <div class="main">
 
@@ -178,61 +210,184 @@ video{
 </div>
 
 <script>
-var firebaseConfig={
-  apiKey:"AIzaSyCDHmmKIYPHDyvx4BXTb-7VP6lmVb8BCYw",
-  authDomain:"film-online-922c1.firebaseapp.com",
-  databaseURL:"https://film-online-922c1-default-rtdb.firebaseio.com/",
-  projectId:"film-online-922c1"
-};
+  var firebaseConfig={
+    apiKey:"AIzaSyCDHmmKIYPHDyvx4BXTb-7VP6lmVb8BCYw",
+    authDomain:"film-online-922c1.firebaseapp.com",
+    databaseURL:"https://film-online-922c1-default-rtdb.firebaseio.com/",
+    projectId:"film-online-922c1"
+  };
 
-firebase.initializeApp(firebaseConfig);
-var db=firebase.database();
-var video=document.getElementById("video");
+  firebase.initializeApp(firebaseConfig);
+  var db = firebase.database();
+  var video = document.getElementById("video");
 
-/* 🧹 پاک شدن چت هنگام ورود */
-db.ref("chat").remove();
+  // ✅ ذخیره اسم (برای اینکه سین/راست‌چپ درست کار کنه)
+  if (localStorage.getItem("username")) {
+    document.getElementById("username").value = localStorage.getItem("username");
+  }
+  document.getElementById("username").addEventListener("input", function(){
+    localStorage.setItem("username", this.value);
+  });
 
-/* 🔗 گذاشتن لینک فیلم + ذخیره در دیتابیس */
-function loadVideo(){
-  var link=document.getElementById("movieLink").value.trim();
-  if(!link) return;
-  db.ref("video/link").set(link);
-}
+  // ✅ آنلاین‌ها
+  var userId = Math.random().toString(36).substr(2,9);
+  var userRef = db.ref("onlineUsers/" + userId);
+  userRef.set(true);
+  userRef.onDisconnect().remove();
 
-/* وقتی لینک تغییر کرد، برای همه ست بشه */
-db.ref("video/link").on("value", snap=>{
-  if(snap.val()) video.src = snap.val();
-});
+  db.ref("onlineUsers").on("value", snap=>{
+    document.getElementById("onlineCount").innerText = "Online: " + snap.numChildren();
+  });
 
-/* ارسال پیام */
-function sendMessage(){
-  var msg=document.getElementById("message").value.trim();
-  if(!msg) return;
+  // 🧹 پاک شدن چت هنگام ورود (طبق خواسته‌ات)
+  // هشدار: هرکسی وارد بشه چت رو پاک می‌کنه.
+  db.ref("chat").remove();
 
-  var name=document.getElementById("username").value.trim() || "Guest";
+  // 🔗 لینک ویدیو
+  function loadVideo(){
+    var link = document.getElementById("movieLink").value.trim();
+    if(!link) return;
+    db.ref("video/link").set(link);
+  }
 
-  var now=new Date();
-  var time=now.getHours().toString().padStart(2,'0')+
-           ":"+
-           now.getMinutes().toString().padStart(2,'0');
+  db.ref("video/link").on("value", snap=>{
+    if (snap.val()) video.src = snap.val();
+  });
 
-  db.ref("chat").push({ user:name, text:msg, time:time });
-  document.getElementById("message").value="";
-}
+  // ✅ ارسال پیام + زمان + seen + reactions
+  function sendMessage(){
+    var msg = document.getElementById("message").value.trim();
+    if(!msg) return;
 
-/* نمایش پیام */
-db.ref("chat").on("child_added", snap=>{
-  var data=snap.val();
-  var currentUser=document.getElementById("username").value.trim();
+    var name = document.getElementById("username").value.trim() || "Guest";
 
-  var div=document.createElement("div");
-  div.className="message "+(data.user===currentUser?"my-message":"other-message");
-  div.innerHTML=`<div>${data.text}</div><div class="time">${data.time}</div>`;
+    var now = new Date();
+    var time = now.getHours().toString().padStart(2,'0') + ":" +
+               now.getMinutes().toString().padStart(2,'0');
 
-  var chat=document.getElementById("chat");
-  chat.appendChild(div);
-  chat.scrollTop=chat.scrollHeight;
-});
+    db.ref("chat").push({
+      user: name,
+      text: msg,
+      time: time,
+      seen: false,
+      reactions: {}
+    });
+
+    document.getElementById("message").value = "";
+  }
+
+  // ✅ ری‌اکشن (فقط ۵ تا)
+  function addReaction(key, emoji){
+    // یک ری‌اکشن برای هر نفر (با userId) => شبیه‌تر به تلگرام
+    db.ref("chat/" + key + "/reactions/" + userId).set(emoji);
+  }
+
+  // پنل ری‌اکشن روی پیام
+  function showPicker(messageDiv, key){
+    // اگر پنل بازه دوباره نساز
+    if(messageDiv.querySelector(".reaction-picker")) return;
+
+    var picker = document.createElement("div");
+    picker.className = "reaction-picker";
+
+    ["😍","😎","🤣","❤️","👌"].forEach(emoji=>{
+      var s = document.createElement("span");
+      s.textContent = emoji;
+      s.onclick = (e)=>{
+        e.stopPropagation();
+        addReaction(key, emoji);
+        picker.remove();
+      };
+      picker.appendChild(s);
+    });
+
+    messageDiv.appendChild(picker);
+
+    // کلیک بیرون => بسته شود
+    setTimeout(()=>{
+      document.addEventListener("click", ()=>{
+        if(picker && picker.parentNode) picker.remove();
+      }, { once:true });
+    }, 0);
+  }
+
+  // رندر پیام‌ها
+  db.ref("chat").on("child_added", snap=>{
+    var data = snap.val();
+    var key  = snap.key;
+    var currentUser = (document.getElementById("username").value || "").trim();
+
+    // ✅ Seen: اگر این پیام مال من نیست، یعنی من دیدم => seen=true
+    if (data.user !== currentUser) {
+      db.ref("chat/" + key + "/seen").set(true);
+    }
+
+    var div = document.createElement("div");
+    var isMine = (data.user === currentUser);
+
+    div.className = "message " + (isMine ? "my-message" : "other-message");
+    div.id = "msg-" + key;
+
+    div.innerHTML = `
+      <div>${escapeHtml(data.text)}</div>
+      <div class="reactions" id="react-${key}"></div>
+      <div class="meta-row">
+        <span>${escapeHtml(data.time || "")}</span>
+        ${isMine ? `<span id="seen-${key}">✔</span>` : ``}
+      </div>
+    `;
+
+    div.onclick = ()=> showPicker(div, key);
+
+    var chat = document.getElementById("chat");
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+
+    // ✅ آپدیت سین (برای پیام‌های خودم)
+    if (isMine) {
+      db.ref("chat/" + key + "/seen").on("value", s=>{
+        var el = document.getElementById("seen-" + key);
+        if(!el) return;
+        el.textContent = s.val() ? "✔✔" : "✔";
+      });
+    }
+
+    // ✅ نمایش ری‌اکشن‌ها
+    db.ref("chat/" + key + "/reactions").on("value", r=>{
+      var container = document.getElementById("react-" + key);
+      if(!container) return;
+
+      container.innerHTML = "";
+      var val = r.val();
+      if (!val) return;
+
+      // شمارش ایموجی‌ها (اگر چند نفر یکی رو بزنن، مثل تلگرام کنار هم میاد)
+      var counts = {};
+      Object.values(val).forEach(e=>{
+        counts[e] = (counts[e] || 0) + 1;
+      });
+
+      // مرتب‌سازی ثابت برای قشنگی
+      ["😍","😎","🤣","❤️","👌"].forEach(e=>{
+        if(counts[e]){
+          container.innerHTML += counts[e] > 1 ? `${e} ${counts[e]} ` : `${e} `;
+        }
+      });
+    });
+  });
+
+  // جلوگیری از تزریق HTML داخل پیام
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, function(m){
+      return ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#039;"
+      })[m];
+    });
+  }
 </script>
 
 </body>
