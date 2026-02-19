@@ -10,21 +10,34 @@
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-
-html,body{
-height:100%;
-}
+html,body{height:100%}
 
 body{
 font-family:Arial;
-background:#0b0b12;
 color:white;
 display:flex;
 flex-direction:column;
-min-height:100dvh; /* 🔥 مهم */
+min-height:100dvh;
+overflow:hidden;
+background:linear-gradient(-45deg,#1f1c2c,#928dab,#0f2027,#2c5364);
+background-size:400% 400%;
+animation:bg 12s ease infinite;
+}
+@keyframes bg{
+0%{background-position:0% 50%}
+50%{background-position:100% 50%}
+100%{background-position:0% 50%}
 }
 
-/* HEADER */
+body.dark{background:#0b0b12}
+
+.glass{
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(12px);
+border:1px solid rgba(255,255,255,.1);
+border-radius:18px;
+}
+
 header{
 height:42px;
 flex-shrink:0;
@@ -32,10 +45,8 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 padding:0 12px;
-background:#14141c;
 }
 
-/* MAIN */
 .main{
 flex:1;
 display:flex;
@@ -45,16 +56,12 @@ gap:8px;
 overflow:hidden;
 }
 
-/* VIDEO */
 .video-container{
 flex:0 0 40%;
-background:#1c1c26;
-border-radius:16px;
 padding:10px;
 display:flex;
 flex-direction:column;
 }
-
 video{
 width:100%;
 flex:1;
@@ -64,8 +71,6 @@ border-radius:12px;
 /* CHAT */
 .chat-container{
 flex:1;
-background:#1c1c26;
-border-radius:16px;
 padding:10px;
 display:flex;
 flex-direction:column;
@@ -80,31 +85,67 @@ flex-direction:column;
 gap:6px;
 }
 
-/* MESSAGE */
 .message{
 padding:8px 10px;
 border-radius:14px;
 max-width:75%;
 font-size:14px;
-background:#2a2a32;
+display:flex;
+flex-direction:column;
+gap:4px;
+position:relative;
 }
 
-/* INPUT */
+.me{align-self:flex-end;background:#0088ff;border-bottom-right-radius:4px}
+.other{align-self:flex-start;background:#2a2a32;border-bottom-left-radius:4px}
+
+.meta{
+font-size:10px;
+opacity:.7;
+display:flex;
+justify-content:flex-end;
+gap:4px;
+}
+
+.reply-box{
+font-size:11px;
+opacity:.8;
+border-left:3px solid #fff;
+padding-left:6px;
+margin-bottom:4px;
+}
+
+.reactions{
+display:flex;
+gap:4px;
+font-size:14px;
+margin-top:4px;
+}
+
+.reaction-picker{
+position:absolute;
+bottom:100%;
+background:#1c1c22;
+padding:6px;
+border-radius:10px;
+display:flex;
+gap:6px;
+font-size:18px;
+}
+
 .input-area{
 display:flex;
 gap:6px;
 margin-top:6px;
-flex-shrink:0; /* 🔥 مهم */
+flex-shrink:0;
 }
-
 .input-area input{
 flex:1;
 padding:10px;
 border-radius:12px;
 border:none;
-font-size:16px; /* 🔥 باعث میشه زوم نشه */
+font-size:16px;
 }
-
 .input-area button{
 padding:10px 12px;
 border:none;
@@ -113,7 +154,61 @@ background:#e50914;
 color:white;
 }
 
-/* LANDSCAPE */
+/* SETTINGS */
+#settings{
+position:fixed;
+right:-260px;
+top:0;
+width:240px;
+height:100%;
+padding:20px;
+transition:.3s;
+z-index:100;
+}
+#settings.open{right:0}
+#settings button{
+width:100%;
+margin-bottom:10px;
+padding:8px;
+border:none;
+border-radius:10px;
+background:#e50914;
+color:white;
+}
+
+/* LOGIN */
+#login{
+position:fixed;
+inset:0;
+background:#000000dd;
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+z-index:999;
+}
+.login-box{
+padding:30px;
+text-align:center;
+}
+.login-box input{
+padding:10px;
+border-radius:12px;
+border:none;
+margin-bottom:10px;
+}
+
+#welcome{
+position:fixed;
+top:20px;
+left:50%;
+transform:translateX(-50%);
+padding:14px 20px;
+border-radius:14px;
+background:#111;
+display:none;
+}
+
 @media (orientation:landscape){
 .main{flex-direction:row}
 .video-container{flex:0 0 60%}
@@ -123,21 +218,43 @@ color:white;
 
 <body>
 
+<div id="login">
+<div class="login-box glass">
+<h3>رمز را وارد کنید</h3>
+<input id="pass">
+<button onclick="checkPass()">تایید</button>
+</div>
+</div>
+
+<div id="welcome" class="glass">
+سلام عزیزم❤️ خوش آمدی
+<button onclick="this.parentElement.style.display='none'">×</button>
+</div>
+
 <header>
 <span>🎬 Watch Together</span>
+<div>
 <span id="online">Online: 1</span>
+<button onclick="toggleSettings()">⚙️</button>
+</div>
 </header>
+
+<div id="settings" class="glass">
+<button onclick="toggleDark()">دارک مود</button>
+<button onclick="clearChat()">حذف تاریخچه</button>
+<button onclick="toggleSettings()">بستن</button>
+</div>
 
 <div class="main">
 
-<div class="video-container">
+<div class="video-container glass">
 <video id="video" controls></video>
 </div>
 
-<div class="chat-container">
+<div class="chat-container glass">
 <div class="chat-box" id="chat"></div>
 <div class="input-area">
-<input id="msg" placeholder="اینجا تایپ کن...">
+<input id="msg" placeholder="پیام...">
 <button onclick="send()">Send</button>
 </div>
 </div>
@@ -154,20 +271,127 @@ projectId:"film-online-922c1"
 firebase.initializeApp(firebaseConfig);
 var db=firebase.database();
 
+var username="user"+Math.floor(Math.random()*1000);
+var myId=Math.random().toString(36).substr(2,9);
+var replyTo=null;
+
+/* LOGIN */
+function checkPass(){
+if(pass.value==="bazsho20"){
+login.style.display="none";
+welcome.style.display="block";
+}
+}
+
+/* SETTINGS */
+function toggleSettings(){settings.classList.toggle("open")}
+function toggleDark(){document.body.classList.toggle("dark")}
+
+/* ONLINE */
+db.ref("online/"+myId).set(true);
+db.ref("online/"+myId).onDisconnect().remove();
+db.ref("online").on("value",snap=>{
+online.innerText="Online: "+snap.numChildren();
+});
+
+/* CHAT */
 function send(){
-var text=msg.value;
-if(!text)return;
-db.ref("chat").push({text:text});
+if(!msg.value)return;
+db.ref("chat").push({
+text:msg.value,
+user:username,
+time:Date.now(),
+reply:replyTo,
+seen:false,
+reactions:{}
+});
 msg.value="";
+replyTo=null;
 }
 
 db.ref("chat").on("child_added",snap=>{
+var d=snap.val();
+var key=snap.key;
+
+if(d.user!==username){
+db.ref("chat/"+key+"/seen").set(true);
+}
+
 var div=document.createElement("div");
-div.className="message";
-div.innerText=snap.val().text;
+div.className="message "+(d.user===username?"me":"other");
+div.id="m_"+key;
+
+if(d.reply){
+var rep=document.createElement("div");
+rep.className="reply-box";
+rep.innerText=d.reply;
+div.appendChild(rep);
+}
+
+var text=document.createElement("div");
+text.innerText=d.text;
+div.appendChild(text);
+
+var meta=document.createElement("div");
+meta.className="meta";
+meta.innerHTML=new Date(d.time).toLocaleTimeString().slice(0,5)
++(d.user===username?" <span id='s"+key+"'>✔</span>":"");
+div.appendChild(meta);
+
+var react=document.createElement("div");
+react.className="reactions";
+div.appendChild(react);
+
+div.onclick=function(e){
+e.stopPropagation();
+showReactions(key,div);
+replyTo=d.text;
+};
+
 chat.appendChild(div);
 chat.scrollTop=chat.scrollHeight;
+
+if(d.user===username){
+db.ref("chat/"+key+"/seen").on("value",s=>{
+document.getElementById("s"+key).innerText=s.val()?"✔✔":"✔";
 });
+}
+});
+
+/* REACTIONS */
+function showReactions(key,div){
+if(div.querySelector(".reaction-picker"))return;
+var picker=document.createElement("div");
+picker.className="reaction-picker";
+["😍","😎","🤣","❤️","👌"].forEach(e=>{
+var span=document.createElement("span");
+span.innerText=e;
+span.onclick=function(ev){
+ev.stopPropagation();
+db.ref("chat/"+key+"/reactions/"+myId).set(e);
+picker.remove();
+};
+picker.appendChild(span);
+});
+div.appendChild(picker);
+}
+
+db.ref("chat").on("child_changed",snap=>{
+var d=snap.val();
+var react=document.querySelector("#m_"+snap.key+" .reactions");
+react.innerHTML="";
+if(d.reactions){
+Object.values(d.reactions).forEach(e=>{
+react.innerHTML+=e+" ";
+});
+}
+});
+
+/* CLEAR */
+function clearChat(){
+db.ref("chat").remove();
+chat.innerHTML="";
+}
 </script>
 
 </body>
