@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Watch Together</title>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -13,29 +14,42 @@ body{
   background:#0f0f0f;
   font-family:Arial;
   color:white;
+  display:flex;
+  flex-direction:column;
+  height:100vh;
 }
 
 header{
   background:#111;
-  padding:15px;
-  display:flex;
-  justify-content:space-between;
+  padding:12px;
+  text-align:center;
+  font-weight:bold;
 }
 
-.container{
-  max-width:900px;
-  margin:auto;
-  padding:20px;
+.main{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
+
+.video-container{
+  background:black;
 }
 
 video{
   width:100%;
-  border-radius:12px;
+  max-height:40vh;
+}
+
+.chat-container{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  padding:10px;
 }
 
 .chat-box{
-  margin-top:20px;
-  height:350px;
+  flex:1;
   overflow-y:auto;
   display:flex;
   flex-direction:column;
@@ -43,12 +57,10 @@ video{
 }
 
 .message{
-  max-width:70%;
+  max-width:75%;
   padding:10px 14px;
   border-radius:15px;
   font-size:14px;
-  position:relative;
-  cursor:pointer;
 }
 
 .my-message{
@@ -70,34 +82,14 @@ video{
   text-align:right;
 }
 
-.reaction-display{
-  margin-top:5px;
-  font-size:16px;
-}
-
-.reaction-picker{
-  position:absolute;
-  bottom:100%;
-  background:#1f1f1f;
-  padding:5px 8px;
-  border-radius:20px;
+.input-area{
   display:flex;
-  gap:6px;
-  box-shadow:0 0 10px rgba(0,0,0,0.5);
-}
-
-.reaction-picker span{
-  cursor:pointer;
-  font-size:18px;
-}
-
-.chat-input{
-  margin-top:15px;
-  display:flex;
-  gap:10px;
+  gap:8px;
+  margin-top:8px;
 }
 
 input{
+  flex:1;
   padding:10px;
   border-radius:20px;
   border:none;
@@ -105,65 +97,65 @@ input{
 }
 
 button{
-  padding:10px 18px;
+  padding:10px 16px;
   border:none;
   border-radius:20px;
   background:#e50914;
   color:white;
-  cursor:pointer;
+}
+
+/* حالت افقی */
+@media (orientation: landscape){
+  .main{
+    flex-direction:row;
+  }
+  .video-container{
+    flex:1;
+  }
+  .chat-container{
+    flex:1;
+  }
+  video{
+    max-height:100vh;
+  }
 }
 </style>
 </head>
 <body>
 
-<header>
-<span>🎬 Watch Together</span>
-<span id="onlineCount">Online: 1</span>
-</header>
+<header>🎬 Watch Together</header>
 
-<div class="container">
+<div class="main">
 
-<input id="movieLink" placeholder="Paste mp4 link">
-<button onclick="loadVideo()">Load</button>
-<br><br>
+<div class="video-container">
 <video id="video" controls></video>
+</div>
+
+<div class="chat-container">
 
 <div class="chat-box" id="chat"></div>
 
-<div class="chat-input">
-<input id="username" placeholder="Your name">
-<input id="message" placeholder="Type message..." style="flex:1">
+<div class="input-area">
+<input id="username" placeholder="Name">
+<input id="message" placeholder="Message">
 <button onclick="sendMessage()">Send</button>
 </div>
 
 </div>
 
+</div>
+
 <script>
-var firebaseConfig = {
-  apiKey: "AIzaSyCDHmmKIYPHDyvx4BXTb-7VP6lmVb8BCYw",
-  authDomain: "film-online-922c1.firebaseapp.com",
-  databaseURL: "https://film-online-922c1-default-rtdb.firebaseio.com/",
-  projectId: "film-online-922c1",
-  storageBucket: "film-online-922c1.firebasestorage.app",
-  messagingSenderId: "519581538305",
-  appId: "1:519581538305:web:544ac4a73ee1100b6d8800"
+var firebaseConfig={
+  apiKey:"AIzaSyCDHmmKIYPHDyvx4BXTb-7VP6lmVb8BCYw",
+  authDomain:"film-online-922c1.firebaseapp.com",
+  databaseURL:"https://film-online-922c1-default-rtdb.firebaseio.com/",
+  projectId:"film-online-922c1"
 };
 
 firebase.initializeApp(firebaseConfig);
-var db = firebase.database();
+var db=firebase.database();
 
-// آنلاین
-var userId=Math.random().toString(36).substr(2,9);
-var userRef=db.ref("onlineUsers/"+userId);
-userRef.set(true);
-userRef.onDisconnect().remove();
-
-db.ref("onlineUsers").on("value",snap=>{
-  document.getElementById("onlineCount").innerText=
-    "Online: "+snap.numChildren();
-});
-
-// ارسال پیام
 function sendMessage(){
   var msg=document.getElementById("message").value;
   var name=document.getElementById("username").value||"Guest";
@@ -176,17 +168,14 @@ function sendMessage(){
   db.ref("chat").push({
     user:name,
     text:msg,
-    time:time,
-    reactions:{}
+    time:time
   });
 
   document.getElementById("message").value="";
 }
 
-// نمایش پیام
 db.ref("chat").on("child_added",snap=>{
   var data=snap.val();
-  var key=snap.key;
   var currentUser=document.getElementById("username").value;
 
   var div=document.createElement("div");
@@ -196,58 +185,12 @@ db.ref("chat").on("child_added",snap=>{
   div.innerHTML=`
     <div>${data.text}</div>
     <div class="time">${data.time}</div>
-    <div class="reaction-display" id="react-${key}"></div>
   `;
 
-  div.onclick=()=>showPicker(div,key);
-
-  document.getElementById("chat").appendChild(div);
-  document.getElementById("chat").scrollTop=
-    document.getElementById("chat").scrollHeight;
-
-  db.ref("chat/"+key+"/reactions").on("value",r=>{
-    var container=document.getElementById("react-"+key);
-    container.innerHTML="";
-    if(r.val()){
-      Object.values(r.val()).forEach(e=>{
-        container.innerHTML+=e+" ";
-      });
-    }
-  });
+  var chat=document.getElementById("chat");
+  chat.appendChild(div);
+  chat.scrollTop=chat.scrollHeight;
 });
-
-// باز شدن پنل ایموجی
-function showPicker(messageDiv,key){
-  if(messageDiv.querySelector(".reaction-picker")) return;
-
-  var picker=document.createElement("div");
-  picker.className="reaction-picker";
-
-  ["😍","😎","🤣","❤️","👌"].forEach(emoji=>{
-    var span=document.createElement("span");
-    span.innerText=emoji;
-    span.onclick=(e)=>{
-      e.stopPropagation();
-      addReaction(key,emoji);
-      picker.remove();
-    };
-    picker.appendChild(span);
-  });
-
-  messageDiv.appendChild(picker);
-
-  setTimeout(()=>{
-    document.addEventListener("click",()=>{
-      picker.remove();
-    },{once:true});
-  },10);
-}
-
-// ثبت ری‌اکشن
-function addReaction(key,emoji){
-  var id=Math.random().toString(36).substr(2,9);
-  db.ref("chat/"+key+"/reactions/"+id).set(emoji);
-}
 </script>
 
 </body>
