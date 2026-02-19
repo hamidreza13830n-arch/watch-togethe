@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Watch Together</title>
 
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
@@ -11,19 +11,23 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 
+html,body{
+height:100%;
+}
+
 body{
-height:100vh;
-display:flex;
-flex-direction:column;
 font-family:Arial;
 background:#0b0b12;
 color:white;
-overflow:hidden;
+display:flex;
+flex-direction:column;
+min-height:100dvh; /* 🔥 مهم */
 }
 
 /* HEADER */
 header{
 height:42px;
+flex-shrink:0;
 display:flex;
 justify-content:space-between;
 align-items:center;
@@ -31,14 +35,14 @@ padding:0 12px;
 background:#14141c;
 }
 
-/* MAIN LAYOUT */
+/* MAIN */
 .main{
 flex:1;
 display:flex;
 flex-direction:column;
 padding:8px;
 gap:8px;
-height:calc(100vh - 42px);
+overflow:hidden;
 }
 
 /* VIDEO */
@@ -76,38 +80,33 @@ flex-direction:column;
 gap:6px;
 }
 
+/* MESSAGE */
 .message{
 padding:8px 10px;
 border-radius:14px;
 max-width:75%;
 font-size:14px;
-}
-
-.me{
-align-self:flex-end;
-background:#0088ff;
-}
-
-.other{
-align-self:flex-start;
 background:#2a2a32;
 }
 
+/* INPUT */
 .input-area{
 display:flex;
 gap:6px;
 margin-top:6px;
+flex-shrink:0; /* 🔥 مهم */
 }
 
 .input-area input{
 flex:1;
-padding:8px;
+padding:10px;
 border-radius:12px;
 border:none;
+font-size:16px; /* 🔥 باعث میشه زوم نشه */
 }
 
 .input-area button{
-padding:8px 12px;
+padding:10px 12px;
 border:none;
 border-radius:12px;
 background:#e50914;
@@ -116,17 +115,8 @@ color:white;
 
 /* LANDSCAPE */
 @media (orientation:landscape){
-.main{
-flex-direction:row;
-}
-
-.video-container{
-flex:0 0 60%;
-}
-
-.chat-container{
-flex:1;
-}
+.main{flex-direction:row}
+.video-container{flex:0 0 60%}
 }
 </style>
 </head>
@@ -147,7 +137,7 @@ flex:1;
 <div class="chat-container">
 <div class="chat-box" id="chat"></div>
 <div class="input-area">
-<input id="msg" placeholder="Message">
+<input id="msg" placeholder="اینجا تایپ کن...">
 <button onclick="send()">Send</button>
 </div>
 </div>
