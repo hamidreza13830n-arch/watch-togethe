@@ -11,8 +11,7 @@
 <style>
 :root{
   --card-dark: rgba(20,20,24,.88);
-  --card-light: rgba(255,255,255,.15);
-  --blur: blur(18px);
+  --card-light: rgba(255,255,255,.6);
 }
 
 body{
@@ -43,6 +42,17 @@ body::before{
 @keyframes moveLights{
   0%{ transform: translate(-10%, -10%) scale(1); }
   100%{ transform: translate(10%, 10%) scale(1.1); }
+}
+
+/* حالت روشن */
+body.light{
+  background:#f2f2f2;
+  color:black;
+}
+body.light .video-container,
+body.light .chat-container{
+  background:var(--card-light);
+  color:black;
 }
 
 /* ===== LOGIN ===== */
@@ -159,6 +169,16 @@ header{
   padding:8px;
 }
 
+.video-container{
+  flex:1.2;
+  min-height:40%;
+}
+
+.chat-container{
+  flex:1;
+  min-height:45%;
+}
+
 .video-container,
 .chat-container{
   border-radius:16px;
@@ -167,9 +187,6 @@ header{
   flex-direction:column;
   background:var(--card-dark);
 }
-
-.video-container{flex:1.6;}
-.chat-container{flex:0.9;}
 
 .link-bar{display:flex;gap:6px;}
 .link-bar input{flex:1;padding:8px;border-radius:12px;border:none;}
@@ -242,8 +259,8 @@ video{width:100%;border-radius:12px;}
 
 @media (orientation: landscape){
   .main{flex-direction:row;}
-  .video-container{flex:1.7;}
-  .chat-container{flex:0.8;}
+  .video-container{flex:1.4;}
+  .chat-container{flex:1;}
 }
 </style>
 </head>
@@ -277,6 +294,7 @@ video{width:100%;border-radius:12px;}
 
 <div class="settings" id="settings">
 <h3>تنظیمات</h3>
+<button onclick="toggleMode()">تغییر حالت دارک / لایت</button>
 <button onclick="clearChat()">حذف تاریخچه پیام‌ها</button>
 <button onclick="closeSettings()">بستن</button>
 </div>
@@ -302,6 +320,10 @@ video{width:100%;border-radius:12px;}
 </div>
 
 <script>
+function toggleMode(){
+document.body.classList.toggle("light");
+}
+
 function checkPass(){
 if(document.getElementById("pass").value==="bazsho20"){
 document.getElementById("login").style.display="none";
