@@ -10,8 +10,10 @@
 
 <style>
 :root{
-  --card: rgba(20,20,24,.75);
-  --border: rgba(255,255,255,.08);
+  --card-dark: rgba(20,20,24,.85);
+  --card-light: rgba(255,255,255,.15);
+  --blur: blur(18px);
+  --border: rgba(255,255,255,.15);
 }
 
 body{
@@ -24,19 +26,10 @@ body{
   overflow:hidden;
   background:#0b0b12;
   position:relative;
+  transition:0.4s;
 }
 
-/* Canvas particles */
-#particles{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  z-index:-2;
-}
-
-/* نورهای گرادیانی نرم */
+/* پس‌زمینه نور */
 body::before{
   content:"";
   position:fixed;
@@ -56,27 +49,74 @@ body::before{
 }
 
 header{
-  background:rgba(10,10,12,.6);
-  backdrop-filter:blur(10px);
   padding:12px;
   display:flex;
   justify-content:space-between;
+  align-items:center;
   font-weight:bold;
-  border-bottom:1px solid var(--border);
+}
+
+.settings-btn{
+  cursor:pointer;
+  font-size:20px;
+}
+
+/* پنل تنظیمات */
+.settings-panel{
+  position:fixed;
+  top:0;
+  right:-300px;
+  width:260px;
+  height:100%;
+  background:rgba(20,20,24,.95);
+  backdrop-filter:blur(20px);
+  padding:20px;
+  transition:0.4s;
+  z-index:100;
+}
+
+.settings-panel.open{ right:0; }
+
+.settings-panel h3{margin-top:0;}
+
+.settings-item{
+  margin-bottom:15px;
+}
+
+.toggle{
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
 
 .main{flex:1;display:flex;flex-direction:column;gap:10px;padding:10px;}
 
-.video-container{
-  flex:1.6;
-  background:var(--card);
+.video-container,
+.chat-container{
+  flex:1;
   border-radius:16px;
   padding:12px;
   display:flex;
   flex-direction:column;
   gap:8px;
-  backdrop-filter:blur(12px);
+  transition:0.4s;
 }
+
+/* حالت تاریک */
+.dark .video-container,
+.dark .chat-container{
+  background:var(--card-dark);
+}
+
+/* حالت روشن شیشه‌ای */
+.light .video-container,
+.light .chat-container{
+  background:var(--card-light);
+  backdrop-filter:var(--blur);
+  border:1px solid var(--border);
+}
+
+.video-container{flex:1.6;}
 
 .link-bar{display:flex;gap:8px;}
 .link-bar input{flex:1;padding:10px;border-radius:18px;border:none;}
@@ -85,17 +125,6 @@ header{
 video{width:100%;height:100%;border-radius:14px;background:black;}
 
 .speed-control{display:flex;justify-content:flex-end;}
-.speed-control select{padding:6px 10px;border-radius:10px;border:none;}
-
-.chat-container{
-  flex:1;
-  background:var(--card);
-  border-radius:16px;
-  padding:12px;
-  display:flex;
-  flex-direction:column;
-  backdrop-filter:blur(12px);
-}
 
 .chat-box{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;}
 
@@ -104,22 +133,23 @@ video{width:100%;height:100%;border-radius:14px;background:black;}
   padding:10px 14px;
   border-radius:15px;
   font-size:14px;
-  cursor:pointer;
   position:relative;
 }
 
-.my-message{align-self:flex-end;background:#0088cc;border-bottom-right-radius:4px;}
-.other-message{align-self:flex-start;background:#262626;border-bottom-left-radius:4px;}
+.my-message{align-self:flex-end;background:#0088cc;}
+.other-message{align-self:flex-start;background:#262626;}
 
-.meta{display:flex;justify-content:flex-end;gap:6px;font-size:11px;opacity:.7;margin-top:4px;}
+.light .other-message{background:rgba(255,255,255,.25);}
+.light .my-message{background:rgba(0,136,204,.6);}
+
+.meta{font-size:11px;opacity:.7;margin-top:4px;}
 
 .reply-preview{
-  background:rgba(255,255,255,.1);
-  padding:5px 8px;
+  background:rgba(255,255,255,.2);
+  padding:5px;
   border-left:3px solid #e50914;
-  border-radius:8px;
+  border-radius:6px;
   font-size:12px;
-  margin-bottom:5px;
 }
 
 .input-area{display:flex;gap:8px;margin-top:8px;}
@@ -134,14 +164,29 @@ video{width:100%;height:100%;border-radius:14px;background:black;}
 </style>
 </head>
 
-<body>
-
-<canvas id="particles"></canvas>
+<body class="dark">
 
 <header>
 <span>🎬 Watch Together</span>
+<span>
 <span id="onlineCount">Online: 1</span>
+<span class="settings-btn" onclick="toggleSettings()">⚙️</span>
+</span>
 </header>
+
+<div class="settings-panel" id="settingsPanel">
+<h3>Settings</h3>
+
+<div class="settings-item">
+<div class="toggle">
+<label>Dark Mode</label>
+<input type="checkbox" id="themeToggle" checked onchange="toggleTheme()">
+</div>
+</div>
+
+<!-- آینده اینجا تنظیمات اضافه می‌کنیم -->
+
+</div>
 
 <div class="main">
 
@@ -154,7 +199,7 @@ video{width:100%;height:100%;border-radius:14px;background:black;}
 <video id="video" controls></video>
 
 <div class="speed-control">
-<select onchange="changeSpeed(this.value)">
+<select onchange="video.playbackRate=this.value">
 <option value="0.5">0.5x</option>
 <option value="1" selected>1x</option>
 <option value="1.5">1.5x</option>
@@ -175,43 +220,73 @@ video{width:100%;height:100%;border-radius:14px;background:black;}
 </div>
 
 <script>
-// 🎇 Particles Effect
-const canvas=document.getElementById("particles");
-const ctx=canvas.getContext("2d");
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
-
-let particles=[];
-for(let i=0;i<60;i++){
-particles.push({
-x:Math.random()*canvas.width,
-y:Math.random()*canvas.height,
-r:Math.random()*2+1,
-dx:(Math.random()-.5)*.3,
-dy:(Math.random()-.5)*.3
-});
+function toggleSettings(){
+document.getElementById("settingsPanel").classList.toggle("open");
 }
 
-function animate(){
-ctx.clearRect(0,0,canvas.width,canvas.height);
-particles.forEach(p=>{
-ctx.beginPath();
-ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-ctx.fillStyle="rgba(255,255,255,0.5)";
-ctx.fill();
-p.x+=p.dx;
-p.y+=p.dy;
-if(p.x<0||p.x>canvas.width)p.dx*=-1;
-if(p.y<0||p.y>canvas.height)p.dy*=-1;
-});
-requestAnimationFrame(animate);
+function toggleTheme(){
+if(document.getElementById("themeToggle").checked){
+document.body.classList.remove("light");
+document.body.classList.add("dark");
+}else{
+document.body.classList.remove("dark");
+document.body.classList.add("light");
 }
-animate();
+}
 
-window.onresize=()=>{
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
+/* Firebase قبلی */
+var firebaseConfig={
+apiKey:"AIzaSyCDHmmKIYPHDyvx4BXTb-7VP6lmVb8BCYw",
+authDomain:"film-online-922c1.firebaseapp.com",
+databaseURL:"https://film-online-922c1-default-rtdb.firebaseio.com/",
+projectId:"film-online-922c1"
 };
+firebase.initializeApp(firebaseConfig);
+var db=firebase.database();
+var video=document.getElementById("video");
+
+if(!localStorage.getItem("username")){
+localStorage.setItem("username",prompt("Your name?")||"Guest");
+}
+var currentUser=localStorage.getItem("username");
+
+var userId=Math.random().toString(36).substr(2,9);
+var userRef=db.ref("onlineUsers/"+userId);
+userRef.set(true);
+userRef.onDisconnect().remove();
+
+db.ref("onlineUsers").on("value",snap=>{
+document.getElementById("onlineCount").innerText="Online: "+snap.numChildren();
+});
+
+db.ref("chat").remove();
+
+function loadVideo(){
+db.ref("video/link").set(document.getElementById("movieLink").value);
+}
+db.ref("video/link").on("value",snap=>{
+if(snap.val()) video.src=snap.val();
+});
+
+function sendMessage(){
+var msg=document.getElementById("message").value;
+if(!msg)return;
+
+var now=new Date();
+var time=now.getHours().toString().padStart(2,'0')+":"+
+now.getMinutes().toString().padStart(2,'0');
+
+db.ref("chat").push({user:currentUser,text:msg,time:time});
+document.getElementById("message").value="";
+}
+
+db.ref("chat").on("child_added",snap=>{
+var data=snap.val();
+var div=document.createElement("div");
+div.className="message "+(data.user===currentUser?"my-message":"other-message");
+div.innerHTML=`<div>${data.text}</div><div class="meta">${data.time}</div>`;
+document.getElementById("chat").appendChild(div);
+});
 </script>
 
 </body>
