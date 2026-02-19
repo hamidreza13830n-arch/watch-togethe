@@ -10,12 +10,14 @@
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+
 body{
 font-family:Arial;
 color:white;
 display:flex;
 flex-direction:column;
-height:100vh;
+min-height:100dvh;
 overflow:hidden;
 background:linear-gradient(-45deg,#1f1c2c,#928dab,#0f2027,#2c5364);
 background-size:400% 400%;
@@ -27,45 +29,22 @@ animation:bg 12s ease infinite;
 100%{background-position:0% 50%}
 }
 
-body.dark{background:#0b0b12;animation:none;}
+body.dark{background:#0b0b12}
+
+.glass{
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(12px);
+border:1px solid rgba(255,255,255,.1);
+border-radius:18px;
+}
 
 header{
 height:42px;
+flex-shrink:0;
 display:flex;
 justify-content:space-between;
 align-items:center;
 padding:0 12px;
-position:relative;
-}
-
-.fairy-lights{
-position:absolute;
-top:0;
-left:0;
-width:100%;
-height:18px;
-display:flex;
-justify-content:space-around;
-pointer-events:none;
-transition:.4s;
-}
-body.dark .fairy-lights{opacity:0;}
-
-.bulb{
-width:6px;height:6px;border-radius:50%;
-animation:blink 2s infinite ease-in-out;
-}
-.bulb:nth-child(1){background:#ff4d6d;}
-.bulb:nth-child(2){background:#ffd166;}
-.bulb:nth-child(3){background:#06d6a0;}
-.bulb:nth-child(4){background:#4cc9f0;}
-.bulb:nth-child(5){background:#f72585;}
-.bulb:nth-child(6){background:#ffbe0b;}
-.bulb:nth-child(7){background:#8338ec;}
-
-@keyframes blink{
-0%,100%{opacity:.3}
-50%{opacity:1}
 }
 
 .main{
@@ -74,21 +53,29 @@ display:flex;
 flex-direction:column;
 padding:8px;
 gap:8px;
+overflow:hidden;
 }
 
-.video-container,.chat-container{
-background:rgba(255,255,255,.08);
-backdrop-filter:blur(12px);
-border-radius:18px;
+.video-container{
+flex:0 0 40%;
 padding:10px;
 display:flex;
 flex-direction:column;
 }
+video{
+width:100%;
+flex:1;
+border-radius:12px;
+}
 
-.video-container{flex:0 0 40%;}
-video{width:100%;flex:1;border-radius:12px;}
+.chat-container{
+flex:1;
+padding:10px;
+display:flex;
+flex-direction:column;
+min-height:0;
+}
 
-.chat-container{flex:1;}
 .chat-box{
 flex:1;
 overflow-y:auto;
@@ -107,13 +94,33 @@ flex-direction:column;
 gap:4px;
 position:relative;
 }
+
 .me{align-self:flex-end;background:#0088ff;border-bottom-right-radius:4px}
 .other{align-self:flex-start;background:#2a2a32;border-bottom-left-radius:4px}
 
-.meta{font-size:10px;opacity:.7;text-align:right;}
-.reply-box{font-size:11px;opacity:.8;border-left:3px solid #fff;padding-left:6px;}
+.meta{
+font-size:10px;
+opacity:.7;
+display:flex;
+justify-content:flex-end;
+gap:4px;
+}
 
-.reactions{display:flex;gap:4px;font-size:14px;}
+.reply-box{
+font-size:11px;
+opacity:.8;
+border-left:3px solid #fff;
+padding-left:6px;
+margin-bottom:4px;
+}
+
+.reactions{
+display:flex;
+gap:4px;
+font-size:14px;
+margin-top:4px;
+}
+
 .reaction-picker{
 position:absolute;
 bottom:100%;
@@ -125,7 +132,12 @@ gap:6px;
 font-size:18px;
 }
 
-.input-area{display:flex;gap:6px;margin-top:6px;}
+.input-area{
+display:flex;
+gap:6px;
+margin-top:6px;
+flex-shrink:0;
+}
 .input-area input{
 flex:1;
 padding:10px;
@@ -141,18 +153,18 @@ background:#e50914;
 color:white;
 }
 
+/* SETTINGS */
 #settings{
 position:fixed;
 right:-260px;
 top:0;
 width:240px;
 height:100%;
-background:#111;
 padding:20px;
 transition:.3s;
 z-index:100;
 }
-#settings.open{right:0;}
+#settings.open{right:0}
 #settings button{
 width:100%;
 margin-bottom:10px;
@@ -163,7 +175,8 @@ background:#e50914;
 color:white;
 }
 
-#login,#welcomeOverlay{
+/* LOGIN */
+#login{
 position:fixed;
 inset:0;
 background:#000000dd;
@@ -173,14 +186,43 @@ align-items:center;
 flex-direction:column;
 z-index:999;
 }
-#welcomeOverlay{display:none;}
-
-.glass{
-background:rgba(255,255,255,.08);
-backdrop-filter:blur(12px);
+.login-box{
 padding:30px;
-border-radius:18px;
 text-align:center;
+}
+.login-box input{
+padding:10px;
+border-radius:12px;
+border:none;
+margin-bottom:10px;
+}
+
+/* WELCOME */
+#welcomeOverlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.6);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:998;
+}
+.welcome-box{
+padding:30px;
+text-align:center;
+width:280px;
+}
+.welcome-box button{
+padding:10px 20px;
+border:none;
+border-radius:12px;
+background:#e50914;
+color:white;
+}
+
+@media (orientation:landscape){
+.main{flex-direction:row}
+.video-container{flex:0 0 60%}
 }
 </style>
 </head>
@@ -188,26 +230,21 @@ text-align:center;
 <body>
 
 <div id="login">
-<div class="glass">
+<div class="login-box glass">
 <h3>رمز را وارد کنید</h3>
-<input id="pass"><br><br>
+<input id="pass">
 <button onclick="checkPass()">تایید</button>
 </div>
 </div>
 
 <div id="welcomeOverlay">
-<div class="glass">
+<div class="welcome-box glass">
 <h3>سلام عزیزم ❤️ خوش آمدی</h3>
 <button onclick="closeWelcome()">ورود</button>
 </div>
 </div>
 
 <header>
-<div class="fairy-lights">
-<div class="bulb"></div><div class="bulb"></div><div class="bulb"></div>
-<div class="bulb"></div><div class="bulb"></div><div class="bulb"></div>
-<div class="bulb"></div>
-</div>
 <span>🎬 Watch Together</span>
 <div>
 <span id="online">Online: 1</span>
@@ -215,28 +252,36 @@ text-align:center;
 </div>
 </header>
 
-<div id="settings">
-<h3>پخش فیلم</h3>
-<input id="videoLinkInput" placeholder="لینک فیلم..." style="width:100%;padding:8px;border-radius:10px;border:none;margin-bottom:8px">
+<div id="settings" class="glass">
+
+<h3 style="margin-bottom:10px">پخش فیلم</h3>
+
+<input id="videoLinkInput" placeholder="لینک فیلم..."
+style="width:100%;padding:8px;border-radius:10px;border:none;margin-bottom:8px">
+
 <button onclick="setVideoLink()">پخش فیلم</button>
-<hr>
+
+<hr style="margin:15px 0;opacity:.3">
+
 <button onclick="toggleDark()">دارک مود</button>
 <button onclick="clearChat()">حذف تاریخچه</button>
 <button onclick="toggleSettings()">بستن</button>
 </div>
 
 <div class="main">
-<div class="video-container">
+
+<div class="video-container glass">
 <video id="video" controls></video>
 </div>
 
-<div class="chat-container">
+<div class="chat-container glass">
 <div class="chat-box" id="chat"></div>
 <div class="input-area">
 <input id="msg" placeholder="پیام...">
 <button onclick="send()">Send</button>
 </div>
 </div>
+
 </div>
 
 <script>
@@ -253,33 +298,40 @@ var username="user"+Math.floor(Math.random()*1000);
 var myId=Math.random().toString(36).substr(2,9);
 var replyTo=null;
 
+/* LOGIN */
 function checkPass(){
 if(pass.value==="bazsho20"){
 login.style.display="none";
 welcomeOverlay.style.display="flex";
 }
 }
-function closeWelcome(){welcomeOverlay.style.display="none";}
-function toggleSettings(){settings.classList.toggle("open");}
-function toggleDark(){document.body.classList.toggle("dark");}
+function closeWelcome(){welcomeOverlay.style.display="none"}
 
+/* SETTINGS */
+function toggleSettings(){settings.classList.toggle("open")}
+function toggleDark(){document.body.classList.toggle("dark")}
+
+/* VIDEO LINK */
 function setVideoLink(){
-var link=videoLinkInput.value;
+var link=document.getElementById("videoLinkInput").value;
 if(!link)return;
 db.ref("video/url").set(link);
 videoLinkInput.value="";
 toggleSettings();
 }
+
 db.ref("video/url").on("value",snap=>{
 if(snap.val())video.src=snap.val();
 });
 
+/* ONLINE */
 db.ref("online/"+myId).set(true);
 db.ref("online/"+myId).onDisconnect().remove();
 db.ref("online").on("value",snap=>{
 online.innerText="Online: "+snap.numChildren();
 });
 
+/* CHAT */
 function send(){
 if(!msg.value)return;
 db.ref("chat").push({
@@ -297,6 +349,7 @@ replyTo=null;
 db.ref("chat").on("child_added",snap=>{
 var d=snap.val();
 var key=snap.key;
+
 if(d.user!==username){
 db.ref("chat/"+key+"/seen").set(true);
 }
@@ -342,12 +395,12 @@ document.getElementById("s"+key).innerText=s.val()?"✔✔":"✔";
 }
 });
 
+/* REACTIONS */
 function showReactions(key,div){
 if(div.querySelector(".reaction-picker"))return;
 var picker=document.createElement("div");
 picker.className="reaction-picker";
-
-["😍","😎","🤣","❤️","👌","🔥","😭","🩷"].forEach(e=>{
+["😍","😎","🤣","❤️","👌"].forEach(e=>{
 var span=document.createElement("span");
 span.innerText=e;
 span.onclick=function(ev){
@@ -363,7 +416,6 @@ div.appendChild(picker);
 db.ref("chat").on("child_changed",snap=>{
 var d=snap.val();
 var react=document.querySelector("#m_"+snap.key+" .reactions");
-if(!react)return;
 react.innerHTML="";
 if(d.reactions){
 Object.values(d.reactions).forEach(e=>{
@@ -372,6 +424,7 @@ react.innerHTML+=e+" ";
 }
 });
 
+/* CLEAR */
 function clearChat(){
 db.ref("chat").remove();
 chat.innerHTML="";
