@@ -10,8 +10,6 @@
 
 <style>
 :root{
-  --bg0:#060607;
-  --bg1:#0b0b10;
   --card: rgba(20,20,24,.75);
   --border: rgba(255,255,255,.08);
 }
@@ -23,17 +21,38 @@ body{
   height:100vh;
   display:flex;
   flex-direction:column;
-  background:
-    radial-gradient(circle at 20% 20%, rgba(229,9,20,.3), transparent 40%),
-    radial-gradient(circle at 80% 30%, rgba(0,136,204,.25), transparent 40%),
-    radial-gradient(circle at 50% 90%, rgba(168,85,247,.2), transparent 40%),
-    linear-gradient(180deg,var(--bg0),var(--bg1));
-  animation:bgMove 15s infinite alternate ease-in-out;
+  overflow:hidden;
+  background:#0b0b12;
+  position:relative;
 }
 
-@keyframes bgMove{
-  0%{background-position:0% 0%;}
-  100%{background-position:100% 100%;}
+/* Canvas particles */
+#particles{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:-2;
+}
+
+/* نورهای گرادیانی نرم */
+body::before{
+  content:"";
+  position:fixed;
+  inset:-50%;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(229,9,20,.4), transparent 40%),
+    radial-gradient(circle at 80% 20%, rgba(0,136,204,.35), transparent 40%),
+    radial-gradient(circle at 60% 80%, rgba(168,85,247,.3), transparent 40%);
+  animation: moveLights 18s infinite alternate ease-in-out;
+  filter: blur(120px);
+  z-index:-1;
+}
+
+@keyframes moveLights{
+  0%{ transform: translate(-10%, -10%) scale(1); }
+  100%{ transform: translate(10%, 10%) scale(1.1); }
 }
 
 header{
@@ -94,21 +113,6 @@ video{width:100%;height:100%;border-radius:14px;background:black;}
 
 .meta{display:flex;justify-content:flex-end;gap:6px;font-size:11px;opacity:.7;margin-top:4px;}
 
-.reactions{margin-top:6px;font-size:16px;}
-
-.reaction-picker{
-  position:absolute;
-  bottom:100%;
-  right:0;
-  background:#1f1f1f;
-  padding:6px 10px;
-  border-radius:18px;
-  display:flex;
-  gap:6px;
-}
-
-.other-message .reaction-picker{right:auto;left:0;}
-
 .reply-preview{
   background:rgba(255,255,255,.1);
   padding:5px 8px;
@@ -132,6 +136,8 @@ video{width:100%;height:100%;border-radius:14px;background:black;}
 
 <body>
 
+<canvas id="particles"></canvas>
+
 <header>
 <span>🎬 Watch Together</span>
 <span id="onlineCount">Online: 1</span>
@@ -144,6 +150,7 @@ video{width:100%;height:100%;border-radius:14px;background:black;}
 <input id="movieLink" placeholder="Paste mp4 link...">
 <button onclick="loadVideo()">Load</button>
 </div>
+
 <video id="video" controls></video>
 
 <div class="speed-control">
@@ -158,9 +165,7 @@ video{width:100%;height:100%;border-radius:14px;background:black;}
 
 <div class="chat-container">
 <div class="chat-box" id="chat"></div>
-
 <div id="replyBox"></div>
-
 <div class="input-area">
 <input id="message" placeholder="Message">
 <button onclick="sendMessage()">Send</button>
@@ -170,121 +175,43 @@ video{width:100%;height:100%;border-radius:14px;background:black;}
 </div>
 
 <script>
-var firebaseConfig={
-apiKey:"AIzaSyCDHmmKIYPHDyvx4BXTb-7VP6lmVb8BCYw",
-authDomain:"film-online-922c1.firebaseapp.com",
-databaseURL:"https://film-online-922c1-default-rtdb.firebaseio.com/",
-projectId:"film-online-922c1"
+// 🎇 Particles Effect
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let particles=[];
+for(let i=0;i<60;i++){
+particles.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+r:Math.random()*2+1,
+dx:(Math.random()-.5)*.3,
+dy:(Math.random()-.5)*.3
+});
+}
+
+function animate(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+particles.forEach(p=>{
+ctx.beginPath();
+ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+ctx.fillStyle="rgba(255,255,255,0.5)";
+ctx.fill();
+p.x+=p.dx;
+p.y+=p.dy;
+if(p.x<0||p.x>canvas.width)p.dx*=-1;
+if(p.y<0||p.y>canvas.height)p.dy*=-1;
+});
+requestAnimationFrame(animate);
+}
+animate();
+
+window.onresize=()=>{
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
 };
-
-firebase.initializeApp(firebaseConfig);
-var db=firebase.database();
-var video=document.getElementById("video");
-
-if(!localStorage.getItem("username")){
-localStorage.setItem("username",prompt("Your name?")||"Guest");
-}
-var currentUser=localStorage.getItem("username");
-
-var userId=Math.random().toString(36).substr(2,9);
-var userRef=db.ref("onlineUsers/"+userId);
-userRef.set(true);
-userRef.onDisconnect().remove();
-
-db.ref("onlineUsers").on("value",snap=>{
-document.getElementById("onlineCount").innerText="Online: "+snap.numChildren();
-});
-
-db.ref("chat").remove();
-
-function loadVideo(){
-db.ref("video/link").set(document.getElementById("movieLink").value);
-}
-db.ref("video/link").on("value",snap=>{
-if(snap.val()) video.src=snap.val();
-});
-function changeSpeed(speed){video.playbackRate=speed;}
-
-var replyingTo=null;
-
-function sendMessage(){
-var msg=document.getElementById("message").value;
-if(!msg) return;
-
-var now=new Date();
-var time=now.getHours().toString().padStart(2,'0')+":"+
-now.getMinutes().toString().padStart(2,'0');
-
-db.ref("chat").push({
-user:currentUser,
-text:msg,
-time:time,
-seen:false,
-reactions:{},
-reply:replyingTo
-});
-
-replyingTo=null;
-document.getElementById("replyBox").innerHTML="";
-document.getElementById("message").value="";
-}
-
-db.ref("chat").on("child_added",snap=>{
-var data=snap.val();
-var key=snap.key;
-
-if(data.user!==currentUser){
-db.ref("chat/"+key+"/seen").set(true);
-}
-
-var div=document.createElement("div");
-var mine=data.user===currentUser;
-div.className="message "+(mine?"my-message":"other-message");
-
-var replyHtml="";
-if(data.reply){
-replyHtml=`<div class="reply-preview">${data.reply.user}: ${data.reply.text}</div>`;
-}
-
-div.innerHTML=`
-${replyHtml}
-<div>${data.text}</div>
-<div class="reactions" id="react-${key}"></div>
-<div class="meta">
-<span>${data.time}</span>
-${mine?`<span id="seen-${key}">✔</span>`:""}
-</div>
-`;
-
-div.onclick=()=>openReply(data);
-
-document.getElementById("chat").appendChild(div);
-
-if(mine){
-db.ref("chat/"+key+"/seen").on("value",s=>{
-document.getElementById("seen-"+key).innerText=s.val()?"✔✔":"✔";
-});
-}
-
-db.ref("chat/"+key+"/reactions").on("value",r=>{
-var container=document.getElementById("react-"+key);
-container.innerHTML="";
-if(r.val()){
-Object.values(r.val()).forEach(e=>{
-container.innerHTML+=e+" ";
-});
-}
-});
-});
-
-function openReply(data){
-replyingTo={user:data.user,text:data.text};
-document.getElementById("replyBox").innerHTML=
-`<div class="reply-preview">Replying to ${data.user}: ${data.text}</div>`;
-}
-
-function showPicker(){}
-
 </script>
 
 </body>
