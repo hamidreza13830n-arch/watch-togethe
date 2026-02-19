@@ -11,16 +11,16 @@
 body{
   margin:0;
   background:#0f0f0f;
-  font-family:Arial, sans-serif;
+  font-family:Arial;
   color:white;
 }
 
 header{
   background:#111;
   padding:15px;
-  font-size:22px;
-  font-weight:bold;
-  color:#e50914;
+  font-size:20px;
+  display:flex;
+  justify-content:space-between;
 }
 
 .container{
@@ -47,8 +47,8 @@ video{
   max-width:70%;
   padding:10px 14px;
   border-radius:15px;
-  position:relative;
   font-size:14px;
+  position:relative;
 }
 
 .my-message{
@@ -68,6 +68,23 @@ video{
   opacity:0.7;
   margin-top:4px;
   text-align:right;
+}
+
+.seen{
+  font-size:11px;
+  opacity:0.7;
+  text-align:right;
+}
+
+.reactions{
+  margin-top:5px;
+  font-size:16px;
+  cursor:pointer;
+}
+
+.reaction-buttons span{
+  cursor:pointer;
+  margin-right:5px;
 }
 
 .chat-input{
@@ -90,25 +107,21 @@ button{
   background:#e50914;
   color:white;
   cursor:pointer;
-  font-weight:bold;
-}
-
-button:hover{
-  background:#b20710;
 }
 </style>
 </head>
 <body>
 
-<header>🎬 Watch Together</header>
+<header>
+<span>🎬 Watch Together</span>
+<span id="onlineCount">Online: 1</span>
+</header>
 
 <div class="container">
 
 <input id="movieLink" placeholder="Paste mp4 link">
 <button onclick="loadVideo()">Load</button>
-
 <br><br>
-
 <video id="video" controls></video>
 
 <div class="chat-box" id="chat"></div>
@@ -136,78 +149,129 @@ firebase.initializeApp(firebaseConfig);
 var db = firebase.database();
 var video = document.getElementById("video");
 
-// ذخیره اسم در مرورگر
-if(localStorage.getItem("username")){
-  document.getElementById("username").value = localStorage.getItem("username");
-}
+// حضور آنلاین
+var userId = Math.random().toString(36).substr(2,9);
+var userRef = db.ref("onlineUsers/" + userId);
+userRef.set(true);
+userRef.onDisconnect().remove();
 
-document.getElementById("username").addEventListener("input", function(){
-  localStorage.setItem("username", this.value);
+db.ref("onlineUsers").on("value", snap=>{
+  document.getElementById("onlineCount").innerText =
+    "Online: " + snap.numChildren();
 });
 
+// ذخیره اسم
+if(localStorage.getItem("username")){
+  document.getElementById("username").value =
+    localStorage.getItem("username");
+}
+document.getElementById("username").addEventListener("input",function(){
+  localStorage.setItem("username",this.value);
+});
+
+// ویدیو سینک
 function loadVideo(){
-  var link = document.getElementById("movieLink").value;
-  db.ref("video/link").set(link);
+  db.ref("video/link").set(
+    document.getElementById("movieLink").value
+  );
 }
 
-db.ref("video/link").on("value", snap=>{
+db.ref("video/link").on("value",snap=>{
   if(snap.val()) video.src = snap.val();
 });
 
-video.onplay = ()=>{
+video.onplay=()=>{
   db.ref("video/state").set({
     playing:true,
     time:video.currentTime
   });
 };
 
-video.onpause = ()=>{
+video.onpause=()=>{
   db.ref("video/state").set({
     playing:false,
     time:video.currentTime
   });
 };
 
-db.ref("video/state").on("value", snap=>{
+db.ref("video/state").on("value",snap=>{
   if(!snap.val()) return;
   video.currentTime = snap.val().time;
   snap.val().playing ? video.play() : video.pause();
 });
 
+// ارسال پیام
 function sendMessage(){
-  var msg = document.getElementById("message").value;
-  var name = document.getElementById("username").value || "Guest";
+  var msg=document.getElementById("message").value;
+  var name=document.getElementById("username").value||"Guest";
 
-  var now = new Date();
-  var time = now.getHours().toString().padStart(2,'0') + ":" +
-             now.getMinutes().toString().padStart(2,'0');
+  var now=new Date();
+  var time=now.getHours().toString().padStart(2,'0')+
+           ":"+
+           now.getMinutes().toString().padStart(2,'0');
 
   db.ref("chat").push({
     user:name,
     text:msg,
-    time:time
+    time:time,
+    seen:false,
+    reactions:{}
   });
 
   document.getElementById("message").value="";
 }
 
-db.ref("chat").on("child_added", snap=>{
-  var data = snap.val();
-  var currentUser = document.getElementById("username").value;
+// نمایش پیام
+db.ref("chat").on("child_added",snap=>{
+  var data=snap.val();
+  var key=snap.key;
+  var currentUser=document.getElementById("username").value;
 
-  var div = document.createElement("div");
-  div.className = "message " + 
-    (data.user === currentUser ? "my-message" : "other-message");
+  if(data.user!==currentUser){
+    db.ref("chat/"+key+"/seen").set(true);
+  }
 
-  div.innerHTML = `
+  var div=document.createElement("div");
+  div.className="message "+
+    (data.user===currentUser?"my-message":"other-message");
+
+  div.innerHTML=`
     <div>${data.text}</div>
     <div class="time">${data.time}</div>
+    <div class="seen">
+      ${data.user===currentUser?
+        (data.seen?"✔✔ Seen":"✔ Sent"):""}
+    </div>
+    <div class="reactions" id="react-${key}"></div>
+    <div class="reaction-buttons">
+      <span onclick="react('${key}','😍')">😍</span>
+      <span onclick="react('${key}','😎')">😎</span>
+      <span onclick="react('${key}','🤣')">🤣</span>
+      <span onclick="react('${key}','❤️')">❤️</span>
+      <span onclick="react('${key}','👌')">👌</span>
+    </div>
   `;
 
-  var chat = document.getElementById("chat");
-  chat.appendChild(div);
-  chat.scrollTop = chat.scrollHeight;
+  document.getElementById("chat").appendChild(div);
+  document.getElementById("chat").scrollTop=
+    document.getElementById("chat").scrollHeight;
+
+  db.ref("chat/"+key+"/reactions").on("value",r=>{
+    var container=document.getElementById("react-"+key);
+    container.innerHTML="";
+    if(r.val()){
+      Object.values(r.val()).forEach(e=>{
+        container.innerHTML+=e+" ";
+      });
+    }
+  });
 });
+
+// ری‌اکشن
+function react(key,emoji){
+  var id=Math.random().toString(36).substr(2,9);
+  db.ref("chat/"+key+"/reactions/"+id).set(emoji);
+}
 </script>
 
 </body>
