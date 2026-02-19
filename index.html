@@ -9,130 +9,92 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <style>
+:root{
+  --bg0:#060607;
+  --bg1:#0b0b10;
+  --card: rgba(20,20,24,.75);
+  --border: rgba(255,255,255,.08);
+}
+
 body{
   margin:0;
-  background:#0f0f0f;
   font-family:Arial;
   color:white;
   height:100vh;
   display:flex;
   flex-direction:column;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(229,9,20,.3), transparent 40%),
+    radial-gradient(circle at 80% 30%, rgba(0,136,204,.25), transparent 40%),
+    radial-gradient(circle at 50% 90%, rgba(168,85,247,.2), transparent 40%),
+    linear-gradient(180deg,var(--bg0),var(--bg1));
+  animation:bgMove 15s infinite alternate ease-in-out;
+}
+
+@keyframes bgMove{
+  0%{background-position:0% 0%;}
+  100%{background-position:100% 100%;}
 }
 
 header{
-  background:#111;
+  background:rgba(10,10,12,.6);
+  backdrop-filter:blur(10px);
   padding:12px;
   display:flex;
   justify-content:space-between;
   font-weight:bold;
+  border-bottom:1px solid var(--border);
 }
 
-.main{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-}
+.main{flex:1;display:flex;flex-direction:column;gap:10px;padding:10px;}
 
-/* 🎬 فیلم عریض‌تر */
 .video-container{
-  flex:1.6; /* بزرگ‌تر شد */
-  background:black;
+  flex:1.6;
+  background:var(--card);
+  border-radius:16px;
+  padding:12px;
   display:flex;
   flex-direction:column;
   gap:8px;
-  padding:10px;
+  backdrop-filter:blur(12px);
 }
 
-.link-bar{
-  display:flex;
-  gap:8px;
-}
+.link-bar{display:flex;gap:8px;}
+.link-bar input{flex:1;padding:10px;border-radius:18px;border:none;}
+.link-bar button{padding:10px 14px;border:none;border-radius:18px;background:#e50914;color:white;font-weight:bold;}
 
-.link-bar input{
-  flex:1;
-  padding:10px 12px;
-  border-radius:18px;
-  border:none;
-}
+video{width:100%;height:100%;border-radius:14px;background:black;}
 
-.link-bar button{
-  padding:10px 14px;
-  border:none;
-  border-radius:18px;
-  background:#e50914;
-  color:white;
-  font-weight:bold;
-}
+.speed-control{display:flex;justify-content:flex-end;}
+.speed-control select{padding:6px 10px;border-radius:10px;border:none;}
 
-video{
-  width:100%;
-  height:100%;
-  border-radius:12px;
-  background:black;
-}
-
-/* کنترل سرعت */
-.speed-control{
-  display:flex;
-  justify-content:flex-end;
-}
-
-.speed-control select{
-  padding:6px 10px;
-  border-radius:10px;
-  border:none;
-}
-
-/* 💬 چت */
 .chat-container{
   flex:1;
+  background:var(--card);
+  border-radius:16px;
+  padding:12px;
   display:flex;
   flex-direction:column;
-  padding:10px 15px 20px 15px;
+  backdrop-filter:blur(12px);
 }
 
-.chat-box{
-  flex:1;
-  overflow-y:auto;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
+.chat-box{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;}
 
 .message{
   max-width:80%;
   padding:10px 14px;
   border-radius:15px;
   font-size:14px;
-  position:relative;
   cursor:pointer;
+  position:relative;
 }
 
-.my-message{
-  align-self:flex-end;
-  background:#0088cc;
-  border-bottom-right-radius:4px;
-}
+.my-message{align-self:flex-end;background:#0088cc;border-bottom-right-radius:4px;}
+.other-message{align-self:flex-start;background:#262626;border-bottom-left-radius:4px;}
 
-.other-message{
-  align-self:flex-start;
-  background:#262626;
-  border-bottom-left-radius:4px;
-}
+.meta{display:flex;justify-content:flex-end;gap:6px;font-size:11px;opacity:.7;margin-top:4px;}
 
-.meta{
-  display:flex;
-  justify-content:flex-end;
-  gap:6px;
-  font-size:11px;
-  opacity:0.7;
-  margin-top:4px;
-}
-
-.reactions{
-  margin-top:6px;
-  font-size:16px;
-}
+.reactions{margin-top:6px;font-size:16px;}
 
 .reaction-picker{
   position:absolute;
@@ -143,46 +105,27 @@ video{
   border-radius:18px;
   display:flex;
   gap:6px;
-  box-shadow:0 0 10px rgba(0,0,0,0.6);
 }
 
-.other-message .reaction-picker{
-  right:auto;
-  left:0;
+.other-message .reaction-picker{right:auto;left:0;}
+
+.reply-preview{
+  background:rgba(255,255,255,.1);
+  padding:5px 8px;
+  border-left:3px solid #e50914;
+  border-radius:8px;
+  font-size:12px;
+  margin-bottom:5px;
 }
 
-.reaction-picker span{
-  cursor:pointer;
-  font-size:18px;
-}
+.input-area{display:flex;gap:8px;margin-top:8px;}
+.input-area input{flex:1;padding:10px;border-radius:20px;border:none;}
+.input-area button{padding:10px 16px;border:none;border-radius:20px;background:#e50914;color:white;font-weight:bold;}
 
-.input-area{
-  display:flex;
-  gap:8px;
-  margin-top:8px;
-}
-
-.input-area input{
-  flex:1;
-  padding:10px;
-  border-radius:20px;
-  border:none;
-}
-
-.input-area button{
-  padding:10px 16px;
-  border:none;
-  border-radius:20px;
-  background:#e50914;
-  color:white;
-  font-weight:bold;
-}
-
-/* حالت افقی */
 @media (orientation: landscape){
-  .main{ flex-direction:row; }
-  .video-container{ flex:1.7; }
-  .chat-container{ flex:1; }
+  .main{flex-direction:row;}
+  .video-container{flex:1.7;}
+  .chat-container{flex:1;}
 }
 </style>
 </head>
@@ -190,176 +133,158 @@ video{
 <body>
 
 <header>
-  <span>🎬 با هم تماشا کنید</span>
-  <span id="onlineCount">Online: 1</span>
+<span>🎬 Watch Together</span>
+<span id="onlineCount">Online: 1</span>
 </header>
 
 <div class="main">
 
-  <div class="video-container">
-    <div class="link-bar">
-      <input id="movieLink" placeholder="Paste mp4 link...">
-      <button onclick="loadVideo()">Load</button>
-    </div>
+<div class="video-container">
+<div class="link-bar">
+<input id="movieLink" placeholder="Paste mp4 link...">
+<button onclick="loadVideo()">Load</button>
+</div>
+<video id="video" controls></video>
 
-    <video id="video" controls></video>
+<div class="speed-control">
+<select onchange="changeSpeed(this.value)">
+<option value="0.5">0.5x</option>
+<option value="1" selected>1x</option>
+<option value="1.5">1.5x</option>
+<option value="2">2x</option>
+</select>
+</div>
+</div>
 
-    <div class="speed-control">
-      <select onchange="changeSpeed(this.value)">
-        <option value="0.5">0.5x</option>
-        <option value="1" selected>1x</option>
-        <option value="1.5">1.5x</option>
-        <option value="2">2x</option>
-      </select>
-    </div>
-  </div>
+<div class="chat-container">
+<div class="chat-box" id="chat"></div>
 
-  <div class="chat-container">
-    <div class="chat-box" id="chat"></div>
+<div id="replyBox"></div>
 
-    <div class="input-area">
-      <input id="message" placeholder="Message">
-      <button onclick="sendMessage()">Send</button>
-    </div>
-  </div>
+<div class="input-area">
+<input id="message" placeholder="Message">
+<button onclick="sendMessage()">Send</button>
+</div>
+</div>
 
 </div>
 
 <script>
 var firebaseConfig={
-  apiKey:"AIzaSyCDHmmKIYPHDyvx4BXTb-7VP6lmVb8BCYw",
-  authDomain:"film-online-922c1.firebaseapp.com",
-  databaseURL:"https://film-online-922c1-default-rtdb.firebaseio.com/",
-  projectId:"film-online-922c1"
+apiKey:"AIzaSyCDHmmKIYPHDyvx4BXTb-7VP6lmVb8BCYw",
+authDomain:"film-online-922c1.firebaseapp.com",
+databaseURL:"https://film-online-922c1-default-rtdb.firebaseio.com/",
+projectId:"film-online-922c1"
 };
 
 firebase.initializeApp(firebaseConfig);
 var db=firebase.database();
 var video=document.getElementById("video");
 
-/* نام کاربر فقط یکبار */
 if(!localStorage.getItem("username")){
-  localStorage.setItem("username",prompt("Your name?")||"Guest");
+localStorage.setItem("username",prompt("Your name?")||"Guest");
 }
 var currentUser=localStorage.getItem("username");
 
-/* آنلاین */
 var userId=Math.random().toString(36).substr(2,9);
 var userRef=db.ref("onlineUsers/"+userId);
 userRef.set(true);
 userRef.onDisconnect().remove();
 
 db.ref("onlineUsers").on("value",snap=>{
-  document.getElementById("onlineCount").innerText=
-  "Online: "+snap.numChildren();
+document.getElementById("onlineCount").innerText="Online: "+snap.numChildren();
 });
 
-/* پاک شدن چت هنگام ورود */
 db.ref("chat").remove();
 
-/* ویدیو */
 function loadVideo(){
-  var link=document.getElementById("movieLink").value;
-  db.ref("video/link").set(link);
+db.ref("video/link").set(document.getElementById("movieLink").value);
 }
-
 db.ref("video/link").on("value",snap=>{
-  if(snap.val()) video.src=snap.val();
+if(snap.val()) video.src=snap.val();
 });
+function changeSpeed(speed){video.playbackRate=speed;}
 
-function changeSpeed(speed){
-  video.playbackRate=speed;
-}
+var replyingTo=null;
 
-/* ارسال پیام */
 function sendMessage(){
-  var msg=document.getElementById("message").value;
-  if(!msg) return;
+var msg=document.getElementById("message").value;
+if(!msg) return;
 
-  var now=new Date();
-  var time=now.getHours().toString().padStart(2,'0')+
-           ":"+
-           now.getMinutes().toString().padStart(2,'0');
+var now=new Date();
+var time=now.getHours().toString().padStart(2,'0')+":"+
+now.getMinutes().toString().padStart(2,'0');
 
-  db.ref("chat").push({
-    user:currentUser,
-    text:msg,
-    time:time,
-    seen:false,
-    reactions:{}
-  });
-
-  document.getElementById("message").value="";
-}
-
-/* نمایش پیام */
-db.ref("chat").on("child_added",snap=>{
-  var data=snap.val();
-  var key=snap.key;
-
-  if(data.user!==currentUser){
-    db.ref("chat/"+key+"/seen").set(true);
-  }
-
-  var div=document.createElement("div");
-  var mine=data.user===currentUser;
-
-  div.className="message "+(mine?"my-message":"other-message");
-  div.innerHTML=`
-    <div>${data.text}</div>
-    <div class="reactions" id="react-${key}"></div>
-    <div class="meta">
-      <span>${data.time}</span>
-      ${mine?`<span id="seen-${key}">✔</span>`:""}
-    </div>
-  `;
-
-  div.onclick=()=>showPicker(div,key);
-
-  document.getElementById("chat").appendChild(div);
-
-  if(mine){
-    db.ref("chat/"+key+"/seen").on("value",s=>{
-      document.getElementById("seen-"+key).innerText=
-      s.val()?"✔✔":"✔";
-    });
-  }
-
-  db.ref("chat/"+key+"/reactions").on("value",r=>{
-    var container=document.getElementById("react-"+key);
-    container.innerHTML="";
-    if(r.val()){
-      Object.values(r.val()).forEach(e=>{
-        container.innerHTML+=e+" ";
-      });
-    }
-  });
+db.ref("chat").push({
+user:currentUser,
+text:msg,
+time:time,
+seen:false,
+reactions:{},
+reply:replyingTo
 });
 
-/* ری‌اکشن */
-function showPicker(messageDiv,key){
-  if(messageDiv.querySelector(".reaction-picker")) return;
-
-  var picker=document.createElement("div");
-  picker.className="reaction-picker";
-
-  ["😍","😎","🤣","❤️","👌"].forEach(emoji=>{
-    var span=document.createElement("span");
-    span.innerText=emoji;
-    span.onclick=(e)=>{
-      e.stopPropagation();
-      db.ref("chat/"+key+"/reactions/"+userId).set(emoji);
-      picker.remove();
-    };
-    picker.appendChild(span);
-  });
-
-  messageDiv.appendChild(picker);
-
-  setTimeout(()=>{
-    document.addEventListener("click",()=>picker.remove(),{once:true});
-  },10);
+replyingTo=null;
+document.getElementById("replyBox").innerHTML="";
+document.getElementById("message").value="";
 }
+
+db.ref("chat").on("child_added",snap=>{
+var data=snap.val();
+var key=snap.key;
+
+if(data.user!==currentUser){
+db.ref("chat/"+key+"/seen").set(true);
+}
+
+var div=document.createElement("div");
+var mine=data.user===currentUser;
+div.className="message "+(mine?"my-message":"other-message");
+
+var replyHtml="";
+if(data.reply){
+replyHtml=`<div class="reply-preview">${data.reply.user}: ${data.reply.text}</div>`;
+}
+
+div.innerHTML=`
+${replyHtml}
+<div>${data.text}</div>
+<div class="reactions" id="react-${key}"></div>
+<div class="meta">
+<span>${data.time}</span>
+${mine?`<span id="seen-${key}">✔</span>`:""}
+</div>
+`;
+
+div.onclick=()=>openReply(data);
+
+document.getElementById("chat").appendChild(div);
+
+if(mine){
+db.ref("chat/"+key+"/seen").on("value",s=>{
+document.getElementById("seen-"+key).innerText=s.val()?"✔✔":"✔";
+});
+}
+
+db.ref("chat/"+key+"/reactions").on("value",r=>{
+var container=document.getElementById("react-"+key);
+container.innerHTML="";
+if(r.val()){
+Object.values(r.val()).forEach(e=>{
+container.innerHTML+=e+" ";
+});
+}
+});
+});
+
+function openReply(data){
+replyingTo={user:data.user,text:data.text};
+document.getElementById("replyBox").innerHTML=
+`<div class="reply-preview">Replying to ${data.user}: ${data.text}</div>`;
+}
+
+function showPicker(){}
+
 </script>
 
 </body>
