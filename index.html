@@ -68,7 +68,6 @@ flex:1;
 border-radius:12px;
 }
 
-/* CHAT */
 .chat-container{
 flex:1;
 padding:10px;
@@ -198,15 +197,33 @@ border:none;
 margin-bottom:10px;
 }
 
-#welcome{
+/* 🔥 NEW WELCOME BOX */
+#welcomeOverlay{
 position:fixed;
-top:20px;
-left:50%;
-transform:translateX(-50%);
-padding:14px 20px;
-border-radius:14px;
-background:#111;
+inset:0;
+background:rgba(0,0,0,.6);
 display:none;
+justify-content:center;
+align-items:center;
+z-index:998;
+}
+
+.welcome-box{
+padding:30px;
+text-align:center;
+width:280px;
+}
+
+.welcome-box h3{
+margin-bottom:15px;
+}
+
+.welcome-box button{
+padding:10px 20px;
+border:none;
+border-radius:12px;
+background:#e50914;
+color:white;
 }
 
 @media (orientation:landscape){
@@ -226,9 +243,12 @@ display:none;
 </div>
 </div>
 
-<div id="welcome" class="glass">
-سلام عزیزم❤️ خوش آمدی
-<button onclick="this.parentElement.style.display='none'">×</button>
+<!-- 🔥 NEW WELCOME STRUCTURE -->
+<div id="welcomeOverlay">
+  <div class="welcome-box glass">
+    <h3>سلام عزیزم ❤️ خوش آمدی</h3>
+    <button onclick="closeWelcome()">ورود</button>
+  </div>
 </div>
 
 <header>
@@ -279,8 +299,12 @@ var replyTo=null;
 function checkPass(){
 if(pass.value==="bazsho20"){
 login.style.display="none";
-welcome.style.display="block";
+document.getElementById("welcomeOverlay").style.display="flex";
 }
+}
+
+function closeWelcome(){
+document.getElementById("welcomeOverlay").style.display="none";
 }
 
 /* SETTINGS */
