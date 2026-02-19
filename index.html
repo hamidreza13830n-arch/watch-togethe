@@ -10,19 +10,21 @@
 
 <style>
 :root{
-  --card-dark: rgba(20,20,24,.88);
-  --card-light: rgba(255,255,255,.6);
+  --dark-card: rgba(20,20,24,.88);
+  --light-card: rgba(255,255,255,.7);
 }
+
+*{box-sizing:border-box;}
 
 body{
   margin:0;
   font-family:Arial;
   color:white;
+  background:#0b0b12;
   height:100vh;
   display:flex;
   flex-direction:column;
   overflow:hidden;
-  background:#0b0b12;
   transition:.3s;
 }
 
@@ -46,153 +48,78 @@ body::before{
 
 /* حالت روشن */
 body.light{
-  background:#f2f2f2;
+  background:#f1f1f1;
   color:black;
 }
 body.light .video-container,
 body.light .chat-container{
-  background:var(--card-light);
+  background:var(--light-card);
   color:black;
 }
 
-/* ===== LOGIN ===== */
-.login-screen{
-  position:fixed;
-  inset:0;
-  background:#0b0b12;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  z-index:9999;
-}
-.login-box{
-  background:rgba(255,255,255,.05);
-  backdrop-filter:blur(20px);
-  padding:30px;
-  border-radius:20px;
-  display:flex;
-  flex-direction:column;
-  gap:15px;
-  width:280px;
-  text-align:center;
-}
-.login-box input{
-  padding:12px;
-  border-radius:15px;
-  border:none;
-}
-.login-box button{
-  padding:12px;
-  border:none;
-  border-radius:15px;
-  background:#e50914;
-  color:white;
-  font-weight:bold;
-}
-
-/* خوش آمد */
-.welcome{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.85);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  z-index:10000;
-}
-.welcome-box{
-  background:#1a1a1a;
-  padding:30px;
-  border-radius:20px;
-  position:relative;
-}
-.close-welcome{
-  position:absolute;
-  top:10px;
-  right:15px;
-  cursor:pointer;
-}
-
-/* ===== HEADER ===== */
+/* HEADER */
 header{
-  height:40px;
-  padding:0 12px;
+  height:42px;
   display:flex;
   justify-content:space-between;
   align-items:center;
+  padding:0 12px;
   background:rgba(20,20,24,.9);
 }
 
-/* ===== SETTINGS ===== */
-.overlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.6);
-  backdrop-filter:blur(4px);
-  opacity:0;
-  pointer-events:none;
-  transition:.3s;
-}
-.overlay.active{opacity:1;pointer-events:auto;}
-
-.settings{
-  position:fixed;
-  right:-260px;
-  top:0;
-  width:240px;
-  height:100%;
-  padding:20px;
-  background:rgba(20,20,24,.95);
-  backdrop-filter:blur(20px);
-  transition:.3s;
-  z-index:100;
-}
-.settings.open{right:0;}
-
-.settings h3{margin-top:0;}
-.settings button{
-  width:100%;
-  margin-top:10px;
-  padding:8px;
-  border:none;
-  border-radius:10px;
-  background:#e50914;
-  color:white;
-}
-
-/* ===== LAYOUT ===== */
+/* LAYOUT */
 .main{
   flex:1;
   display:flex;
   flex-direction:column;
-  gap:8px;
+  height:calc(100vh - 42px);
   padding:8px;
+  gap:8px;
 }
 
 .video-container{
-  flex:1.2;
-  min-height:40%;
-}
-
-.chat-container{
-  flex:1;
-  min-height:45%;
-}
-
-.video-container,
-.chat-container{
+  flex:0 0 45%;
+  background:var(--dark-card);
   border-radius:16px;
   padding:10px;
   display:flex;
   flex-direction:column;
-  background:var(--card-dark);
 }
 
-.link-bar{display:flex;gap:6px;}
-.link-bar input{flex:1;padding:8px;border-radius:12px;border:none;}
-.link-bar button{padding:8px;border:none;border-radius:12px;background:#e50914;color:white;}
+.chat-container{
+  flex:1;
+  background:var(--dark-card);
+  border-radius:16px;
+  padding:10px;
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+}
 
-video{width:100%;border-radius:12px;}
+.link-bar{
+  display:flex;
+  gap:6px;
+  margin-bottom:6px;
+}
+.link-bar input{
+  flex:1;
+  padding:8px;
+  border-radius:12px;
+  border:none;
+}
+.link-bar button{
+  padding:8px 12px;
+  border:none;
+  border-radius:12px;
+  background:#e50914;
+  color:white;
+}
+
+video{
+  width:100%;
+  border-radius:12px;
+  flex:1;
+}
 
 .chat-box{
   flex:1;
@@ -242,6 +169,7 @@ video{width:100%;border-radius:12px;}
 .input-area{
   display:flex;
   gap:6px;
+  margin-top:6px;
 }
 .input-area input{
   flex:1;
@@ -250,17 +178,106 @@ video{width:100%;border-radius:12px;}
   border:none;
 }
 .input-area button{
-  padding:8px;
+  padding:8px 12px;
   border:none;
   border-radius:12px;
   background:#e50914;
   color:white;
 }
 
+/* LANDSCAPE */
 @media (orientation: landscape){
   .main{flex-direction:row;}
-  .video-container{flex:1.4;}
+  .video-container{flex:0 0 60%;}
   .chat-container{flex:1;}
+}
+
+/* SETTINGS */
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  opacity:0;
+  pointer-events:none;
+  transition:.3s;
+}
+.overlay.active{opacity:1;pointer-events:auto;}
+
+.settings{
+  position:fixed;
+  right:-260px;
+  top:0;
+  width:240px;
+  height:100%;
+  padding:20px;
+  background:rgba(20,20,24,.95);
+  backdrop-filter:blur(20px);
+  transition:.3s;
+}
+.settings.open{right:0;}
+.settings button{
+  width:100%;
+  margin-top:10px;
+  padding:8px;
+  border:none;
+  border-radius:10px;
+  background:#e50914;
+  color:white;
+}
+
+/* LOGIN */
+.login-screen{
+  position:fixed;
+  inset:0;
+  background:#0b0b12;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+}
+.login-box{
+  background:rgba(255,255,255,.05);
+  padding:30px;
+  border-radius:20px;
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+  width:280px;
+  text-align:center;
+}
+.login-box input{
+  padding:12px;
+  border-radius:15px;
+  border:none;
+}
+.login-box button{
+  padding:12px;
+  border:none;
+  border-radius:15px;
+  background:#e50914;
+  color:white;
+}
+
+.welcome{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.85);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:10000;
+}
+.welcome-box{
+  background:#1a1a1a;
+  padding:30px;
+  border-radius:20px;
+  position:relative;
+}
+.close-welcome{
+  position:absolute;
+  top:10px;
+  right:15px;
+  cursor:pointer;
 }
 </style>
 </head>
@@ -294,7 +311,7 @@ video{width:100%;border-radius:12px;}
 
 <div class="settings" id="settings">
 <h3>تنظیمات</h3>
-<button onclick="toggleMode()">تغییر حالت دارک / لایت</button>
+<button onclick="toggleMode()">دارک / لایت</button>
 <button onclick="clearChat()">حذف تاریخچه پیام‌ها</button>
 <button onclick="closeSettings()">بستن</button>
 </div>
@@ -320,9 +337,7 @@ video{width:100%;border-radius:12px;}
 </div>
 
 <script>
-function toggleMode(){
-document.body.classList.toggle("light");
-}
+function toggleMode(){document.body.classList.toggle("light");}
 
 function checkPass(){
 if(document.getElementById("pass").value==="bazsho20"){
@@ -418,24 +433,6 @@ el.innerHTML+=e+" ";
 }
 });
 });
-
-function showReact(div,key){
-if(div.querySelector(".reaction-picker"))return;
-var picker=document.createElement("div");
-picker.className="reaction-picker";
-["😍","😎","🤣","❤️","👌"].forEach(e=>{
-var span=document.createElement("span");
-span.innerText=e;
-span.onclick=(ev)=>{
-ev.stopPropagation();
-db.ref("chat/"+key+"/reactions/"+userId).set(e);
-picker.remove();
-};
-picker.appendChild(span);
-});
-div.appendChild(picker);
-setTimeout(()=>document.addEventListener("click",()=>picker.remove(),{once:true}),10);
-}
 </script>
 
 </body>
