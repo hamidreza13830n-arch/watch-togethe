@@ -26,10 +26,10 @@ body{
   overflow:hidden;
   background:#0b0b12;
   position:relative;
-  transition:0.4s;
+  transition:.4s;
 }
 
-/* پس‌زمینه نور */
+/* پس‌زمینه اصلی */
 body::before{
   content:"";
   position:fixed;
@@ -59,64 +59,107 @@ header{
 .settings-btn{
   cursor:pointer;
   font-size:20px;
+  transition:.3s;
+}
+.settings-btn:hover{ transform:rotate(90deg); }
+
+/* اوورلی تار */
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.5);
+  backdrop-filter:blur(5px);
+  opacity:0;
+  pointer-events:none;
+  transition:.3s;
+  z-index:90;
+}
+.overlay.active{
+  opacity:1;
+  pointer-events:auto;
 }
 
 /* پنل تنظیمات */
 .settings-panel{
   position:fixed;
   top:0;
-  right:-300px;
-  width:260px;
+  right:-320px;
+  width:280px;
   height:100%;
-  background:rgba(20,20,24,.95);
-  backdrop-filter:blur(20px);
-  padding:20px;
-  transition:0.4s;
+  padding:25px 20px;
+  transition:.4s;
   z-index:100;
+  color:white;
+
+  background:
+    radial-gradient(circle at 30% 20%, rgba(229,9,20,.35), transparent 40%),
+    radial-gradient(circle at 80% 30%, rgba(0,136,204,.3), transparent 40%),
+    radial-gradient(circle at 50% 90%, rgba(168,85,247,.25), transparent 40%),
+    rgba(20,20,24,.9);
+
+  backdrop-filter:blur(25px);
+  border-left:1px solid rgba(255,255,255,.1);
+  box-shadow:-10px 0 40px rgba(0,0,0,.6);
 }
 
-.settings-panel.open{ right:0; }
+.settings-panel.open{
+  right:0;
+}
 
-.settings-panel h3{margin-top:0;}
+.settings-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.close-btn{
+  cursor:pointer;
+  font-size:22px;
+  transition:.3s;
+}
+.close-btn:hover{ transform:scale(1.2); }
 
 .settings-item{
-  margin-bottom:15px;
+  margin-bottom:20px;
+  padding:10px;
+  border-radius:12px;
+  background:rgba(255,255,255,.05);
+  backdrop-filter:blur(10px);
 }
 
 .toggle{
   display:flex;
+  justify-content:space-between;
   align-items:center;
-  gap:10px;
 }
 
 .main{flex:1;display:flex;flex-direction:column;gap:10px;padding:10px;}
 
 .video-container,
 .chat-container{
-  flex:1;
   border-radius:16px;
   padding:12px;
   display:flex;
   flex-direction:column;
   gap:8px;
-  transition:0.4s;
+  transition:.4s;
 }
 
-/* حالت تاریک */
+.video-container{flex:1.6;}
+.chat-container{flex:1;}
+
 .dark .video-container,
 .dark .chat-container{
   background:var(--card-dark);
 }
 
-/* حالت روشن شیشه‌ای */
 .light .video-container,
 .light .chat-container{
   background:var(--card-light);
   backdrop-filter:var(--blur);
   border:1px solid var(--border);
 }
-
-.video-container{flex:1.6;}
 
 .link-bar{display:flex;gap:8px;}
 .link-bar input{flex:1;padding:10px;border-radius:18px;border:none;}
@@ -133,24 +176,10 @@ video{width:100%;height:100%;border-radius:14px;background:black;}
   padding:10px 14px;
   border-radius:15px;
   font-size:14px;
-  position:relative;
 }
 
 .my-message{align-self:flex-end;background:#0088cc;}
 .other-message{align-self:flex-start;background:#262626;}
-
-.light .other-message{background:rgba(255,255,255,.25);}
-.light .my-message{background:rgba(0,136,204,.6);}
-
-.meta{font-size:11px;opacity:.7;margin-top:4px;}
-
-.reply-preview{
-  background:rgba(255,255,255,.2);
-  padding:5px;
-  border-left:3px solid #e50914;
-  border-radius:6px;
-  font-size:12px;
-}
 
 .input-area{display:flex;gap:8px;margin-top:8px;}
 .input-area input{flex:1;padding:10px;border-radius:20px;border:none;}
@@ -166,16 +195,21 @@ video{width:100%;height:100%;border-radius:14px;background:black;}
 
 <body class="dark">
 
+<div class="overlay" id="overlay" onclick="closeSettings()"></div>
+
 <header>
 <span>🎬 Watch Together</span>
 <span>
 <span id="onlineCount">Online: 1</span>
-<span class="settings-btn" onclick="toggleSettings()">⚙️</span>
+<span class="settings-btn" onclick="openSettings()">⚙️</span>
 </span>
 </header>
 
 <div class="settings-panel" id="settingsPanel">
+<div class="settings-header">
 <h3>Settings</h3>
+<span class="close-btn" onclick="closeSettings()">×</span>
+</div>
 
 <div class="settings-item">
 <div class="toggle">
@@ -183,8 +217,6 @@ video{width:100%;height:100%;border-radius:14px;background:black;}
 <input type="checkbox" id="themeToggle" checked onchange="toggleTheme()">
 </div>
 </div>
-
-<!-- آینده اینجا تنظیمات اضافه می‌کنیم -->
 
 </div>
 
@@ -210,7 +242,6 @@ video{width:100%;height:100%;border-radius:14px;background:black;}
 
 <div class="chat-container">
 <div class="chat-box" id="chat"></div>
-<div id="replyBox"></div>
 <div class="input-area">
 <input id="message" placeholder="Message">
 <button onclick="sendMessage()">Send</button>
@@ -220,10 +251,14 @@ video{width:100%;height:100%;border-radius:14px;background:black;}
 </div>
 
 <script>
-function toggleSettings(){
-document.getElementById("settingsPanel").classList.toggle("open");
+function openSettings(){
+document.getElementById("settingsPanel").classList.add("open");
+document.getElementById("overlay").classList.add("active");
 }
-
+function closeSettings(){
+document.getElementById("settingsPanel").classList.remove("open");
+document.getElementById("overlay").classList.remove("active");
+}
 function toggleTheme(){
 if(document.getElementById("themeToggle").checked){
 document.body.classList.remove("light");
@@ -234,7 +269,7 @@ document.body.classList.add("light");
 }
 }
 
-/* Firebase قبلی */
+/* Firebase */
 var firebaseConfig={
 apiKey:"AIzaSyCDHmmKIYPHDyvx4BXTb-7VP6lmVb8BCYw",
 authDomain:"film-online-922c1.firebaseapp.com",
@@ -243,12 +278,6 @@ projectId:"film-online-922c1"
 };
 firebase.initializeApp(firebaseConfig);
 var db=firebase.database();
-var video=document.getElementById("video");
-
-if(!localStorage.getItem("username")){
-localStorage.setItem("username",prompt("Your name?")||"Guest");
-}
-var currentUser=localStorage.getItem("username");
 
 var userId=Math.random().toString(36).substr(2,9);
 var userRef=db.ref("onlineUsers/"+userId);
@@ -271,20 +300,15 @@ if(snap.val()) video.src=snap.val();
 function sendMessage(){
 var msg=document.getElementById("message").value;
 if(!msg)return;
-
-var now=new Date();
-var time=now.getHours().toString().padStart(2,'0')+":"+
-now.getMinutes().toString().padStart(2,'0');
-
-db.ref("chat").push({user:currentUser,text:msg,time:time});
+db.ref("chat").push({text:msg,time:new Date().toLocaleTimeString()});
 document.getElementById("message").value="";
 }
 
 db.ref("chat").on("child_added",snap=>{
 var data=snap.val();
 var div=document.createElement("div");
-div.className="message "+(data.user===currentUser?"my-message":"other-message");
-div.innerHTML=`<div>${data.text}</div><div class="meta">${data.time}</div>`;
+div.className="message";
+div.innerHTML=`<div>${data.text}</div>`;
 document.getElementById("chat").appendChild(div);
 });
 </script>
