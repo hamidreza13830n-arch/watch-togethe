@@ -10,7 +10,7 @@
 
 <style>
 :root{
-  --card-dark: rgba(20,20,24,.85);
+  --card-dark: rgba(20,20,24,.88);
   --card-light: rgba(255,255,255,.15);
   --blur: blur(18px);
 }
@@ -46,7 +46,6 @@ body::before{
 }
 
 /* ===== LOGIN ===== */
-
 .login-screen{
   position:fixed;
   inset:0;
@@ -81,6 +80,7 @@ body::before{
   font-weight:bold;
 }
 
+/* خوش آمد */
 .welcome{
   position:fixed;
   inset:0;
@@ -104,19 +104,16 @@ body::before{
 }
 
 /* ===== HEADER ===== */
-
 header{
   height:40px;
   padding:0 12px;
   display:flex;
   justify-content:space-between;
   align-items:center;
-  font-size:14px;
   background:rgba(20,20,24,.9);
 }
 
 /* ===== SETTINGS ===== */
-
 .overlay{
   position:fixed;
   inset:0;
@@ -126,16 +123,13 @@ header{
   pointer-events:none;
   transition:.3s;
 }
-.overlay.active{
-  opacity:1;
-  pointer-events:auto;
-}
+.overlay.active{opacity:1;pointer-events:auto;}
 
 .settings{
   position:fixed;
-  right:-280px;
+  right:-260px;
   top:0;
-  width:250px;
+  width:240px;
   height:100%;
   padding:20px;
   background:rgba(20,20,24,.95);
@@ -143,8 +137,20 @@ header{
   transition:.3s;
   z-index:100;
 }
-.settings.open{ right:0; }
+.settings.open{right:0;}
 
+.settings h3{margin-top:0;}
+.settings button{
+  width:100%;
+  margin-top:10px;
+  padding:8px;
+  border:none;
+  border-radius:10px;
+  background:#e50914;
+  color:white;
+}
+
+/* ===== LAYOUT ===== */
 .main{
   flex:1;
   display:flex;
@@ -166,8 +172,8 @@ header{
 .chat-container{flex:0.9;}
 
 .link-bar{display:flex;gap:6px;}
-.link-bar input{flex:1;padding:8px;border-radius:15px;border:none;}
-.link-bar button{padding:8px 12px;border:none;border-radius:15px;background:#e50914;color:white;}
+.link-bar input{flex:1;padding:8px;border-radius:12px;border:none;}
+.link-bar button{padding:8px;border:none;border-radius:12px;background:#e50914;color:white;}
 
 video{width:100%;border-radius:12px;}
 
@@ -223,18 +229,17 @@ video{width:100%;border-radius:12px;}
 .input-area input{
   flex:1;
   padding:8px;
-  border-radius:15px;
+  border-radius:12px;
   border:none;
 }
 .input-area button{
-  padding:8px 12px;
+  padding:8px;
   border:none;
-  border-radius:15px;
+  border-radius:12px;
   background:#e50914;
   color:white;
 }
 
-/* Landscape Fix */
 @media (orientation: landscape){
   .main{flex-direction:row;}
   .video-container{flex:1.7;}
@@ -260,10 +265,21 @@ video{width:100%;border-radius:12px;}
   </div>
 </div>
 
+<div class="overlay" id="overlay" onclick="closeSettings()"></div>
+
 <header>
 <span>🎬 Watch Together</span>
+<span>
 <span id="online">Online: 1</span>
+<span style="cursor:pointer" onclick="openSettings()">⚙️</span>
+</span>
 </header>
+
+<div class="settings" id="settings">
+<h3>تنظیمات</h3>
+<button onclick="clearChat()">حذف تاریخچه پیام‌ها</button>
+<button onclick="closeSettings()">بستن</button>
+</div>
 
 <div class="main">
 
@@ -286,20 +302,23 @@ video{width:100%;border-radius:12px;}
 </div>
 
 <script>
-/* LOGIN */
 function checkPass(){
 if(document.getElementById("pass").value==="bazsho20"){
 document.getElementById("login").style.display="none";
 document.getElementById("welcome").style.display="flex";
-}else{
-alert("رمز اشتباهه ❌");
+}else alert("رمز اشتباهه ❌");
 }
+function enter(){document.getElementById("welcome").style.display="none";}
+
+function openSettings(){
+document.getElementById("settings").classList.add("open");
+document.getElementById("overlay").classList.add("active");
 }
-function enter(){
-document.getElementById("welcome").style.display="none";
+function closeSettings(){
+document.getElementById("settings").classList.remove("open");
+document.getElementById("overlay").classList.remove("active");
 }
 
-/* FIREBASE */
 var firebaseConfig={
 apiKey:"AIzaSyCDHmmKIYPHDyvx4BXTb-7VP6lmVb8BCYw",
 authDomain:"film-online-922c1.firebaseapp.com",
@@ -338,12 +357,19 @@ reactions:{}
 document.getElementById("msg").value="";
 }
 
+function clearChat(){
+db.ref("chat").remove();
+closeSettings();
+}
+
 db.ref("chat").on("child_added",snap=>{
 var data=snap.val();
 var key=snap.key;
+
 if(data.user!==userId){
 db.ref("chat/"+key+"/seen").set(true);
 }
+
 var div=document.createElement("div");
 div.className="message "+(data.user===userId?"my":"other");
 div.innerHTML=`
