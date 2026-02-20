@@ -31,6 +31,60 @@ animation:bg 12s ease infinite;
 
 body.dark{background:#0b0b12}
 
+/* 🎄 SMALL CHRISTMAS LIGHTS */
+.light-wrapper{
+position:relative;
+width:100%;
+height:36px;
+flex-shrink:0;
+overflow:hidden;
+}
+
+.light-wire{
+position:absolute;
+top:8px;
+left:0;
+width:100%;
+height:28px;
+}
+
+.light-wire svg{
+width:100%;
+height:100%;
+}
+
+.bulb{
+position:absolute;
+width:9px;
+height:13px;
+border-radius:50% 50% 45% 45%;
+animation:blink 1.4s infinite alternate ease-in-out;
+box-shadow:0 0 6px currentColor,0 0 12px currentColor;
+}
+
+.bulb::before{
+content:"";
+position:absolute;
+top:-3px;
+left:50%;
+transform:translateX(-50%);
+width:5px;
+height:4px;
+background:#222;
+border-radius:2px;
+}
+
+@keyframes blink{
+0%{opacity:1;transform:scale(1)}
+100%{opacity:.5;transform:scale(.85)}
+}
+
+body.dark .light-wrapper{
+opacity:0;
+pointer-events:none;
+}
+/* END LIGHTS */
+
 .glass{
 background:rgba(255,255,255,.08);
 backdrop-filter:blur(12px);
@@ -153,7 +207,6 @@ background:#e50914;
 color:white;
 }
 
-/* SETTINGS */
 #settings{
 position:fixed;
 right:-260px;
@@ -175,7 +228,6 @@ background:#e50914;
 color:white;
 }
 
-/* LOGIN */
 #login{
 position:fixed;
 inset:0;
@@ -197,7 +249,6 @@ border:none;
 margin-bottom:10px;
 }
 
-/* WELCOME */
 #welcomeOverlay{
 position:fixed;
 inset:0;
@@ -252,23 +303,28 @@ color:white;
 </div>
 </header>
 
-<div id="settings" class="glass">
+<!-- 🎄 LIGHT STRING -->
+<div class="light-wrapper">
+<div class="light-wire">
+<svg viewBox="0 0 1000 100" preserveAspectRatio="none">
+<path d="M0,25 Q100,55 200,25 T400,25 T600,25 T800,25 T1000,25"
+stroke="#111" stroke-width="3" fill="transparent"/>
+</svg>
+</div>
+</div>
 
+<div id="settings" class="glass">
 <h3 style="margin-bottom:10px">پخش فیلم</h3>
 <input id="videoLinkInput" placeholder="لینک فیلم..."
 style="width:100%;padding:8px;border-radius:10px;border:none;margin-bottom:8px">
-
 <button onclick="setVideoLink()">پخش فیلم</button>
-
 <hr style="margin:15px 0;opacity:.3">
-
 <button onclick="toggleDark()">دارک مود</button>
 <button onclick="clearChat()">حذف تاریخچه</button>
 <button onclick="toggleSettings()">بستن</button>
 </div>
 
 <div class="main">
-
 <div class="video-container glass">
 <video id="video" controls></video>
 </div>
@@ -280,8 +336,29 @@ style="width:100%;padding:8px;border-radius:10px;border:none;margin-bottom:8px">
 <button onclick="send()">Send</button>
 </div>
 </div>
-
 </div>
+
+<script>
+/* 🎄 CREATE SMALL BULBS */
+const colors=["#ff2d2d","#ffd400","#00ff88","#00aaff","#ff66ff"];
+const wrapper=document.querySelector(".light-wrapper");
+
+for(let i=0;i<30;i++){
+let bulb=document.createElement("div");
+bulb.className="bulb";
+bulb.style.left=(i*3.4)+"%";
+bulb.style.top=(14+Math.sin(i)*4)+"px";
+bulb.style.color=colors[Math.floor(Math.random()*colors.length)];
+bulb.style.animationDelay=(Math.random()*2)+"s";
+wrapper.appendChild(bulb);
+}
+
+setInterval(()=>{
+document.querySelectorAll(".bulb").forEach(b=>{
+b.style.color=colors[Math.floor(Math.random()*colors.length)];
+});
+},2000);
+</script>
 
 <script>
 var firebaseConfig={
@@ -297,7 +374,6 @@ var username="user"+Math.floor(Math.random()*1000);
 var myId=Math.random().toString(36).substr(2,9);
 var replyTo=null;
 
-/* LOGIN */
 function checkPass(){
 if(pass.value==="bazsho20"){
 login.style.display="none";
@@ -305,12 +381,9 @@ welcomeOverlay.style.display="flex";
 }
 }
 function closeWelcome(){welcomeOverlay.style.display="none"}
-
-/* SETTINGS */
 function toggleSettings(){settings.classList.toggle("open")}
 function toggleDark(){document.body.classList.toggle("dark")}
 
-/* VIDEO LINK */
 function setVideoLink(){
 var link=document.getElementById("videoLinkInput").value;
 if(!link)return;
@@ -318,19 +391,16 @@ db.ref("video/url").set(link);
 videoLinkInput.value="";
 toggleSettings();
 }
-
 db.ref("video/url").on("value",snap=>{
 if(snap.val())video.src=snap.val();
 });
 
-/* ONLINE */
 db.ref("online/"+myId).set(true);
 db.ref("online/"+myId).onDisconnect().remove();
 db.ref("online").on("value",snap=>{
 online.innerText="Online: "+snap.numChildren();
 });
 
-/* CHAT */
 function send(){
 if(!msg.value)return;
 db.ref("chat").push({
@@ -348,11 +418,9 @@ replyTo=null;
 db.ref("chat").on("child_added",snap=>{
 var d=snap.val();
 var key=snap.key;
-
 if(d.user!==username){
 db.ref("chat/"+key+"/seen").set(true);
 }
-
 var div=document.createElement("div");
 div.className="message "+(d.user===username?"me":"other");
 div.id="m_"+key;
@@ -394,7 +462,6 @@ document.getElementById("s"+key).innerText=s.val()?"✔✔":"✔";
 }
 });
 
-/* REACTIONS */
 function showReactions(key,div){
 if(div.querySelector(".reaction-picker"))return;
 var picker=document.createElement("div");
@@ -423,7 +490,6 @@ react.innerHTML+=e+" ";
 }
 });
 
-/* CLEAR */
 function clearChat(){
 db.ref("chat").remove();
 chat.innerHTML="";
