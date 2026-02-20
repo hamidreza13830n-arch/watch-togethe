@@ -1,43 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Watch Together</title>
-
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-
+<!-- 🎄 REALISTIC CHRISTMAS LIGHTS (CSS اضافه کن داخل <style> اصلیت) -->
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
-
-body{
-font-family:Arial;
-color:white;
-display:flex;
-flex-direction:column;
-min-height:100dvh;
-overflow:hidden;
-background:linear-gradient(-45deg,#1f1c2c,#928dab,#0f2027,#2c5364);
-background-size:400% 400%;
-animation:bg 12s ease infinite;
-}
-@keyframes bg{
-0%{background-position:0% 50%}
-50%{background-position:100% 50%}
-100%{background-position:0% 50%}
-}
-
-body.dark{background:#0b0b12}
-
-/* 🎄 SMALL CHRISTMAS LIGHTS */
 .light-wrapper{
 position:relative;
 width:100%;
-height:36px;
+height:38px;
 flex-shrink:0;
 overflow:hidden;
+filter:drop-shadow(0 3px 3px rgba(0,0,0,.4));
 }
 
 .light-wire{
@@ -58,8 +27,12 @@ position:absolute;
 width:9px;
 height:13px;
 border-radius:50% 50% 45% 45%;
-animation:blink 1.4s infinite alternate ease-in-out;
-box-shadow:0 0 6px currentColor,0 0 12px currentColor;
+background:radial-gradient(circle at 30% 30%, #ffffff 0%, currentColor 45%, #00000022 100%);
+box-shadow:
+0 0 6px currentColor,
+0 0 14px currentColor,
+0 2px 4px rgba(0,0,0,.4);
+animation:blink 1.6s infinite alternate ease-in-out;
 }
 
 .bulb::before{
@@ -70,258 +43,58 @@ left:50%;
 transform:translateX(-50%);
 width:5px;
 height:4px;
-background:#222;
+background:linear-gradient(#444,#111);
 border-radius:2px;
+box-shadow:0 1px 2px rgba(0,0,0,.6);
 }
 
 @keyframes blink{
-0%{opacity:1;transform:scale(1)}
-100%{opacity:.5;transform:scale(.85)}
+0%{opacity:1;transform:scale(1);filter:brightness(1.1);}
+100%{opacity:.65;transform:scale(.9);filter:brightness(.85);}
 }
 
 body.dark .light-wrapper{
 opacity:0;
 pointer-events:none;
 }
-/* END LIGHTS */
-
-.glass{
-background:rgba(255,255,255,.08);
-backdrop-filter:blur(12px);
-border:1px solid rgba(255,255,255,.1);
-border-radius:18px;
-}
-
-header{
-height:42px;
-flex-shrink:0;
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:0 12px;
-}
-
-.main{
-flex:1;
-display:flex;
-flex-direction:column;
-padding:8px;
-gap:8px;
-overflow:hidden;
-}
-
-.video-container{
-flex:0 0 40%;
-padding:10px;
-display:flex;
-flex-direction:column;
-}
-video{
-width:100%;
-flex:1;
-border-radius:12px;
-}
-
-.chat-container{
-flex:1;
-padding:10px;
-display:flex;
-flex-direction:column;
-min-height:0;
-}
-
-.chat-box{
-flex:1;
-overflow-y:auto;
-display:flex;
-flex-direction:column;
-gap:6px;
-}
-
-.message{
-padding:8px 10px;
-border-radius:14px;
-max-width:75%;
-font-size:14px;
-display:flex;
-flex-direction:column;
-gap:4px;
-position:relative;
-}
-
-.me{align-self:flex-end;background:#0088ff;border-bottom-right-radius:4px}
-.other{align-self:flex-start;background:#2a2a32;border-bottom-left-radius:4px}
-
-.meta{
-font-size:10px;
-opacity:.7;
-display:flex;
-justify-content:flex-end;
-gap:4px;
-}
-
-.reply-box{
-font-size:11px;
-opacity:.8;
-border-left:3px solid #fff;
-padding-left:6px;
-margin-bottom:4px;
-}
-
-.reactions{
-display:flex;
-gap:4px;
-font-size:14px;
-margin-top:4px;
-}
-
-.reaction-picker{
-position:absolute;
-bottom:100%;
-background:#1c1c22;
-padding:6px;
-border-radius:10px;
-display:flex;
-gap:6px;
-font-size:18px;
-}
-
-.input-area{
-display:flex;
-gap:6px;
-margin-top:6px;
-flex-shrink:0;
-}
-.input-area input{
-flex:1;
-padding:10px;
-border-radius:12px;
-border:none;
-font-size:16px;
-}
-.input-area button{
-padding:10px 12px;
-border:none;
-border-radius:12px;
-background:#e50914;
-color:white;
-}
-
-#settings{
-position:fixed;
-right:-260px;
-top:0;
-width:240px;
-height:100%;
-padding:20px;
-transition:.3s;
-z-index:100;
-}
-#settings.open{right:0}
-#settings button{
-width:100%;
-margin-bottom:10px;
-padding:8px;
-border:none;
-border-radius:10px;
-background:#e50914;
-color:white;
-}
-
-#login{
-position:fixed;
-inset:0;
-background:#000000dd;
-display:flex;
-justify-content:center;
-align-items:center;
-flex-direction:column;
-z-index:999;
-}
-.login-box{
-padding:30px;
-text-align:center;
-}
-.login-box input{
-padding:10px;
-border-radius:12px;
-border:none;
-margin-bottom:10px;
-}
-
-#welcomeOverlay{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.6);
-display:none;
-justify-content:center;
-align-items:center;
-z-index:998;
-}
-.welcome-box{
-padding:30px;
-text-align:center;
-width:280px;
-}
-.welcome-box button{
-padding:10px 20px;
-border:none;
-border-radius:12px;
-background:#e50914;
-color:white;
-}
-
-@media (orientation:landscape){
-.main{flex-direction:row}
-.video-container{flex:0 0 60%}
-}
 </style>
-</head>
 
-<body>
+<!-- 🎄 اینو دقیقاً قبل از <div class="main"> بذار -->
 
-<div id="login">
-<div class="login-box glass">
-<h3>رمز را وارد کنید</h3>
-<input id="pass">
-<button onclick="checkPass()">تایید</button>
-</div>
-</div>
-
-<div id="welcomeOverlay">
-<div class="welcome-box glass">
-<h3>سلام عزیزم ❤️ خوش آمدی</h3>
-<button onclick="closeWelcome()">ورود</button>
-</div>
-</div>
-
-<header>
-<span>🎬 Watch Together</span>
-<div>
-<span id="online">Online: 1</span>
-<button onclick="toggleSettings()">⚙️</button>
-</div>
-</header>
-
-<!-- 🎄 LIGHT STRING -->
 <div class="light-wrapper">
 <div class="light-wire">
 <svg viewBox="0 0 1000 100" preserveAspectRatio="none">
 <path d="M0,25 Q100,55 200,25 T400,25 T600,25 T800,25 T1000,25"
-stroke="#111" stroke-width="3" fill="transparent"/>
+stroke="#1a1a1a"
+stroke-width="3"
+fill="transparent"
+style="filter: drop-shadow(0 2px 2px rgba(0,0,0,.6));"/>
 </svg>
 </div>
 </div>
 
-<div id="settings" class="glass">
-<h3 style="margin-bottom:10px">پخش فیلم</h3>
-<input id="videoLinkInput" placeholder="لینک فیلم..."
-style="width:100%;padding:8px;border-radius:10px;border:none;margin-bottom:8px">
+<!-- کد خودت بدون حذف -->
+
+<input id="videoLinkInput" placeholder="لینک فیلم..." style="width:100%;padding:8px;border-radius:10px;border:none;margin-bottom:8px">
 <button onclick="setVideoLink()">پخش فیلم</button>
 <hr style="margin:15px 0;opacity:.3">
 <button onclick="toggleDark()">دارک مود</button>
 <button onclick="clearChat()">حذف تاریخچه</button>
 <button onclick="toggleSettings()">بستن</button>
+</div>
+
+<!-- 🎄 این ریسه اینجاست -->
+
+<div class="light-wrapper">
+<div class="light-wire">
+<svg viewBox="0 0 1000 100" preserveAspectRatio="none">
+<path d="M0,25 Q100,55 200,25 T400,25 T600,25 T800,25 T1000,25"
+stroke="#1a1a1a"
+stroke-width="3"
+fill="transparent"
+style="filter: drop-shadow(0 2px 2px rgba(0,0,0,.6));"/>
+</svg>
+</div>
 </div>
 
 <div class="main">
@@ -338,10 +111,19 @@ style="width:100%;padding:8px;border-radius:10px;border:none;margin-bottom:8px">
 </div>
 </div>
 
+<!-- 🎄 اسکریپت ساخت لامپ‌ها (قبل از firebase) -->
+
 <script>
-/* 🎄 CREATE SMALL BULBS */
-const colors=["#ff2d2d","#ffd400","#00ff88","#00aaff","#ff66ff"];
-const wrapper=document.querySelector(".light-wrapper");
+const colors=[
+"#ff2d2d",
+"#ffd400",
+"#00ff88",
+"#00aaff",
+"#ff66ff",
+"#ff8800"
+];
+
+const wrapper=document.querySelectorAll(".light-wrapper")[1];
 
 for(let i=0;i<30;i++){
 let bulb=document.createElement("div");
@@ -357,8 +139,10 @@ setInterval(()=>{
 document.querySelectorAll(".bulb").forEach(b=>{
 b.style.color=colors[Math.floor(Math.random()*colors.length)];
 });
-},2000);
+},2500);
 </script>
+
+<!-- کد Firebase و چت خودت بدون هیچ تغییری -->
 
 <script>
 var firebaseConfig={
@@ -369,21 +153,23 @@ projectId:"film-online-922c1"
 };
 firebase.initializeApp(firebaseConfig);
 var db=firebase.database();
-
 var username="user"+Math.floor(Math.random()*1000);
 var myId=Math.random().toString(36).substr(2,9);
 var replyTo=null;
 
+/* LOGIN */
 function checkPass(){
 if(pass.value==="bazsho20"){
 login.style.display="none";
 welcomeOverlay.style.display="flex";
-}
-}
+}}
 function closeWelcome(){welcomeOverlay.style.display="none"}
+
+/* SETTINGS */
 function toggleSettings(){settings.classList.toggle("open")}
 function toggleDark(){document.body.classList.toggle("dark")}
 
+/* VIDEO LINK */
 function setVideoLink(){
 var link=document.getElementById("videoLinkInput").value;
 if(!link)return;
@@ -395,12 +181,14 @@ db.ref("video/url").on("value",snap=>{
 if(snap.val())video.src=snap.val();
 });
 
+/* ONLINE */
 db.ref("online/"+myId).set(true);
 db.ref("online/"+myId).onDisconnect().remove();
 db.ref("online").on("value",snap=>{
 online.innerText="Online: "+snap.numChildren();
 });
 
+/* CHAT */
 function send(){
 if(!msg.value)return;
 db.ref("chat").push({
@@ -495,6 +283,3 @@ db.ref("chat").remove();
 chat.innerHTML="";
 }
 </script>
-
-</body>
-</html>
