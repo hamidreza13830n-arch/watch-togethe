@@ -31,33 +31,61 @@ animation:bg 12s ease infinite;
 
 body.dark{background:#0b0b12}
 
-/* 🎄 LIGHT STRING */
-.light-string{
-display:flex;
-justify-content:center;
-gap:8px;
-padding:6px 0;
+/* 🎄 CHRISTMAS LIGHT STRING */
+
+.light-wrapper{
+position:relative;
+width:100%;
+height:70px;
 flex-shrink:0;
+overflow:hidden;
+}
+
+.light-wire{
+position:absolute;
+top:20px;
+left:0;
+width:100%;
+height:40px;
+}
+
+.light-wire svg{
+width:100%;
+height:100%;
 }
 
 .bulb{
-width:10px;
-height:14px;
-border-radius:50%;
-animation:blink 1.2s infinite alternate;
+position:absolute;
+width:16px;
+height:22px;
+border-radius:50% 50% 45% 45%;
+animation:blink 1.5s infinite alternate ease-in-out;
+box-shadow:0 0 10px currentColor,0 0 20px currentColor;
+}
+
+.bulb::before{
+content:"";
+position:absolute;
+top:-6px;
+left:50%;
+transform:translateX(-50%);
+width:8px;
+height:6px;
+background:#222;
+border-radius:2px;
 }
 
 @keyframes blink{
 0%{opacity:1;transform:scale(1)}
-100%{opacity:.4;transform:scale(.8)}
+100%{opacity:.5;transform:scale(.85)}
 }
 
-body.dark .light-string{
+body.dark .light-wrapper{
 opacity:0;
 pointer-events:none;
 }
 
-/* END LIGHT STRING */
+/* END LIGHTS */
 
 .glass{
 background:rgba(255,255,255,.08);
@@ -181,7 +209,6 @@ background:#e50914;
 color:white;
 }
 
-/* SETTINGS */
 #settings{
 position:fixed;
 right:-260px;
@@ -203,7 +230,6 @@ background:#e50914;
 color:white;
 }
 
-/* LOGIN */
 #login{
 position:fixed;
 inset:0;
@@ -225,7 +251,6 @@ border:none;
 margin-bottom:10px;
 }
 
-/* WELCOME */
 #welcomeOverlay{
 position:fixed;
 inset:0;
@@ -280,20 +305,22 @@ color:white;
 </div>
 </header>
 
-<!-- 🎄 LIGHT STRING -->
-<div class="light-string" id="lights"></div>
+<!-- 🎄 LIGHTS -->
+<div class="light-wrapper">
+<div class="light-wire">
+<svg viewBox="0 0 1000 100" preserveAspectRatio="none">
+<path d="M0,40 Q100,80 200,40 T400,40 T600,40 T800,40 T1000,40"
+stroke="#111" stroke-width="4" fill="transparent"/>
+</svg>
+</div>
+</div>
 
 <div id="settings" class="glass">
-
 <h3 style="margin-bottom:10px">پخش فیلم</h3>
-
 <input id="videoLinkInput" placeholder="لینک فیلم..."
 style="width:100%;padding:8px;border-radius:10px;border:none;margin-bottom:8px">
-
 <button onclick="setVideoLink()">پخش فیلم</button>
-
 <hr style="margin:15px 0;opacity:.3">
-
 <button onclick="toggleDark()">دارک مود</button>
 <button onclick="clearChat()">حذف تاریخچه</button>
 <button onclick="toggleSettings()">بستن</button>
@@ -316,26 +343,28 @@ style="width:100%;padding:8px;border-radius:10px;border:none;margin-bottom:8px">
 </div>
 
 <script>
-/* 🎄 CREATE LIGHTS */
-const colors=["#ff4d4d","#ffd11a","#33cc33","#3399ff","#ff66cc","#ff884d"];
-for(let i=0;i<30;i++){
-let b=document.createElement("div");
-b.className="bulb";
-b.style.background=colors[Math.floor(Math.random()*colors.length)];
-b.style.animationDelay=(Math.random()*1.5)+"s";
-lights.appendChild(b);
+/* 🎄 CREATE CHRISTMAS BULBS */
+const colors=["#ff2d2d","#ffd400","#00ff88","#00aaff","#ff66ff"];
+const wrapper=document.querySelector(".light-wrapper");
+
+for(let i=0;i<25;i++){
+let bulb=document.createElement("div");
+bulb.className="bulb";
+bulb.style.left=(i*4)+"%";
+bulb.style.top=(35+Math.sin(i)*8)+"px";
+bulb.style.color=colors[Math.floor(Math.random()*colors.length)];
+bulb.style.animationDelay=(Math.random()*2)+"s";
+wrapper.appendChild(bulb);
 }
+
 setInterval(()=>{
 document.querySelectorAll(".bulb").forEach(b=>{
-b.style.background=colors[Math.floor(Math.random()*colors.length)];
+b.style.color=colors[Math.floor(Math.random()*colors.length)];
 });
-},1500);
-/* END LIGHTS */
-
-/* بقیه کدهای خودت بدون تغییر */
+},2000);
 </script>
 
-<!-- ⬇ اینجا کل اسکریپت قبلیت رو دقیق بدون تغییر بذار -->
+<!-- بقیه اسکریپت Firebase و چتت اینجا بدون تغییر همونه که خودت دادی -->
 <script>
 var firebaseConfig={
 apiKey:"AIzaSyCDHmmKIYPHDyvx4BXTb-7VP6lmVb8BCYw",
@@ -345,7 +374,6 @@ projectId:"film-online-922c1"
 };
 firebase.initializeApp(firebaseConfig);
 var db=firebase.database();
-
 var username="user"+Math.floor(Math.random()*1000);
 var myId=Math.random().toString(36).substr(2,9);
 var replyTo=null;
@@ -359,7 +387,6 @@ welcomeOverlay.style.display="flex";
 function closeWelcome(){welcomeOverlay.style.display="none"}
 function toggleSettings(){settings.classList.toggle("open")}
 function toggleDark(){document.body.classList.toggle("dark")}
-
 function setVideoLink(){
 var link=document.getElementById("videoLinkInput").value;
 if(!link)return;
@@ -370,13 +397,11 @@ toggleSettings();
 db.ref("video/url").on("value",snap=>{
 if(snap.val())video.src=snap.val();
 });
-
 db.ref("online/"+myId).set(true);
 db.ref("online/"+myId).onDisconnect().remove();
 db.ref("online").on("value",snap=>{
 online.innerText="Online: "+snap.numChildren();
 });
-
 function send(){
 if(!msg.value)return;
 db.ref("chat").push({
@@ -390,7 +415,6 @@ reactions:{}
 msg.value="";
 replyTo=null;
 }
-
 db.ref("chat").on("child_added",snap=>{
 var d=snap.val();
 var key=snap.key;
@@ -400,7 +424,6 @@ db.ref("chat/"+key+"/seen").set(true);
 var div=document.createElement("div");
 div.className="message "+(d.user===username?"me":"other");
 div.id="m_"+key;
-
 if(d.reply){
 var rep=document.createElement("div");
 rep.className="reply-box";
@@ -410,33 +433,27 @@ div.appendChild(rep);
 var text=document.createElement("div");
 text.innerText=d.text;
 div.appendChild(text);
-
 var meta=document.createElement("div");
 meta.className="meta";
 meta.innerHTML=new Date(d.time).toLocaleTimeString().slice(0,5)
 +(d.user===username?" <span id='s"+key+"'>✔</span>":"");
 div.appendChild(meta);
-
 var react=document.createElement("div");
 react.className="reactions";
 div.appendChild(react);
-
 div.onclick=function(e){
 e.stopPropagation();
 showReactions(key,div);
 replyTo=d.text;
 };
-
 chat.appendChild(div);
 chat.scrollTop=chat.scrollHeight;
-
 if(d.user===username){
 db.ref("chat/"+key+"/seen").on("value",s=>{
 document.getElementById("s"+key).innerText=s.val()?"✔✔":"✔";
 });
 }
 });
-
 function showReactions(key,div){
 if(div.querySelector(".reaction-picker"))return;
 var picker=document.createElement("div");
@@ -453,7 +470,6 @@ picker.appendChild(span);
 });
 div.appendChild(picker);
 }
-
 db.ref("chat").on("child_changed",snap=>{
 var d=snap.val();
 var react=document.querySelector("#m_"+snap.key+" .reactions");
@@ -464,7 +480,6 @@ react.innerHTML+=e+" ";
 });
 }
 });
-
 function clearChat(){
 db.ref("chat").remove();
 chat.innerHTML="";
