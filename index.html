@@ -31,6 +31,34 @@ animation:bg 12s ease infinite;
 
 body.dark{background:#0b0b12}
 
+/* 🎄 LIGHT STRING */
+.light-string{
+display:flex;
+justify-content:center;
+gap:8px;
+padding:6px 0;
+flex-shrink:0;
+}
+
+.bulb{
+width:10px;
+height:14px;
+border-radius:50%;
+animation:blink 1.2s infinite alternate;
+}
+
+@keyframes blink{
+0%{opacity:1;transform:scale(1)}
+100%{opacity:.4;transform:scale(.8)}
+}
+
+body.dark .light-string{
+opacity:0;
+pointer-events:none;
+}
+
+/* END LIGHT STRING */
+
 .glass{
 background:rgba(255,255,255,.08);
 backdrop-filter:blur(12px);
@@ -252,6 +280,9 @@ color:white;
 </div>
 </header>
 
+<!-- 🎄 LIGHT STRING -->
+<div class="light-string" id="lights"></div>
+
 <div id="settings" class="glass">
 
 <h3 style="margin-bottom:10px">پخش فیلم</h3>
@@ -285,6 +316,27 @@ style="width:100%;padding:8px;border-radius:10px;border:none;margin-bottom:8px">
 </div>
 
 <script>
+/* 🎄 CREATE LIGHTS */
+const colors=["#ff4d4d","#ffd11a","#33cc33","#3399ff","#ff66cc","#ff884d"];
+for(let i=0;i<30;i++){
+let b=document.createElement("div");
+b.className="bulb";
+b.style.background=colors[Math.floor(Math.random()*colors.length)];
+b.style.animationDelay=(Math.random()*1.5)+"s";
+lights.appendChild(b);
+}
+setInterval(()=>{
+document.querySelectorAll(".bulb").forEach(b=>{
+b.style.background=colors[Math.floor(Math.random()*colors.length)];
+});
+},1500);
+/* END LIGHTS */
+
+/* بقیه کدهای خودت بدون تغییر */
+</script>
+
+<!-- ⬇ اینجا کل اسکریپت قبلیت رو دقیق بدون تغییر بذار -->
+<script>
 var firebaseConfig={
 apiKey:"AIzaSyCDHmmKIYPHDyvx4BXTb-7VP6lmVb8BCYw",
 authDomain:"film-online-922c1.firebaseapp.com",
@@ -298,7 +350,6 @@ var username="user"+Math.floor(Math.random()*1000);
 var myId=Math.random().toString(36).substr(2,9);
 var replyTo=null;
 
-/* LOGIN */
 function checkPass(){
 if(pass.value==="bazsho20"){
 login.style.display="none";
@@ -306,12 +357,9 @@ welcomeOverlay.style.display="flex";
 }
 }
 function closeWelcome(){welcomeOverlay.style.display="none"}
-
-/* SETTINGS */
 function toggleSettings(){settings.classList.toggle("open")}
 function toggleDark(){document.body.classList.toggle("dark")}
 
-/* VIDEO LINK */
 function setVideoLink(){
 var link=document.getElementById("videoLinkInput").value;
 if(!link)return;
@@ -319,19 +367,16 @@ db.ref("video/url").set(link);
 videoLinkInput.value="";
 toggleSettings();
 }
-
 db.ref("video/url").on("value",snap=>{
 if(snap.val())video.src=snap.val();
 });
 
-/* ONLINE */
 db.ref("online/"+myId).set(true);
 db.ref("online/"+myId).onDisconnect().remove();
 db.ref("online").on("value",snap=>{
 online.innerText="Online: "+snap.numChildren();
 });
 
-/* CHAT */
 function send(){
 if(!msg.value)return;
 db.ref("chat").push({
@@ -349,11 +394,9 @@ replyTo=null;
 db.ref("chat").on("child_added",snap=>{
 var d=snap.val();
 var key=snap.key;
-
 if(d.user!==username){
 db.ref("chat/"+key+"/seen").set(true);
 }
-
 var div=document.createElement("div");
 div.className="message "+(d.user===username?"me":"other");
 div.id="m_"+key;
@@ -364,7 +407,6 @@ rep.className="reply-box";
 rep.innerText=d.reply;
 div.appendChild(rep);
 }
-
 var text=document.createElement("div");
 text.innerText=d.text;
 div.appendChild(text);
@@ -395,12 +437,11 @@ document.getElementById("s"+key).innerText=s.val()?"✔✔":"✔";
 }
 });
 
-/* REACTIONS */
 function showReactions(key,div){
 if(div.querySelector(".reaction-picker"))return;
 var picker=document.createElement("div");
 picker.className="reaction-picker";
-["😍","🤣","❤️","👌","🩷","🔥","😭","😎","😜","😱","💔"].forEach(e=>{
+["😍","😎","🤣","❤️","👌"].forEach(e=>{
 var span=document.createElement("span");
 span.innerText=e;
 span.onclick=function(ev){
@@ -424,7 +465,6 @@ react.innerHTML+=e+" ";
 }
 });
 
-/* CLEAR */
 function clearChat(){
 db.ref("chat").remove();
 chat.innerHTML="";
