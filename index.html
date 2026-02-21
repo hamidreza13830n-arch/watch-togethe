@@ -584,7 +584,22 @@ div.appendChild(meta);
 var react=document.createElement("div");  
 react.className="reactions";  
 div.appendChild(react);  
+/* Reaction button */
+var reactBtn=document.createElement("div");
+reactBtn.innerHTML="😊";
+reactBtn.style.position="absolute";
+reactBtn.style.top="6px";
+reactBtn.style.left="-22px";
+reactBtn.style.fontSize="14px";
+reactBtn.style.cursor="pointer";
+reactBtn.style.opacity="0.7";
 
+reactBtn.onclick=function(e){
+e.stopPropagation();
+showReactions(key,div);
+};
+
+div.appendChild(reactBtn);
 /* ✅ NEW: single tap reaction, double tap reply (mobile) */
 let lastTap=0;
 div.addEventListener("touchend",function(e){
@@ -611,25 +626,7 @@ e.stopPropagation();
 if(clickTimer) clearTimeout(clickTimer);
 showReplyPreview(d.text,key);
 });
-/* LONG PRESS = reaction | DOUBLE TAP = reply */
 
-let pressTimer=null;
-let lastTapTime=0;
-let isLongPress=false;
-
-div.addEventListener("touchstart",function(e){
-isLongPress=false;
-
-pressTimer=setTimeout(function(){
-isLongPress=true;
-showReactions(key,div);
-},600);
-});
-
-div.addEventListener("touchend",function(e){
-clearTimeout(pressTimer);
-
-if(isLongPress) return;
 
 let currentTime=Date.now();
 let tapGap=currentTime-lastTapTime;
