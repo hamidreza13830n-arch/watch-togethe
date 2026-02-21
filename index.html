@@ -159,6 +159,7 @@ display:flex;
 justify-content:flex-end;  
 gap:4px;  
 align-items:center;  
+flex-wrap:wrap;  
 }  
   
 .reply-box{  
@@ -201,6 +202,19 @@ user-select:none;
 }  
 .react-btn:active{transform:scale(.96)}  
 
+/* ✅ tiny edit button on my messages */
+.edit-btn{  
+font-size:11px;  
+opacity:.9;  
+padding:2px 5px;  
+border-radius:8px;  
+border:1px solid rgba(255,255,255,.25);  
+background:rgba(0,0,0,.15);  
+cursor:pointer;  
+user-select:none;  
+}  
+.edit-btn:active{transform:scale(.96)}  
+
 /* ✅ close button inside picker */
 .picker-close{  
 font-size:12px;  
@@ -210,6 +224,20 @@ border:1px solid rgba(255,255,255,.25);
 background:rgba(255,255,255,.08);  
 cursor:pointer;  
 user-select:none;  
+}  
+
+/* ✅ typing indicator */
+#typingIndicator{  
+display:none;  
+flex-shrink:0;  
+margin-top:6px;  
+margin-bottom:4px;  
+padding:6px 10px;  
+border-radius:14px;  
+background:rgba(0,0,0,.16);  
+backdrop-filter:blur(10px);  
+font-size:12px;  
+opacity:.9;  
 }  
 
 /* ✅ Telegram-like reply preview above input */
@@ -250,6 +278,45 @@ color:white;
 cursor:pointer;  
 }  
 #cancelReply:active{transform:scale(.97)}  
+
+/* ✅ edit preview above input */
+#editPreview{  
+display:none;  
+flex-shrink:0;  
+margin-top:6px;  
+margin-bottom:4px;  
+padding:8px 10px;  
+border-radius:14px;  
+border-left:4px solid #ffd400;  
+background:rgba(0,0,0,.18);  
+backdrop-filter:blur(10px);  
+}  
+#editPreview .ep-top{  
+display:flex;  
+justify-content:space-between;  
+align-items:center;  
+gap:10px;  
+margin-bottom:4px;  
+font-size:11px;  
+opacity:.9;  
+}  
+#editPreview .ep-text{  
+font-size:12px;  
+opacity:.9;  
+white-space:nowrap;  
+overflow:hidden;  
+text-overflow:ellipsis;  
+}  
+#cancelEdit{  
+font-size:12px;  
+padding:2px 8px;  
+border-radius:10px;  
+border:1px solid rgba(255,255,255,.25);  
+background:rgba(255,255,255,.08);  
+color:white;  
+cursor:pointer;  
+}  
+#cancelEdit:active{transform:scale(.97)}  
   
 .input-area{  
 display:flex;  
@@ -397,6 +464,18 @@ style="width:100%;padding:8px;border-radius:10px;border:none;margin-bottom:8px">
 <div class="chat-container glass">  
 <div class="chat-box" id="chat"></div>  
 
+<!-- ✅ Typing indicator -->
+<div id="typingIndicator"></div>
+
+<!-- ✅ Edit preview -->
+<div id="editPreview">  
+  <div class="ep-top">  
+    <span>ویرایش پیام</span>  
+    <button id="cancelEdit" onclick="cancelEdit()">لغو</button>  
+  </div>  
+  <div class="ep-text" id="editPreviewText"></div>  
+</div>  
+
 <!-- ✅ Reply preview (Telegram-like) -->
 <div id="replyPreview">  
   <div class="rp-top">  
@@ -448,6 +527,7 @@ var db=firebase.database();
 var username="user"+Math.floor(Math.random()*1000);  
 var myId=Math.random().toString(36).substr(2,9);  
 var replyTo=null;  
+var editKey=null;  
   
 function checkPass(){  
 if(pass.value==="bazsho20"){  
@@ -574,6 +654,62 @@ box.style.display="none";
 document.getElementById("replyPreviewText").innerText="";  
 }  
 
+/****************************/
+/* ✅ EDIT MESSAGE SYSTEM ✅ */
+/****************************/
+function setEdit(key,oldText){  
+editKey=key;  
+document.getElementById("editPreviewText").innerText=oldText;  
+document.getElementById("editPreview").style.display="block";  
+msg.value=oldText;  
+try{msg.focus();}catch(e){}  
+cancelReply();  
+}  
+
+function cancelEdit(){  
+editKey=null;  
+document.getElementById("editPreview").style.display="none";  
+document.getElementById("editPreviewText").innerText="";  
+msg.value="";  
+}  
+
+/*****************************/
+/* ✅ TYPING INDICATOR ✅     */
+/*****************************/
+function setTyping(isTyping){  
+db.ref("typing/"+myId).set(isTyping?{user:username,typing:true,ts:Date.now()}:null);  
+}  
+db.ref("typing/"+myId).onDisconnect().remove();  
+
+var typingTimer=null;  
+msg.addEventListener("input",()=>{  
+setTyping(true);  
+if(typingTimer)clearTimeout(typingTimer);  
+typingTimer=setTimeout(()=>{  
+setTyping(false);  
+},900);  
+});  
+msg.addEventListener("blur",()=>{  
+setTyping(false);  
+});  
+
+db.ref("typing").on("value",snap=>{  
+var names=[];  
+snap.forEach(c=>{  
+if(c.key!==myId && c.val() && c.val().typing){  
+names.push(c.val().user||"someone");  
+}  
+});  
+var box=document.getElementById("typingIndicator");  
+if(names.length){  
+box.style.display="block";  
+box.innerText=(names.length===1?names[0]:"چند نفر")+" در حال تایپ...";  
+}else{  
+box.style.display="none";  
+box.innerText="";  
+}  
+});  
+
 /*****************************/
 /* ✅ CLOSE ANY OPEN PICKER ✅ */
 /*****************************/
@@ -586,16 +722,28 @@ closeAllPickers();
 
 function send(){  
 if(!msg.value)return;  
+
+if(editKey){  
+db.ref("chat/"+editKey+"/text").set(msg.value);  
+db.ref("chat/"+editKey+"/edited").set(true);  
+msg.value="";  
+cancelEdit();  
+setTyping(false);  
+return;  
+}  
+
 db.ref("chat").push({  
 text:msg.value,  
 user:username,  
 time:Date.now(),  
 reply:replyTo,  
 seen:false,  
+edited:false,  
 reactions:{}  
 });  
 msg.value="";  
 cancelReply();  
+setTyping(false);  
 }  
 
 /********************************************/
@@ -645,7 +793,7 @@ var meta=document.createElement("div");
 meta.className="meta";  
 
 /*************************************/
-/* ✅ SMALL REACTION BUTTON PER MSG ✅ */
+/* ✅ SMALL BUTTONS PER MSG ✅ */
 /*************************************/
 var reactBtn=document.createElement("span");  
 reactBtn.className="react-btn";  
@@ -656,8 +804,24 @@ closeAllPickers();
 showReactions(key,div);  
 };  
 
+if(d.user===username){  
+var editBtn=document.createElement("span");  
+editBtn.className="edit-btn";  
+editBtn.innerText="✎";  
+editBtn.onclick=function(ev){  
+ev.stopPropagation();  
+closeAllPickers();  
+setEdit(key,d.text);  
+};  
+}  
+
 meta.innerHTML=new Date(d.time).toLocaleTimeString().slice(0,5)  
++(d.edited?" <span style='opacity:.75'>(edited)</span>":"")  
 +(d.user===username?" <span id='s"+key+"'>✔</span>":"");  
+
+if(d.user===username){  
+meta.appendChild(editBtn);  
+}  
 meta.appendChild(reactBtn);  
 div.appendChild(meta);  
   
@@ -717,21 +881,27 @@ div.appendChild(picker);
   
 db.ref("chat").on("child_changed",snap=>{  
 var d=snap.val();  
-var react=document.querySelector("#m_"+snap.key+" .reactions");  
-react.innerHTML="";  
-if(d.reactions){  
-Object.values(d.reactions).forEach(e=>{  
-react.innerHTML+=e+" ";  
-});  
-}  
-});  
-  
-function clearChat(){  
-db.ref("chat").remove();  
-chat.innerHTML="";  
-cancelReply();  
-}  
-</script>  
-  
-</body>  
-</html>
+
+/********** update message text + edited label **********/
+var m=document.getElementById("m_"+snap.key);  
+if(m){  
+var mainText=m.querySelector("div:nth-child("+(d.reply?2:1)+")");  
+if(mainText)mainText.innerText=d.text;  
+
+var meta=m.querySelector(".meta");  
+if(meta){  
+var timeStr=new Date(d.time).toLocaleTimeString().slice(0,5);  
+var editedStr=d.edited?" <span style='opacity:.75'>(edited)</span>":"";  
+if(d.user===username){  
+meta.innerHTML=timeStr+editedStr+" <span id='s"+snap.key+"'>"+(d.seen?"✔✔":"✔")+"</span>";  
+var editBtn=document.createElement("span");  
+editBtn.className="edit-btn";  
+editBtn.innerText="✎";  
+editBtn.onclick=function(ev){  
+ev.stopPropagation();  
+closeAllPickers();  
+setEdit(snap.key,d.text);  
+};  
+meta.appendChild(editBtn);  
+
+var re
