@@ -611,7 +611,41 @@ e.stopPropagation();
 if(clickTimer) clearTimeout(clickTimer);
 showReplyPreview(d.text,key);
 });
+/* LONG PRESS = reaction | DOUBLE TAP = reply */
 
+let pressTimer=null;
+let lastTapTime=0;
+let isLongPress=false;
+
+div.addEventListener("touchstart",function(e){
+isLongPress=false;
+
+pressTimer=setTimeout(function(){
+isLongPress=true;
+showReactions(key,div);
+},600);
+});
+
+div.addEventListener("touchend",function(e){
+clearTimeout(pressTimer);
+
+if(isLongPress) return;
+
+let currentTime=Date.now();
+let tapGap=currentTime-lastTapTime;
+
+if(tapGap>0 && tapGap<300){
+showReplyPreview(d.text,key);
+}
+
+lastTapTime=currentTime;
+});
+
+/* Desktop double click */
+div.addEventListener("dblclick",function(e){
+e.stopPropagation();
+showReplyPreview(d.text,key);
+});
 chat.appendChild(div);  
 chat.scrollTop=chat.scrollHeight;  
   
