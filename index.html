@@ -407,6 +407,21 @@ color:white;
 .main{flex-direction:row}  
 .video-container{flex:0 0 60%}  
 }  
+  /* 🟢 ONLINE STATUS DOT */
+#onlineDot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#00ff66;
+  box-shadow:0 0 6px #00ff66;
+  animation:blinkOnline 1s infinite;
+}
+
+@keyframes blinkOnline{
+  0%{opacity:1}
+  50%{opacity:.3}
+  100%{opacity:1}
+}
 </style>  
 </head>  
   
@@ -430,7 +445,11 @@ color:white;
 <header>  
 <span>🎬 Watch Together</span>  
 <div>  
-<span id="online">Online: 1</span>  
+
+  <span id="onlineWrapper" style="display:flex;align-items:center;gap:6px;">
+  <span id="onlineDot"></span>
+  <span id="online">Online: 1</span>
+  </span>
 <button onclick="toggleSettings()">⚙️</button>  
 </div>  
 </header>  
@@ -629,11 +648,27 @@ setTimeout(()=>{isSyncing=false;},300);
 });  
 /* ===== END SYNC ===== */  
   
-db.ref("online/"+myId).set(true);  
-db.ref("online/"+myId).onDisconnect().remove();  
-db.ref("online").on("value",snap=>{  
-online.innerText="Online: "+snap.numChildren();  
-});  
+/* 🟢 PROFESSIONAL ONLINE SYSTEM */
+var connectedRef = db.ref(".info/connected");
+
+connectedRef.on("value", function(snap) {
+  if (snap.val() === true) {
+    var con = db.ref("online/" + myId);
+    con.set({
+      user: username,
+      ts: Date.now()
+    });
+    con.onDisconnect().remove();
+  }
+});
+
+db.ref("online").on("value", snap => {
+  var count = 0;
+  snap.forEach(child => {
+    if(child.val()) count++;
+  });
+  document.getElementById("online").innerText = "Online: " + count;
+});
 
 /*****************************/
 /* ✅ REPLY PREVIEW SYSTEM ✅ */
