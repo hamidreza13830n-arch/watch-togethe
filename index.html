@@ -158,6 +158,7 @@ opacity:.7;
 display:flex;  
 justify-content:flex-end;  
 gap:4px;  
+align-items:center;  
 }  
   
 .reply-box{  
@@ -184,7 +185,71 @@ border-radius:10px;
 display:flex;  
 gap:6px;  
 font-size:18px;  
+align-items:center;  
 }  
+
+/* ✅ tiny reaction button on each message */
+.react-btn{  
+font-size:11px;  
+opacity:.9;  
+padding:2px 5px;  
+border-radius:8px;  
+border:1px solid rgba(255,255,255,.25);  
+background:rgba(0,0,0,.15);  
+cursor:pointer;  
+user-select:none;  
+}  
+.react-btn:active{transform:scale(.96)}  
+
+/* ✅ close button inside picker */
+.picker-close{  
+font-size:12px;  
+padding:2px 6px;  
+border-radius:8px;  
+border:1px solid rgba(255,255,255,.25);  
+background:rgba(255,255,255,.08);  
+cursor:pointer;  
+user-select:none;  
+}  
+
+/* ✅ Telegram-like reply preview above input */
+#replyPreview{  
+display:none;  
+flex-shrink:0;  
+margin-top:6px;  
+margin-bottom:4px;  
+padding:8px 10px;  
+border-radius:14px;  
+border-left:4px solid #fff;  
+background:rgba(0,0,0,.18);  
+backdrop-filter:blur(10px);  
+}  
+#replyPreview .rp-top{  
+display:flex;  
+justify-content:space-between;  
+align-items:center;  
+gap:10px;  
+margin-bottom:4px;  
+font-size:11px;  
+opacity:.85;  
+}  
+#replyPreview .rp-text{  
+font-size:12px;  
+opacity:.9;  
+white-space:nowrap;  
+overflow:hidden;  
+text-overflow:ellipsis;  
+}  
+#cancelReply{  
+font-size:12px;  
+padding:2px 8px;  
+border-radius:10px;  
+border:1px solid rgba(255,255,255,.25);  
+background:rgba(255,255,255,.08);  
+color:white;  
+cursor:pointer;  
+}  
+#cancelReply:active{transform:scale(.97)}  
   
 .input-area{  
 display:flex;  
@@ -331,6 +396,16 @@ style="width:100%;padding:8px;border-radius:10px;border:none;margin-bottom:8px">
   
 <div class="chat-container glass">  
 <div class="chat-box" id="chat"></div>  
+
+<!-- ✅ Reply preview (Telegram-like) -->
+<div id="replyPreview">  
+  <div class="rp-top">  
+    <span>Reply</span>  
+    <button id="cancelReply" onclick="cancelReply()">لغو</button>  
+  </div>  
+  <div class="rp-text" id="replyPreviewText"></div>  
+</div>  
+
 <div class="input-area">  
 <input id="msg" placeholder="پیام...">  
 <button onclick="send()">Send</button>  
@@ -479,7 +554,36 @@ db.ref("online/"+myId).onDisconnect().remove();
 db.ref("online").on("value",snap=>{  
 online.innerText="Online: "+snap.numChildren();  
 });  
-  
+
+/*****************************/
+/* ✅ REPLY PREVIEW SYSTEM ✅ */
+/*****************************/
+function setReply(text){  
+replyTo=text;  
+var box=document.getElementById("replyPreview");  
+var t=document.getElementById("replyPreviewText");  
+t.innerText=text;  
+box.style.display="block";  
+try{msg.focus();}catch(e){}  
+}  
+
+function cancelReply(){  
+replyTo=null;  
+var box=document.getElementById("replyPreview");  
+box.style.display="none";  
+document.getElementById("replyPreviewText").innerText="";  
+}  
+
+/*****************************/
+/* ✅ CLOSE ANY OPEN PICKER ✅ */
+/*****************************/
+function closeAllPickers(){  
+document.querySelectorAll(".reaction-picker").forEach(p=>p.remove());  
+}  
+document.addEventListener("click",()=>{  
+closeAllPickers();  
+});  
+
 function send(){  
 if(!msg.value)return;  
 db.ref("chat").push({  
@@ -491,9 +595,31 @@ seen:false,
 reactions:{}  
 });  
 msg.value="";  
-replyTo=null;  
+cancelReply();  
 }  
-  
+
+/********************************************/
+/* ✅ DOUBLE TAP / DOUBLE CLICK TO REPLY ✅ */
+/********************************************/
+var lastTapTimeByKey={};  
+
+function attachReplyHandlers(div,key,text){  
+div.addEventListener("dblclick",function(e){  
+e.stopPropagation();  
+setReply(text);  
+});  
+
+div.addEventListener("touchend",function(e){  
+var now=Date.now();  
+var last=lastTapTimeByKey[key]||0;  
+lastTapTimeByKey[key]=now;  
+if(now-last<320){  
+try{e.preventDefault();}catch(err){}  
+setReply(text);  
+}  
+},{passive:false});  
+}  
+
 db.ref("chat").on("child_added",snap=>{  
 var d=snap.val();  
 var key=snap.key;  
@@ -517,19 +643,37 @@ div.appendChild(text);
   
 var meta=document.createElement("div");  
 meta.className="meta";  
+
+/*************************************/
+/* ✅ SMALL REACTION BUTTON PER MSG ✅ */
+/*************************************/
+var reactBtn=document.createElement("span");  
+reactBtn.className="react-btn";  
+reactBtn.innerText="😊";  
+reactBtn.onclick=function(ev){  
+ev.stopPropagation();  
+closeAllPickers();  
+showReactions(key,div);  
+};  
+
 meta.innerHTML=new Date(d.time).toLocaleTimeString().slice(0,5)  
 +(d.user===username?" <span id='s"+key+"'>✔</span>":"");  
+meta.appendChild(reactBtn);  
 div.appendChild(meta);  
   
 var react=document.createElement("div");  
 react.className="reactions";  
 div.appendChild(react);  
-  
+
+/********************************************/
+/* ✅ CHANGE: click no longer sets reply ✅ */
+/* (reply only on double tap / dblclick)    */
+/********************************************/
 div.onclick=function(e){  
 e.stopPropagation();  
-showReactions(key,div);  
-replyTo=d.text;  
 };  
+
+attachReplyHandlers(div,key,d.text);  
   
 chat.appendChild(div);  
 chat.scrollTop=chat.scrollHeight;  
@@ -545,6 +689,19 @@ function showReactions(key,div){
 if(div.querySelector(".reaction-picker"))return;  
 var picker=document.createElement("div");  
 picker.className="reaction-picker";  
+
+/*************************************/
+/* ✅ CANCEL/CLOSE BUTTON IN PANEL ✅ */
+/*************************************/
+var close=document.createElement("span");  
+close.className="picker-close";  
+close.innerText="✕";  
+close.onclick=function(ev){  
+ev.stopPropagation();  
+picker.remove();  
+};  
+picker.appendChild(close);  
+
 ["😍","😎","🤣","🩷","👌","😭","😡","🔥","😜"].forEach(e=>{  
 var span=document.createElement("span");  
 span.innerText=e;  
@@ -572,6 +729,7 @@ react.innerHTML+=e+" ";
 function clearChat(){  
 db.ref("chat").remove();  
 chat.innerHTML="";  
+cancelReply();  
 }  
 </script>  
   
