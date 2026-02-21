@@ -30,6 +30,38 @@ animation:bg 12s ease infinite;
 }  
   
 body.dark{background:#0b0b12}  
+
+/* ✅ STICKERS (ADDED) */
+#stickerPanel{  
+display:none;  
+flex-wrap:wrap;  
+gap:8px;  
+margin-top:8px;  
+max-height:160px;  
+overflow:auto;  
+padding:6px;  
+border-radius:14px;  
+background:rgba(0,0,0,.12);  
+backdrop-filter:blur(10px);  
+}  
+#stickerPanel img{  
+width:64px;  
+height:64px;  
+object-fit:contain;  
+cursor:pointer;  
+border-radius:14px;  
+transition:.12s;  
+user-select:none;  
+}  
+#stickerPanel img:active{  
+transform:scale(.92);  
+}  
+.sticker-img{  
+max-width:140px;  
+border-radius:14px;  
+margin-top:4px;  
+}  
+/* END STICKERS */  
   
 /* 🎄 SMALL CHRISTMAS LIGHTS */  
 .light-wrapper{  
@@ -408,8 +440,7 @@ color:white;
 .video-container{flex:0 0 60%}  
 }  
 </style>  
-</head>  
-  
+</head>
 <body>  
   
 <div id="login">  
@@ -487,12 +518,16 @@ style="width:100%;padding:8px;border-radius:10px;border:none;margin-bottom:8px">
 
 <div class="input-area">  
 <input id="msg" placeholder="پیام...">  
+<button onclick="toggleStickerPanel()">🎁</button>  
 <button onclick="send()">Send</button>  
 </div>  
+
+<div id="stickerPanel"></div>  
+
 </div>  
 </div>  
-  
-<script>  
+</div>
+  <script>  
 /* 🎄 CREATE SMALL BULBS */  
 const colors=["#ff2d2d","#ffd400","#00ff88","#00aaff","#ff66ff"];  
 const wrapper=document.querySelector(".light-wrapper");  
@@ -528,6 +563,59 @@ var username="user"+Math.floor(Math.random()*1000);
 var myId=Math.random().toString(36).substr(2,9);  
 var replyTo=null;  
 var editKey=null;  
+
+/* ✅ STICKERS (ADDED) */
+var stickerList=[  
+"https://cdn-icons-png.flaticon.com/512/742/742751.png",  
+"https://cdn-icons-png.flaticon.com/512/742/742774.png",  
+"https://cdn-icons-png.flaticon.com/512/742/742766.png",  
+"https://cdn-icons-png.flaticon.com/512/742/742920.png",  
+"https://cdn-icons-png.flaticon.com/512/742/742923.png",  
+"https://cdn-icons-png.flaticon.com/512/742/742888.png",  
+"https://cdn-icons-png.flaticon.com/512/742/742910.png",  
+"https://cdn-icons-png.flaticon.com/512/742/742922.png"  
+];  
+
+function initStickers(){  
+var panel=document.getElementById("stickerPanel");  
+if(!panel)return;  
+panel.innerHTML="";  
+stickerList.forEach(url=>{  
+var img=document.createElement("img");  
+img.src=url;  
+img.loading="lazy";  
+img.onclick=function(e){  
+try{e.stopPropagation();}catch(err){}  
+sendSticker(url);  
+};  
+panel.appendChild(img);  
+});  
+}  
+
+function toggleStickerPanel(){  
+var p=document.getElementById("stickerPanel");  
+if(!p)return;  
+p.style.display=(p.style.display==="flex")?"none":"flex";  
+}  
+
+function sendSticker(url){  
+db.ref("chat").push({  
+type:"sticker",  
+sticker:url,  
+text:"[Sticker]",  
+user:username,  
+time:Date.now(),  
+reply:replyTo,  
+seen:false,  
+edited:false,  
+reactions:{}  
+});  
+var p=document.getElementById("stickerPanel");  
+if(p)p.style.display="none";  
+cancelReply();  
+setTyping(false);  
+}  
+/* END STICKERS */  
   
 function checkPass(){  
 if(pass.value==="bazsho20"){  
@@ -718,6 +806,11 @@ document.querySelectorAll(".reaction-picker").forEach(p=>p.remove());
 }  
 document.addEventListener("click",()=>{  
 closeAllPickers();  
+/* ✅ close sticker panel on outside click (ADDED) */
+var sp=document.getElementById("stickerPanel");  
+if(sp && sp.style.display==="flex"){  
+sp.style.display="none";  
+}  
 });  
 
 function send(){  
@@ -784,17 +877,22 @@ rep.className="reply-box";
 rep.innerText=d.reply;  
 div.appendChild(rep);  
 }  
-  
+
+/* ✅ STICKER RENDER (ADDED) */
+if(d.type==="sticker" && d.sticker){  
+var img=document.createElement("img");  
+img.className="sticker-img";  
+img.src=d.sticker;  
+div.appendChild(img);  
+}else{  
 var text=document.createElement("div");  
 text.innerText=d.text;  
 div.appendChild(text);  
+}  
   
 var meta=document.createElement("div");  
 meta.className="meta";  
 
-/*************************************/
-/* ✅ SMALL BUTTONS PER MSG ✅ */
-/*************************************/
 var reactBtn=document.createElement("span");  
 reactBtn.className="react-btn";  
 reactBtn.innerText="😊";  
@@ -829,15 +927,13 @@ var react=document.createElement("div");
 react.className="reactions";  
 div.appendChild(react);  
 
-/********************************************/
-/* ✅ CHANGE: click no longer sets reply ✅ */
-/* (reply only on double tap / dblclick)    */
-/********************************************/
 div.onclick=function(e){  
 e.stopPropagation();  
 };  
 
-attachReplyHandlers(div,key,d.text);  
+/* ✅ reply text for sticker (ADDED) */
+var replyText=(d.type==="sticker")?"[Sticker]":d.text;  
+attachReplyHandlers(div,key,replyText);  
   
 chat.appendChild(div);  
 chat.scrollTop=chat.scrollHeight;  
@@ -854,9 +950,6 @@ if(div.querySelector(".reaction-picker"))return;
 var picker=document.createElement("div");  
 picker.className="reaction-picker";  
 
-/*************************************/
-/* ✅ CANCEL/CLOSE BUTTON IN PANEL ✅ */
-/*************************************/
 var close=document.createElement("span");  
 close.className="picker-close";  
 close.innerText="✕";  
@@ -882,11 +975,36 @@ div.appendChild(picker);
 db.ref("chat").on("child_changed",snap=>{  
 var d=snap.val();  
 
-/********** update message text + edited label **********/
 var m=document.getElementById("m_"+snap.key);  
 if(m){  
+/* ✅ handle sticker updates too (ADDED) */
+if(d.type==="sticker" && d.sticker){  
+var existingImg=m.querySelector("img.sticker-img");  
+if(!existingImg){  
+/* remove old text node if exists */
+var mainText=m.querySelector("div:nth-child("+(d.reply?2:1)+")");  
+if(mainText)mainText.remove();  
+var img=document.createElement("img");  
+img.className="sticker-img";  
+img.src=d.sticker;  
+/* insert after reply if exists */
+if(d.reply){  
+var repNode=m.querySelector(".reply-box");  
+if(repNode && repNode.nextSibling){  
+m.insertBefore(img,repNode.nextSibling);  
+}else{  
+m.insertBefore(img,m.firstChild);  
+}  
+}else{  
+m.insertBefore(img,m.firstChild);  
+}  
+}else{  
+existingImg.src=d.sticker;  
+}  
+}else{  
 var mainText=m.querySelector("div:nth-child("+(d.reply?2:1)+")");  
 if(mainText)mainText.innerText=d.text;  
+}  
 
 var meta=m.querySelector(".meta");  
 if(meta){  
@@ -928,7 +1046,6 @@ meta.appendChild(reactBtn);
 }  
 }  
 
-/********** update reactions **********/
 var react=document.querySelector("#m_"+snap.key+" .reactions");  
 if(react){  
 react.innerHTML="";  
@@ -946,6 +1063,9 @@ chat.innerHTML="";
 cancelReply();  
 cancelEdit();  
 }  
+
+/* ✅ init stickers after DOM ready (ADDED) */
+try{initStickers();}catch(e){}  
 </script>  
   
 </body>  
