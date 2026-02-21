@@ -523,6 +523,22 @@ projectId:"film-online-922c1"
 };  
 firebase.initializeApp(firebaseConfig);  
 var db=firebase.database();  
+
+/* ✅ FIX: STOP RELYING ON ID->GLOBAL VARIABLES */
+var passEl=document.getElementById("pass");  
+var loginEl=document.getElementById("login");  
+var welcomeOverlayEl=document.getElementById("welcomeOverlay");  
+var settingsEl=document.getElementById("settings");  
+var videoLinkInputEl=document.getElementById("videoLinkInput");  
+var onlineEl=document.getElementById("online");  
+var chatEl=document.getElementById("chat");  
+var msgEl=document.getElementById("msg");  
+var videoEl=document.getElementById("video");  
+var typingIndicatorEl=document.getElementById("typingIndicator");  
+var replyPreviewEl=document.getElementById("replyPreview");  
+var replyPreviewTextEl=document.getElementById("replyPreviewText");  
+var editPreviewEl=document.getElementById("editPreview");  
+var editPreviewTextEl=document.getElementById("editPreviewText");  
   
 var username="user"+Math.floor(Math.random()*1000);  
 var myId=Math.random().toString(36).substr(2,9);  
@@ -530,30 +546,30 @@ var replyTo=null;
 var editKey=null;  
   
 function checkPass(){  
-if(pass.value==="bazsho20"){  
-login.style.display="none";  
-welcomeOverlay.style.display="flex";  
+if(passEl.value==="bazsho20"){  
+loginEl.style.display="none";  
+welcomeOverlayEl.style.display="flex";  
 }  
 }  
-function closeWelcome(){welcomeOverlay.style.display="none"}  
-function toggleSettings(){settings.classList.toggle("open")}  
+function closeWelcome(){welcomeOverlayEl.style.display="none"}  
+function toggleSettings(){settingsEl.classList.toggle("open")}  
 function toggleDark(){document.body.classList.toggle("dark")}  
   
 function setVideoLink(){  
-var link=document.getElementById("videoLinkInput").value;  
+var link=videoLinkInputEl.value;  
 if(!link)return;  
 db.ref("video/url").set(link);  
-videoLinkInput.value="";  
+videoLinkInputEl.value="";  
 toggleSettings();  
 }  
 db.ref("video/url").on("value",snap=>{  
-if(snap.val())video.src=snap.val();  
+if(snap.val())videoEl.src=snap.val();  
 });  
 
 /* ===================== */
 /* ✅ VIDEO SYNC ADDED ✅ */
 /* ===================== */
-var vid=document.getElementById("video");  
+var vid=videoEl;  
 var isSyncing=false;  
 var lastSeekSend=0;  
 
@@ -632,7 +648,7 @@ setTimeout(()=>{isSyncing=false;},300);
 db.ref("online/"+myId).set(true);  
 db.ref("online/"+myId).onDisconnect().remove();  
 db.ref("online").on("value",snap=>{  
-online.innerText="Online: "+snap.numChildren();  
+onlineEl.innerText="Online: "+snap.numChildren();  
 });  
 
 /*****************************/
@@ -640,18 +656,15 @@ online.innerText="Online: "+snap.numChildren();
 /*****************************/
 function setReply(text){  
 replyTo=text;  
-var box=document.getElementById("replyPreview");  
-var t=document.getElementById("replyPreviewText");  
-t.innerText=text;  
-box.style.display="block";  
-try{msg.focus();}catch(e){}  
+replyPreviewTextEl.innerText=text;  
+replyPreviewEl.style.display="block";  
+try{msgEl.focus();}catch(e){}  
 }  
 
 function cancelReply(){  
 replyTo=null;  
-var box=document.getElementById("replyPreview");  
-box.style.display="none";  
-document.getElementById("replyPreviewText").innerText="";  
+replyPreviewEl.style.display="none";  
+replyPreviewTextEl.innerText="";  
 }  
 
 /****************************/
@@ -659,18 +672,18 @@ document.getElementById("replyPreviewText").innerText="";
 /****************************/
 function setEdit(key,oldText){  
 editKey=key;  
-document.getElementById("editPreviewText").innerText=oldText;  
-document.getElementById("editPreview").style.display="block";  
-msg.value=oldText;  
-try{msg.focus();}catch(e){}  
+editPreviewTextEl.innerText=oldText;  
+editPreviewEl.style.display="block";  
+msgEl.value=oldText;  
+try{msgEl.focus();}catch(e){}  
 cancelReply();  
 }  
 
 function cancelEdit(){  
 editKey=null;  
-document.getElementById("editPreview").style.display="none";  
-document.getElementById("editPreviewText").innerText="";  
-msg.value="";  
+editPreviewEl.style.display="none";  
+editPreviewTextEl.innerText="";  
+msgEl.value="";  
 }  
 
 /*****************************/
@@ -682,14 +695,14 @@ db.ref("typing/"+myId).set(isTyping?{user:username,typing:true,ts:Date.now()}:nu
 db.ref("typing/"+myId).onDisconnect().remove();  
 
 var typingTimer=null;  
-msg.addEventListener("input",()=>{  
+msgEl.addEventListener("input",()=>{  
 setTyping(true);  
 if(typingTimer)clearTimeout(typingTimer);  
 typingTimer=setTimeout(()=>{  
 setTyping(false);  
 },900);  
 });  
-msg.addEventListener("blur",()=>{  
+msgEl.addEventListener("blur",()=>{  
 setTyping(false);  
 });  
 
@@ -700,13 +713,12 @@ if(c.key!==myId && c.val() && c.val().typing){
 names.push(c.val().user||"someone");  
 }  
 });  
-var box=document.getElementById("typingIndicator");  
 if(names.length){  
-box.style.display="block";  
-box.innerText=(names.length===1?names[0]:"چند نفر")+" در حال تایپ...";  
+typingIndicatorEl.style.display="block";  
+typingIndicatorEl.innerText=(names.length===1?names[0]:"چند نفر")+" در حال تایپ...";  
 }else{  
-box.style.display="none";  
-box.innerText="";  
+typingIndicatorEl.style.display="none";  
+typingIndicatorEl.innerText="";  
 }  
 });  
 
@@ -721,19 +733,19 @@ closeAllPickers();
 });  
 
 function send(){  
-if(!msg.value)return;  
+if(!msgEl.value)return;  
 
 if(editKey){  
-db.ref("chat/"+editKey+"/text").set(msg.value);  
+db.ref("chat/"+editKey+"/text").set(msgEl.value);  
 db.ref("chat/"+editKey+"/edited").set(true);  
-msg.value="";  
+msgEl.value="";  
 cancelEdit();  
 setTyping(false);  
 return;  
 }  
 
 db.ref("chat").push({  
-text:msg.value,  
+text:msgEl.value,  
 user:username,  
 time:Date.now(),  
 reply:replyTo,  
@@ -741,7 +753,7 @@ seen:false,
 edited:false,  
 reactions:{}  
 });  
-msg.value="";  
+msgEl.value="";  
 cancelReply();  
 setTyping(false);  
 }  
@@ -792,9 +804,6 @@ div.appendChild(text);
 var meta=document.createElement("div");  
 meta.className="meta";  
 
-/*************************************/
-/* ✅ SMALL BUTTONS PER MSG ✅ */
-/*************************************/
 var reactBtn=document.createElement("span");  
 reactBtn.className="react-btn";  
 reactBtn.innerText="😊";  
@@ -829,22 +838,19 @@ var react=document.createElement("div");
 react.className="reactions";  
 div.appendChild(react);  
 
-/********************************************/
-/* ✅ CHANGE: click no longer sets reply ✅ */
-/* (reply only on double tap / dblclick)    */
-/********************************************/
 div.onclick=function(e){  
 e.stopPropagation();  
 };  
 
 attachReplyHandlers(div,key,d.text);  
   
-chat.appendChild(div);  
-chat.scrollTop=chat.scrollHeight;  
+chatEl.appendChild(div);  
+chatEl.scrollTop=chatEl.scrollHeight;  
   
 if(d.user===username){  
 db.ref("chat/"+key+"/seen").on("value",s=>{  
-document.getElementById("s"+key).innerText=s.val()?"✔✔":"✔";  
+var el=document.getElementById("s"+key);  
+if(el)el.innerText=s.val()?"✔✔":"✔";  
 });  
 }  
 });  
@@ -854,9 +860,6 @@ if(div.querySelector(".reaction-picker"))return;
 var picker=document.createElement("div");  
 picker.className="reaction-picker";  
 
-/*************************************/
-/* ✅ CANCEL/CLOSE BUTTON IN PANEL ✅ */
-/*************************************/
 var close=document.createElement("span");  
 close.className="picker-close";  
 close.innerText="✕";  
@@ -882,7 +885,6 @@ div.appendChild(picker);
 db.ref("chat").on("child_changed",snap=>{  
 var d=snap.val();  
 
-/********** update message text + edited label **********/
 var m=document.getElementById("m_"+snap.key);  
 if(m){  
 var mainText=m.querySelector("div:nth-child("+(d.reply?2:1)+")");  
@@ -897,11 +899,4 @@ meta.innerHTML=timeStr+editedStr+" <span id='s"+snap.key+"'>"+(d.seen?"✔✔":"
 var editBtn=document.createElement("span");  
 editBtn.className="edit-btn";  
 editBtn.innerText="✎";  
-editBtn.onclick=function(ev){  
-ev.stopPropagation();  
-closeAllPickers();  
-setEdit(snap.key,d.text);  
-};  
-meta.appendChild(editBtn);  
-
-var re
+e
