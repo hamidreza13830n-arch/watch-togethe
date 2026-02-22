@@ -80,6 +80,26 @@ animation:t4 15s ease infinite;
 100%{background-position:0% 55%}
 }
 
+/* ✅ subtle telegram-like shapes for theme 2 & 3 */
+body.theme2::after,
+body.theme3::after{
+content:"";
+position:fixed;
+inset:0;
+pointer-events:none;
+background-image:
+radial-gradient(circle at 18% 28%, rgba(255,255,255,.05) 0%, transparent 40%),
+radial-gradient(circle at 82% 68%, rgba(255,255,255,.04) 0%, transparent 45%),
+radial-gradient(circle at 52% 52%, rgba(255,255,255,.03) 0%, transparent 60%),
+radial-gradient(circle at 30% 75%, rgba(255,255,255,.035) 0%, transparent 55%);
+animation:shapeMove 20s linear infinite;
+}
+@keyframes shapeMove{
+0%{transform:translateY(0)}
+50%{transform:translateY(-20px)}
+100%{transform:translateY(0)}
+}
+
 body.dark{background:#0b0b12}
 
 /* 🎄 SMALL CHRISTMAS LIGHTS */  
@@ -268,13 +288,6 @@ position:relative;
 }  
 .me{align-self:flex-end;background:#0088ff;border-bottom-right-radius:4px}  
 .other{align-self:flex-start;background:#2a2a32;border-bottom-left-radius:4px}  
-
-/* ✅ DEVICE TAG */
-.device-tag{
-font-size:10px;
-opacity:.6;
-margin-bottom:2px;
-}
 
 .meta{  
 font-size:10px;  
@@ -573,9 +586,8 @@ color:white;
 }  
 </style>  
 </head>
-<body>  
-
-<div id="login">  
+<body>
+  <div id="login">  
   <div class="login-box">  
     <h3>رمز را وارد کنید</h3>  
     <input id="pass" placeholder="رمز...">  
@@ -627,10 +639,7 @@ color:white;
 
   <hr style="margin:15px 0;opacity:.3">  
 
-  <h3 style="margin-bottom:10px">ایموجی لحظه‌ای</h3>
-  <button onclick="toggleLiveEmotes()">باز/بستن پنل ایموجی</button>
-
-  <hr style="margin:15px 0;opacity:.3">  
+  <!-- ✅ (Removed) Emoji panel from settings -->
 
   <button onclick="toggleDark()">دارک مود</button>  
   <button onclick="clearChat()">حذف تاریخچه</button>  
@@ -651,8 +660,11 @@ color:white;
 
     <video id="video" controls></video>  
 
-    <!-- 🎉 LIVE EMOTES PANEL (hidden by default) -->
-    <div id="liveEmotePanel" class="glass" style="display:none;position:absolute;right:14px;bottom:14px;z-index:12;padding:8px;border-radius:14px;">
+    <!-- ✅ NEW: tiny button like chat reaction -->
+    <span id="videoReactBtn" class="react-btn" style="position:absolute;right:14px;bottom:14px;z-index:12;">😊</span>
+
+    <!-- ✅ NEW: panel for video reactions -->
+    <div id="videoReactPanel" class="glass" style="display:none;position:absolute;right:14px;bottom:48px;z-index:12;padding:8px;border-radius:14px;">
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:22px;">
         <span style="cursor:pointer;user-select:none" onclick="sendLiveEmote('🤣')">🤣</span>
         <span style="cursor:pointer;user-select:none" onclick="sendLiveEmote('😍')">😍</span>
@@ -662,6 +674,9 @@ color:white;
         <span style="cursor:pointer;user-select:none" onclick="sendLiveEmote('👏')">👏</span>
         <span style="cursor:pointer;user-select:none" onclick="sendLiveEmote('🔥')">🔥</span>
         <span style="cursor:pointer;user-select:none" onclick="sendLiveEmote('👌')">👌</span>
+
+        <!-- ✅ close button inside panel -->
+        <span class="picker-close" style="margin-left:6px" onclick="closeVideoPanel()">✕</span>
       </div>
     </div>
 
@@ -696,8 +711,7 @@ color:white;
       <button onclick="send()">Send</button>  
     </div>  
   </div>  
-</div>  
-
+</div>
 <script>  
 /* 🎄 CREATE SMALL BULBS */  
 const colors=["#ff2d2d","#ffd400","#00ff88","#00aaff","#ff66ff"];  
@@ -719,6 +733,7 @@ b.style.color=colors[Math.floor(Math.random()*colors.length)];
 });  
 },2000);  
 </script>
+
 <script>  
 var firebaseConfig={  
 apiKey:"AIzaSyCDHmmKIYPHDyvx4BXTb-7VP6lmVb8BCYw",  
@@ -735,22 +750,6 @@ var replyTo=null;
 var editKey=null;  
 
 /*****************************/
-/* 📱 DEVICE NAME (mobile model or Desktop) */
-/*****************************/
-function getDeviceName(){
-  var ua=navigator.userAgent;
-  if(/iPhone/.test(ua)) return "iPhone";
-  if(/iPad/.test(ua)) return "iPad";
-  if(/Android/.test(ua)){
-    var match=ua.match(/Android.*;\s([^)]+)/);
-    if(match && match[1]) return match[1];
-    return "Android";
-  }
-  return "Desktop";
-}
-var myDevice=getDeviceName();
-
-/*****************************/
 /* 🎨 THEME SYSTEM           */
 /*****************************/
 function applyTheme(t){
@@ -760,7 +759,6 @@ function applyTheme(t){
 function setTheme(t){
   applyTheme(t);
   try{localStorage.setItem("wt_theme",t);}catch(e){}
-  // optional sync for both:
   db.ref("ui/theme").set(t);
 }
 (function(){
@@ -789,13 +787,28 @@ function toggleSettings(){settings.classList.toggle("open")}
 function toggleDark(){document.body.classList.toggle("dark")}  
 
 /*****************************/
-/* 🎉 LIVE EMOTES (panel + sync) */
+/* 🎉 VIDEO REACTION PANEL ✅ */
 /*****************************/
-function toggleLiveEmotes(){
-  var p=document.getElementById("liveEmotePanel");
-  p.style.display=(p.style.display==="none"||!p.style.display)?"block":"none";
+var __videoPanel=document.getElementById("videoReactPanel");
+var __videoBtn=document.getElementById("videoReactBtn");
+
+function closeVideoPanel(){
+  if(__videoPanel) __videoPanel.style.display="none";
 }
 
+__videoBtn.addEventListener("click",function(e){
+  e.stopPropagation();
+  if(!__videoPanel) return;
+  __videoPanel.style.display=(__videoPanel.style.display==="none" || !__videoPanel.style.display) ? "block" : "none";
+});
+
+document.addEventListener("click",function(){
+  closeVideoPanel();
+});
+
+/*****************************/
+/* 🎉 LIVE EMOTES (overlay + sync) */
+/*****************************/
 function spawnVideoEmote(emoji){
   var layer=document.getElementById("videoEmoteLayer");
   if(!layer)return;
@@ -803,37 +816,31 @@ function spawnVideoEmote(emoji){
   el.className="fly-emo";
   el.innerText=emoji;
 
-  // spawn from left side at random vertical position
   var top=12 + Math.floor(Math.random()* (layer.clientHeight-60));
   el.style.left="8px";
   el.style.top=top+"px";
 
   layer.appendChild(el);
-  // force reflow for animation
   void el.offsetWidth;
-
-  // randomize travel a bit
   el.style.animationDuration=(1.0 + Math.random()*0.4)+"s";
 
   setTimeout(()=>{ try{el.remove();}catch(e){} },1500);
 }
 
 function sendLiveEmote(emoji){
-  // show instantly on my side
   spawnVideoEmote(emoji);
-  // sync to others
   db.ref("video/emotes").push({
     e:emoji,
     user:username,
     ts:Date.now()
   });
+  closeVideoPanel(); /* ✅ auto close after click */
 }
 
 /* listen for others */
 db.ref("video/emotes").limitToLast(30).on("child_added",snap=>{
   var d=snap.val();
   if(!d)return;
-  // avoid double show for my own push (optional)
   if(d.user===username) return;
   spawnVideoEmote(d.e);
 });
@@ -1026,7 +1033,7 @@ function closeAllPickers(){
 document.addEventListener("click",()=>{closeAllPickers();});  
 
 /*****************************/
-/* ✅ SEND + DEVICE          */
+/* ✅ SEND (device removed)  */
 /*****************************/
 function send(){  
   if(!msg.value)return;  
@@ -1043,7 +1050,6 @@ function send(){
   db.ref("chat").push({  
     text:msg.value,  
     user:username,  
-    device:myDevice,  
     time:Date.now(),  
     reply:replyTo,  
     seen:false,  
@@ -1079,7 +1085,6 @@ function attachReplyHandlers(div,key,text){
 /* ✅ DELETE SINGLE MESSAGE ✅ */
 /*****************************/
 function deleteMessage(key){
-  // remove from DB (sync to everyone)
   db.ref("chat/"+key).remove();
 }
 
@@ -1097,14 +1102,6 @@ db.ref("chat").on("child_added",snap=>{
   var div=document.createElement("div");  
   div.className="message "+(d.user===username?"me":"other");  
   div.id="m_"+key;  
-
-  // device tag
-  if(d.device){
-    var deviceTag=document.createElement("div");
-    deviceTag.className="device-tag";
-    deviceTag.innerText=d.device;
-    div.appendChild(deviceTag);
-  }
 
   if(d.reply){  
     var rep=document.createElement("div");  
@@ -1179,7 +1176,6 @@ db.ref("chat").on("child_added",snap=>{
   }  
 });  
 
-/* remove single message from UI when deleted */
 db.ref("chat").on("child_removed",snap=>{
   var el=document.getElementById("m_"+snap.key);
   if(el) el.remove();
@@ -1219,7 +1215,7 @@ db.ref("chat").on("child_changed",snap=>{
   var d=snap.val();  
   var m=document.getElementById("m_"+snap.key);  
   if(m){  
-    var mainText=m.querySelector("div:nth-child("+(d.reply? (d.device?3:2) : (d.device?2:1) )+")");  
+    var mainText=m.querySelector("div:nth-child("+(d.reply?2:1)+")");  
     if(mainText) mainText.innerText=d.text;  
 
     var meta=m.querySelector(".meta");  
@@ -1290,12 +1286,12 @@ db.ref("chat").on("child_changed",snap=>{
 /* ✅ CLEAR CHAT (SYNC) ✅    */
 /*****************************/
 function clearChat(){  
-  // removes from DB => sync for both
   db.ref("chat").remove();  
   chat.innerHTML="";  
   cancelReply();  
   cancelEdit();  
 }  
+
 </script>  
 
 </body>  
