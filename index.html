@@ -614,14 +614,17 @@ color:white;
 /* ✅ UPDATED: landscape layout fix (video not dropping down) */
 @media (orientation:landscape){  
   .main{
-    flex-direction:row;
-    align-items:stretch;   /* هر دو هم‌قد */
-  }  
+  flex-direction:row;
+  align-items:stretch;
+  height:100dvh;
+  }
 
   .video-container{
     flex:0 0 60%;
     margin-top:0;          /* بدون شیفت */
-  }  
+align-self:flex-start;
+height:100%;
+  } 
 
   .chat-container{
     flex:1;
