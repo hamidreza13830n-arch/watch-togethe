@@ -615,16 +615,29 @@ color:white;
 @media (orientation:landscape){  
   .main{
     flex-direction:row;
-    align-items:flex-start;   /* ✅ stick to top */
+    align-items:stretch;   /* هر دو هم‌قد */
   }  
+
   .video-container{
     flex:0 0 60%;
-    margin-top:-10px;         /* ✅ move video slightly up */
+    margin-top:0;          /* بدون شیفت */
   }  
+
   .chat-container{
-    margin-top:-10px;         /* ✅ keep aligned (remove if you don't want chat up) */
+    flex:1;
+    margin-top:0;          /* بدون شیفت */
+    display:flex;
+    flex-direction:column;
   }
-}  
+
+  .chat-box{
+    flex:1;                /* پیام‌ها وسط */
+  }
+
+  .input-area{
+    margin-top:auto;       /* بچسبه پایین */
+  }
+}
 </style>  
 </head>
 <body>
