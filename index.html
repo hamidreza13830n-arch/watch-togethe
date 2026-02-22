@@ -11,26 +11,77 @@
 <style>  
 *{box-sizing:border-box;margin:0;padding:0}  
 html,body{height:100%}  
-  
-body{  
-font-family:Arial;  
-color:white;  
-display:flex;  
-flex-direction:column;  
-min-height:100dvh;  
-overflow:hidden;  
-background:linear-gradient(-45deg,#1f1c2c,#928dab,#0f2027,#2c5364);  
-background-size:400% 400%;  
-animation:bg 12s ease infinite;  
-}  
-@keyframes bg{  
-0%{background-position:0% 50%}  
-50%{background-position:100% 50%}  
-100%{background-position:0% 50%}  
-}  
-  
-body.dark{background:#0b0b12}  
-  
+
+/* ========================= */
+/* 🎨 THEMES (4 animated)    */
+/* ========================= */
+body{
+font-family:Arial;
+color:white;
+display:flex;
+flex-direction:column;
+min-height:100dvh;
+overflow:hidden;
+background:linear-gradient(-45deg,#1f1c2c,#928dab,#0f2027,#2c5364);
+background-size:400% 400%;
+animation:bg 12s ease infinite;
+}
+@keyframes bg{
+0%{background-position:0% 50%}
+50%{background-position:100% 50%}
+100%{background-position:0% 50%}
+}
+
+/* Theme 1 (Default: Neon Night) */
+body.theme1{
+background:linear-gradient(-45deg,#1f1c2c,#928dab,#0f2027,#2c5364);
+background-size:420% 420%;
+animation:t1 12s ease infinite;
+}
+@keyframes t1{
+0%{background-position:0% 40%}
+50%{background-position:100% 60%}
+100%{background-position:0% 40%}
+}
+
+/* Theme 2 (Aurora) */
+body.theme2{
+background:linear-gradient(-45deg,#061a2d,#00c9ff,#92fe9d,#6a11cb);
+background-size:500% 500%;
+animation:t2 14s ease infinite;
+}
+@keyframes t2{
+0%{background-position:0% 50%}
+50%{background-position:100% 50%}
+100%{background-position:0% 50%}
+}
+
+/* Theme 3 (Cyber Sunset) */
+body.theme3{
+background:linear-gradient(-45deg,#12001b,#ff006e,#8338ec,#00f5d4);
+background-size:480% 480%;
+animation:t3 13s ease infinite;
+}
+@keyframes t3{
+0%{background-position:10% 50%}
+50%{background-position:90% 55%}
+100%{background-position:10% 50%}
+}
+
+/* Theme 4 (Deep Ocean) */
+body.theme4{
+background:linear-gradient(-45deg,#000428,#004e92,#00c6ff,#0072ff);
+background-size:520% 520%;
+animation:t4 15s ease infinite;
+}
+@keyframes t4{
+0%{background-position:0% 55%}
+50%{background-position:100% 45%}
+100%{background-position:0% 55%}
+}
+
+body.dark{background:#0b0b12}
+
 /* 🎄 SMALL CHRISTMAS LIGHTS */  
 .light-wrapper{  
 position:relative;  
@@ -39,7 +90,6 @@ height:36px;
 flex-shrink:0;  
 overflow:hidden;  
 }  
-  
 .light-wire{  
 position:absolute;  
 top:8px;  
@@ -47,12 +97,10 @@ left:0;
 width:100%;  
 height:28px;  
 }  
-  
 .light-wire svg{  
 width:100%;  
 height:100%;  
 }  
-  
 .bulb{  
 position:absolute;  
 width:9px;  
@@ -61,7 +109,6 @@ border-radius:50% 50% 45% 45%;
 animation:blink 1.4s infinite alternate ease-in-out;  
 box-shadow:0 0 6px currentColor,0 0 12px currentColor;  
 }  
-  
 .bulb::before{  
 content:"";  
 position:absolute;  
@@ -73,18 +120,16 @@ height:4px;
 background:#222;  
 border-radius:2px;  
 }  
-  
 @keyframes blink{  
 0%{opacity:1;transform:scale(1)}  
 100%{opacity:.5;transform:scale(.85)}  
 }  
-  
 body.dark .light-wrapper{  
 opacity:0;  
 pointer-events:none;  
 }  
 /* END LIGHTS */  
-  
+
 .glass{  
 background:rgba(255,255,255,.08);  
 backdrop-filter:blur(12px);  
@@ -100,7 +145,7 @@ justify-content:space-between;
 align-items:center;  
 padding:0 12px;  
 }  
-  
+
 .main{  
 flex:1;  
 display:flex;  
@@ -109,7 +154,7 @@ padding:8px;
 gap:8px;  
 overflow:hidden;  
 }  
-  
+
 .video-container{  
 flex:0 0 40%;  
 padding:10px;  
@@ -123,7 +168,7 @@ width:100%;
 flex:1;  
 border-radius:12px;  
 }  
-  
+
 /********************/
 /* 🎭 REAL CURTAIN  */
 /********************/
@@ -136,57 +181,65 @@ pointer-events:none;
 display:flex;  
 overflow:hidden;  
 }  
-  
 #curtain .side{  
 width:50%;  
 height:100%;  
-background:  
-repeating-linear-gradient(  
-90deg,  
-#7a0000 0px,  
-#b30000 20px,  
-#7a0000 40px  
-);  
+background:repeating-linear-gradient(90deg,#7a0000 0px,#b30000 20px,#7a0000 40px);  
 box-shadow: inset 0 0 40px rgba(0,0,0,.6);  
 transition:transform 1.6s cubic-bezier(.77,0,.18,1);  
 }  
-  
-#curtain .left{transform:translateX(0)}  
-#curtain .right{transform:translateX(0)}  
-  
 #curtain.open .left{transform:translateX(-105%)}  
 #curtain.open .right{transform:translateX(105%)}  
 #curtain.hide{display:none}  
-  
+
 /* 🥇 GOLD BAR */
 #curtain::before{  
 content:"";  
 position:absolute;  
-top:0;  
-left:0;  
-width:100%;  
-height:14px;  
+top:0; left:0;  
+width:100%; height:14px;  
 background:linear-gradient(90deg,#caa400,#ffd700,#fff3a0,#ffd700,#caa400);  
-box-shadow:0 2px 8px rgba(255,215,0,.6), inset 0 -2px 4px rgba(0,0,0,.4);  
+box-shadow:0 2px 8px rgba(255,215,0,.6), inset 0 -2px 4px rgba(0,0,0,.35);  
 z-index:20;  
 }  
-#curtain::after{  
-content:"";  
-position:absolute;  
-top:2px;  
-left:0;  
-width:100%;  
-height:4px;  
-background:linear-gradient(90deg,rgba(255,255,255,.6),rgba(255,255,255,.1),rgba(255,255,255,.6));  
-animation:goldShine 3s linear infinite;  
-opacity:.7;  
-z-index:21;  
-}  
-@keyframes goldShine{  
-0%{transform:translateX(-100%)}  
-100%{transform:translateX(100%)}  
-}  
-  
+
+/* 🎉 EMOJI OVERLAY ON VIDEO */
+#videoEmoteLayer{
+position:absolute;
+inset:10px;
+border-radius:12px;
+pointer-events:none;
+z-index:11;
+overflow:hidden;
+}
+.fly-emo{
+position:absolute;
+font-size:34px;
+filter: drop-shadow(0 6px 10px rgba(0,0,0,.45));
+opacity:0;
+animation:flyEmo 1.2s ease-out forwards;
+}
+@keyframes flyEmo{
+0%{transform:translateX(-20px) translateY(0) scale(.9); opacity:0}
+15%{opacity:1}
+100%{transform:translateX(260px) translateY(-40px) scale(1.15); opacity:0}
+}
+
+/* 🟢 ONLINE DOT */
+#onlineDot{
+width:8px;
+height:8px;
+border-radius:50%;
+background:#00ff66;
+box-shadow:0 0 6px #00ff66;
+animation:blinkOnline 1s infinite;
+}
+@keyframes blinkOnline{
+0%{opacity:1}
+50%{opacity:.3}
+100%{opacity:1}
+}
+
 .chat-container{  
 flex:1;  
 padding:10px;  
@@ -194,7 +247,7 @@ display:flex;
 flex-direction:column;  
 min-height:0;  
 }  
-  
+
 .chat-box{  
 flex:1;  
 overflow-y:auto;  
@@ -202,7 +255,7 @@ display:flex;
 flex-direction:column;  
 gap:6px;  
 }  
-  
+
 .message{  
 padding:8px 10px;  
 border-radius:14px;  
@@ -213,10 +266,16 @@ flex-direction:column;
 gap:4px;  
 position:relative;  
 }  
-  
 .me{align-self:flex-end;background:#0088ff;border-bottom-right-radius:4px}  
 .other{align-self:flex-start;background:#2a2a32;border-bottom-left-radius:4px}  
-  
+
+/* ✅ DEVICE TAG */
+.device-tag{
+font-size:10px;
+opacity:.6;
+margin-bottom:2px;
+}
+
 .meta{  
 font-size:10px;  
 opacity:.7;  
@@ -226,7 +285,7 @@ gap:4px;
 align-items:center;  
 flex-wrap:wrap;  
 }  
-  
+
 .reply-box{  
 font-size:11px;  
 opacity:.8;  
@@ -234,14 +293,14 @@ border-left:3px solid #fff;
 padding-left:6px;  
 margin-bottom:4px;  
 }  
-  
+
 .reactions{  
 display:flex;  
 gap:4px;  
 font-size:14px;  
 margin-top:4px;  
 }  
-  
+
 .reaction-picker{  
 position:absolute;  
 bottom:100%;  
@@ -253,7 +312,7 @@ gap:6px;
 font-size:18px;  
 align-items:center;  
 }  
-  
+
 .react-btn{  
 font-size:11px;  
 opacity:.9;  
@@ -265,7 +324,7 @@ cursor:pointer;
 user-select:none;  
 }  
 .react-btn:active{transform:scale(.96)}  
-  
+
 .edit-btn{  
 font-size:11px;  
 opacity:.9;  
@@ -277,7 +336,20 @@ cursor:pointer;
 user-select:none;  
 }  
 .edit-btn:active{transform:scale(.96)}  
-  
+
+/* ✅ DELETE BUTTON (my msgs) */
+.del-btn{
+font-size:11px;
+opacity:.9;
+padding:2px 5px;
+border-radius:8px;
+border:1px solid rgba(255,255,255,.25);
+background:rgba(0,0,0,.15);
+cursor:pointer;
+user-select:none;
+}
+.del-btn:active{transform:scale(.96)}
+
 .picker-close{  
 font-size:12px;  
 padding:2px 6px;  
@@ -287,7 +359,7 @@ background:rgba(255,255,255,.08);
 cursor:pointer;  
 user-select:none;  
 }  
-  
+
 #typingIndicator{  
 display:none;  
 flex-shrink:0;  
@@ -300,7 +372,7 @@ backdrop-filter:blur(10px);
 font-size:12px;  
 opacity:.9;  
 }  
-  
+
 #replyPreview{  
 display:none;  
 flex-shrink:0;  
@@ -338,7 +410,7 @@ color:white;
 cursor:pointer;  
 }  
 #cancelReply:active{transform:scale(.97)}  
-  
+
 #editPreview{  
 display:none;  
 flex-shrink:0;  
@@ -376,7 +448,7 @@ color:white;
 cursor:pointer;  
 }  
 #cancelEdit:active{transform:scale(.97)}  
-  
+
 .input-area{  
 display:flex;  
 gap:6px;  
@@ -397,7 +469,7 @@ border-radius:12px;
 background:#e50914;  
 color:white;  
 }  
-  
+
 #settings{  
 position:fixed;  
 right:-260px;  
@@ -407,6 +479,8 @@ height:100%;
 padding:20px;  
 transition:.3s;  
 z-index:100;  
+overflow-y:auto;  
+-webkit-overflow-scrolling:touch;  
 }  
 #settings.open{right:0}  
 #settings button{  
@@ -418,171 +492,217 @@ border-radius:10px;
 background:#e50914;  
 color:white;  
 }  
-  
+
+/* ✅ make settings easier in landscape */
+@media (orientation:landscape){
+  #settings{width:260px}
+}
+
 #login{  
 position:fixed;  
 inset:0;  
-background:#000000dd;  
+background:radial-gradient(circle at 50% 40%, rgba(229,9,20,.35), rgba(0,0,0,.92) 60%);  
 display:flex;  
 justify-content:center;  
 align-items:center;  
 flex-direction:column;  
 z-index:999;  
 }  
+
+/* ✅ Stylish Black/Red login */
 .login-box{  
-padding:30px;  
+padding:26px;  
 text-align:center;  
+border-radius:20px;  
+border:1px solid rgba(229,9,20,.35);  
+background:linear-gradient(180deg, rgba(20,0,0,.82), rgba(0,0,0,.78));  
+box-shadow:0 10px 30px rgba(0,0,0,.55), 0 0 18px rgba(229,9,20,.25);  
 }  
+.login-box h3{margin-bottom:12px; letter-spacing:.2px}
 .login-box input{  
-padding:10px;  
-border-radius:12px;  
-border:none;  
-margin-bottom:10px;  
+width:220px;
+padding:12px;  
+border-radius:14px;  
+border:1px solid rgba(229,9,20,.35);  
+background:rgba(0,0,0,.45);  
+color:white;  
+outline:none;
+margin-bottom:12px;  
 }  
-  
+.login-box button{
+padding:10px 18px;
+border:none;
+border-radius:14px;
+background:#e50914;
+color:white;
+box-shadow:0 8px 18px rgba(229,9,20,.25);
+}
+
 #welcomeOverlay{  
 position:fixed;  
 inset:0;  
-background:rgba(0,0,0,.6);  
+background:radial-gradient(circle at 50% 40%, rgba(229,9,20,.18), rgba(0,0,0,.78) 65%);  
 display:none;  
 justify-content:center;  
 align-items:center;  
 z-index:998;  
 }  
+
+/* ✅ Stylish welcome */
 .welcome-box{  
-padding:30px;  
+padding:26px;  
 text-align:center;  
-width:280px;  
+width:300px;  
+border-radius:20px;  
+border:1px solid rgba(229,9,20,.28);  
+background:linear-gradient(180deg, rgba(20,0,0,.72), rgba(0,0,0,.72));  
+box-shadow:0 10px 30px rgba(0,0,0,.55), 0 0 18px rgba(229,9,20,.18);  
 }  
+.welcome-box h3{margin-bottom:14px}
 .welcome-box button{  
 padding:10px 20px;  
 border:none;  
-border-radius:12px;  
+border-radius:14px;  
 background:#e50914;  
 color:white;  
 }  
-  
-/********************/
-/* 🟢 ONLINE DOT    */
-/********************/
-#onlineDot{  
-  width:8px;  
-  height:8px;  
-  border-radius:50%;  
-  background:#00ff66;  
-  box-shadow:0 0 6px #00ff66;  
-  animation:blinkOnline 1s infinite;  
-}  
-@keyframes blinkOnline{  
-  0%{opacity:1}  
-  50%{opacity:.3}  
-  100%{opacity:1}  
-}  
-  
+
 @media (orientation:landscape){  
 .main{flex-direction:row}  
 .video-container{flex:0 0 60%}  
 }  
 </style>  
-</head>  
-  
+</head>
 <body>  
-  
+
 <div id="login">  
-<div class="login-box glass">  
-<h3>رمز را وارد کنید</h3>  
-<input id="pass">  
-<button onclick="checkPass()">تایید</button>  
+  <div class="login-box">  
+    <h3>رمز را وارد کنید</h3>  
+    <input id="pass" placeholder="رمز...">  
+    <button onclick="checkPass()">تایید</button>  
+  </div>  
 </div>  
-</div>  
-  
+
 <div id="welcomeOverlay">  
-<div class="welcome-box glass">  
-<h3>سلام عزیزم ❤️ خوش آمدی</h3>  
-<button onclick="closeWelcome()">ورود</button>  
+  <div class="welcome-box">  
+    <h3>سلام عزیزم ❤️ خوش آمدی</h3>  
+    <button onclick="closeWelcome()">ورود</button>  
+  </div>  
 </div>  
-</div>  
-  
+
 <header>  
-<span>🎬 Watch Together</span>  
-<div style="display:flex;align-items:center;gap:8px;white-space:nowrap;">  
-  <span id="onlineWrapper" style="display:flex;align-items:center;gap:6px;">  
-    <span id="onlineDot"></span>  
-    <span id="online">Online: 1</span>  
-  </span>  
-  <button onclick="toggleSettings()">⚙️</button>  
-</div>  
-</header>
+  <span>🎬 Watch Together</span>  
+  <div style="display:flex;align-items:center;gap:8px;white-space:nowrap;">  
+    <span id="onlineWrapper" style="display:flex;align-items:center;gap:6px;">  
+      <span id="onlineDot"></span>  
+      <span id="online">Online: 1</span>  
+    </span>  
+    <button onclick="toggleSettings()">⚙️</button>  
+  </div>  
+</header>  
+
 <!-- 🎄 LIGHT STRING -->  
 <div class="light-wrapper">  
-<div class="light-wire">  
-<svg viewBox="0 0 1000 100" preserveAspectRatio="none">  
-<path d="M0,25 Q100,55 200,25 T400,25 T600,25 T800,25 T1000,25"  
-stroke="#111" stroke-width="3" fill="transparent"/>  
-</svg>  
+  <div class="light-wire">  
+    <svg viewBox="0 0 1000 100" preserveAspectRatio="none">  
+      <path d="M0,25 Q100,55 200,25 T400,25 T600,25 T800,25 T1000,25"  
+      stroke="#111" stroke-width="3" fill="transparent"/>  
+    </svg>  
+  </div>  
 </div>  
-</div>  
-  
+
 <div id="settings" class="glass">  
-<h3 style="margin-bottom:10px">پخش فیلم</h3>  
-<input id="videoLinkInput" placeholder="لینک فیلم..."  
-style="width:100%;padding:8px;border-radius:10px;border:none;margin-bottom:8px">  
-<button onclick="setVideoLink()">پخش فیلم</button>  
-<hr style="margin:15px 0;opacity:.3">  
-<button onclick="toggleDark()">دارک مود</button>  
-<button onclick="clearChat()">حذف تاریخچه</button>  
-<button onclick="toggleSettings()">بستن</button>  
+  <h3 style="margin-bottom:10px">پخش فیلم</h3>  
+  <input id="videoLinkInput" placeholder="لینک فیلم..."  
+  style="width:100%;padding:8px;border-radius:10px;border:none;margin-bottom:8px">  
+  <button onclick="setVideoLink()">پخش فیلم</button>  
+
+  <hr style="margin:15px 0;opacity:.3">  
+
+  <h3 style="margin-bottom:10px">تم سایت</h3>
+  <button onclick="setTheme('theme1')">تم 1 (Neon Night)</button>
+  <button onclick="setTheme('theme2')">تم 2 (Aurora)</button>
+  <button onclick="setTheme('theme3')">تم 3 (Cyber Sunset)</button>
+  <button onclick="setTheme('theme4')">تم 4 (Deep Ocean)</button>
+
+  <hr style="margin:15px 0;opacity:.3">  
+
+  <h3 style="margin-bottom:10px">ایموجی لحظه‌ای</h3>
+  <button onclick="toggleLiveEmotes()">باز/بستن پنل ایموجی</button>
+
+  <hr style="margin:15px 0;opacity:.3">  
+
+  <button onclick="toggleDark()">دارک مود</button>  
+  <button onclick="clearChat()">حذف تاریخچه</button>  
+  <button onclick="toggleSettings()">بستن</button>  
 </div>  
-  
+
 <div class="main">  
-<div class="video-container glass">  
-  
-  <!-- 🎬 REAL CURTAIN -->
-  <div id="curtain">  
-    <div class="side left"></div>  
-    <div class="side right"></div>  
+  <div class="video-container glass">  
+
+    <!-- 🎬 REAL CURTAIN -->
+    <div id="curtain">  
+      <div class="side left"></div>  
+      <div class="side right"></div>  
+    </div>  
+
+    <!-- 🎉 Emoji overlay layer -->
+    <div id="videoEmoteLayer"></div>
+
+    <video id="video" controls></video>  
+
+    <!-- 🎉 LIVE EMOTES PANEL (hidden by default) -->
+    <div id="liveEmotePanel" class="glass" style="display:none;position:absolute;right:14px;bottom:14px;z-index:12;padding:8px;border-radius:14px;">
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:22px;">
+        <span style="cursor:pointer;user-select:none" onclick="sendLiveEmote('🤣')">🤣</span>
+        <span style="cursor:pointer;user-select:none" onclick="sendLiveEmote('😍')">😍</span>
+        <span style="cursor:pointer;user-select:none" onclick="sendLiveEmote('😮')">😮</span>
+        <span style="cursor:pointer;user-select:none" onclick="sendLiveEmote('😭')">😭</span>
+        <span style="cursor:pointer;user-select:none" onclick="sendLiveEmote('😡')">😡</span>
+        <span style="cursor:pointer;user-select:none" onclick="sendLiveEmote('👏')">👏</span>
+        <span style="cursor:pointer;user-select:none" onclick="sendLiveEmote('🔥')">🔥</span>
+        <span style="cursor:pointer;user-select:none" onclick="sendLiveEmote('👌')">👌</span>
+      </div>
+    </div>
+
   </div>  
-  
-  <video id="video" controls></video>  
-  
-</div>  
-  
-<div class="chat-container glass">  
-<div class="chat-box" id="chat"></div>  
-  
-<!-- ✅ Typing indicator -->  
-<div id="typingIndicator"></div>  
-  
-<!-- ✅ Edit preview -->  
-<div id="editPreview">  
-  <div class="ep-top">  
-    <span>ویرایش پیام</span>  
-    <button id="cancelEdit" onclick="cancelEdit()">لغو</button>  
+
+  <div class="chat-container glass">  
+    <div class="chat-box" id="chat"></div>  
+
+    <!-- ✅ Typing indicator -->
+    <div id="typingIndicator"></div>
+
+    <!-- ✅ Edit preview -->
+    <div id="editPreview">  
+      <div class="ep-top">  
+        <span>ویرایش پیام</span>  
+        <button id="cancelEdit" onclick="cancelEdit()">لغو</button>  
+      </div>  
+      <div class="ep-text" id="editPreviewText"></div>  
+    </div>  
+
+    <!-- ✅ Reply preview (Telegram-like) -->
+    <div id="replyPreview">  
+      <div class="rp-top">  
+        <span>Reply</span>  
+        <button id="cancelReply" onclick="cancelReply()">لغو</button>  
+      </div>  
+      <div class="rp-text" id="replyPreviewText"></div>  
+    </div>  
+
+    <div class="input-area">  
+      <input id="msg" placeholder="پیام...">  
+      <button onclick="send()">Send</button>  
+    </div>  
   </div>  
-  <div class="ep-text" id="editPreviewText"></div>  
 </div>  
-  
-<!-- ✅ Reply preview (Telegram-like) -->  
-<div id="replyPreview">  
-  <div class="rp-top">  
-    <span>Reply</span>  
-    <button id="cancelReply" onclick="cancelReply()">لغو</button>  
-  </div>  
-  <div class="rp-text" id="replyPreviewText"></div>  
-</div>  
-  
-<div class="input-area">  
-<input id="msg" placeholder="پیام...">  
-<button onclick="send()">Send</button>  
-</div>  
-</div>  
-</div>  
-  
+
 <script>  
 /* 🎄 CREATE SMALL BULBS */  
 const colors=["#ff2d2d","#ffd400","#00ff88","#00aaff","#ff66ff"];  
 const wrapper=document.querySelector(".light-wrapper");  
-  
+
 for(let i=0;i<30;i++){  
 let bulb=document.createElement("div");  
 bulb.className="bulb";  
@@ -592,7 +712,7 @@ bulb.style.color=colors[Math.floor(Math.random()*colors.length)];
 bulb.style.animationDelay=(Math.random()*2)+"s";  
 wrapper.appendChild(bulb);  
 }  
-  
+
 setInterval(()=>{  
 document.querySelectorAll(".bulb").forEach(b=>{  
 b.style.color=colors[Math.floor(Math.random()*colors.length)];  
@@ -608,54 +728,139 @@ projectId:"film-online-922c1"
 };  
 firebase.initializeApp(firebaseConfig);  
 var db=firebase.database();  
-  
+
 var username="user"+Math.floor(Math.random()*1000);  
 var myId=Math.random().toString(36).substr(2,9);  
 var replyTo=null;  
 var editKey=null;  
-  
+
+/*****************************/
+/* 📱 DEVICE NAME (mobile model or Desktop) */
+/*****************************/
+function getDeviceName(){
+  var ua=navigator.userAgent;
+  if(/iPhone/.test(ua)) return "iPhone";
+  if(/iPad/.test(ua)) return "iPad";
+  if(/Android/.test(ua)){
+    var match=ua.match(/Android.*;\s([^)]+)/);
+    if(match && match[1]) return match[1];
+    return "Android";
+  }
+  return "Desktop";
+}
+var myDevice=getDeviceName();
+
+/*****************************/
+/* 🎨 THEME SYSTEM           */
+/*****************************/
+function applyTheme(t){
+  document.body.classList.remove("theme1","theme2","theme3","theme4");
+  document.body.classList.add(t);
+}
+function setTheme(t){
+  applyTheme(t);
+  try{localStorage.setItem("wt_theme",t);}catch(e){}
+  // optional sync for both:
+  db.ref("ui/theme").set(t);
+}
+(function(){
+  var t=null;
+  try{t=localStorage.getItem("wt_theme");}catch(e){}
+  if(t) applyTheme(t); else applyTheme("theme1");
+})();
+
+db.ref("ui/theme").on("value",snap=>{
+  var t=snap.val();
+  if(t) applyTheme(t);
+});
+
+/*****************************/
+/* ✅ LOGIN / WELCOME        */
+/*****************************/
 function checkPass(){  
   var input=document.getElementById("pass").value.trim();  
   if(input==="bazsho20"){  
     document.getElementById("login").style.display="none";  
     document.getElementById("welcomeOverlay").style.display="flex";  
-  }else{  
-    alert("رمز اشتباهه");  
   }  
 }  
 function closeWelcome(){welcomeOverlay.style.display="none"}  
 function toggleSettings(){settings.classList.toggle("open")}  
 function toggleDark(){document.body.classList.toggle("dark")}  
-  
+
+/*****************************/
+/* 🎉 LIVE EMOTES (panel + sync) */
+/*****************************/
+function toggleLiveEmotes(){
+  var p=document.getElementById("liveEmotePanel");
+  p.style.display=(p.style.display==="none"||!p.style.display)?"block":"none";
+}
+
+function spawnVideoEmote(emoji){
+  var layer=document.getElementById("videoEmoteLayer");
+  if(!layer)return;
+  var el=document.createElement("div");
+  el.className="fly-emo";
+  el.innerText=emoji;
+
+  // spawn from left side at random vertical position
+  var top=12 + Math.floor(Math.random()* (layer.clientHeight-60));
+  el.style.left="8px";
+  el.style.top=top+"px";
+
+  layer.appendChild(el);
+  // force reflow for animation
+  void el.offsetWidth;
+
+  // randomize travel a bit
+  el.style.animationDuration=(1.0 + Math.random()*0.4)+"s";
+
+  setTimeout(()=>{ try{el.remove();}catch(e){} },1500);
+}
+
+function sendLiveEmote(emoji){
+  // show instantly on my side
+  spawnVideoEmote(emoji);
+  // sync to others
+  db.ref("video/emotes").push({
+    e:emoji,
+    user:username,
+    ts:Date.now()
+  });
+}
+
+/* listen for others */
+db.ref("video/emotes").limitToLast(30).on("child_added",snap=>{
+  var d=snap.val();
+  if(!d)return;
+  // avoid double show for my own push (optional)
+  if(d.user===username) return;
+  spawnVideoEmote(d.e);
+});
+
+/*****************************/
+/* 🎬 VIDEO LINK             */
+/*****************************/
 function setVideoLink(){  
-var link=document.getElementById("videoLinkInput").value;  
-if(!link)return;  
-db.ref("video/url").set(link);  
-videoLinkInput.value="";  
-toggleSettings();  
+  var link=document.getElementById("videoLinkInput").value;  
+  if(!link)return;  
+  db.ref("video/url").set(link);  
+  videoLinkInput.value="";  
+  toggleSettings();  
 }  
 db.ref("video/url").on("value",snap=>{  
-if(snap.val())video.src=snap.val();  
+  if(snap.val())video.src=snap.val();  
 });  
-  
-/* ===================== */  
-/* ✅ VIDEO SYNC ADDED ✅ */  
-/* ===================== */  
-var vid=document.getElementById("video");  
-var isSyncing=false;  
-var lastSeekSend=0;  
-  
-function pushState(state){  
-db.ref("video/state").set(state);  
-}  
-  
+
+/*****************************/
+/* 🎭 CURTAIN HELPERS        */
+/*****************************/
 function curtainReset(){  
   var c=document.getElementById("curtain");  
   if(!c)return;  
   c.classList.remove("hide");  
   c.classList.remove("open");  
 }  
-  
 function curtainOpenAndGo(){  
   var c=document.getElementById("curtain");  
   if(!c)return;  
@@ -664,404 +869,434 @@ function curtainOpenAndGo(){
   setTimeout(()=>{ c.classList.add("open"); },60);  
   setTimeout(()=>{ c.classList.add("hide"); },1750);  
 }  
-  
+</script>
+<script>
+/* ===================== */  
+/* ✅ VIDEO SYNC ADDED ✅ */  
+/* ===================== */  
+var vid=document.getElementById("video");  
+var isSyncing=false;  
+var lastSeekSend=0;  
+
+function pushState(state){  
+  db.ref("video/state").set(state);  
+}  
+
 vid.addEventListener("play",()=>{  
   curtainOpenAndGo();  
   if(isSyncing)return;  
-  pushState({  
-    action:"play",  
-    time:vid.currentTime,  
-    rate:vid.playbackRate,  
-    ts:Date.now()  
-  });  
+  pushState({action:"play",time:vid.currentTime,rate:vid.playbackRate,ts:Date.now()});  
 });  
-  
+
 vid.addEventListener("pause",()=>{  
   curtainReset();  
   if(isSyncing)return;  
-  pushState({  
-    action:"pause",  
-    time:vid.currentTime,  
-    rate:vid.playbackRate,  
-    ts:Date.now()  
-  });  
+  pushState({action:"pause",time:vid.currentTime,rate:vid.playbackRate,ts:Date.now()});  
 });  
-  
+
 vid.addEventListener("seeked",()=>{  
-  curtainOpenAndGo(); /* ✅ وقتی اسنپ/seek میدی پرده دوباره میاد */  
+  curtainOpenAndGo();  
   if(isSyncing)return;  
   var now=Date.now();  
   if(now-lastSeekSend<250)return;  
   lastSeekSend=now;  
-  pushState({  
-    action:"seek",  
-    time:vid.currentTime,  
-    rate:vid.playbackRate,  
-    ts:now  
-  });  
+  pushState({action:"seek",time:vid.currentTime,rate:vid.playbackRate,ts:now});  
 });  
-  
+
 vid.addEventListener("ratechange",()=>{  
-if(isSyncing)return;  
-pushState({  
-action:"rate",  
-time:vid.currentTime,  
-rate:vid.playbackRate,  
-ts:Date.now()  
+  if(isSyncing)return;  
+  pushState({action:"rate",time:vid.currentTime,rate:vid.playbackRate,ts:Date.now()});  
 });  
-});  
-  
+
 db.ref("video/state").on("value",snap=>{  
-var s=snap.val();  
-if(!s)return;  
-isSyncing=true;  
-  
-if(typeof s.rate==="number" && vid.playbackRate!==s.rate){  
-vid.playbackRate=s.rate;  
-}  
-  
-if(typeof s.time==="number" && Math.abs(vid.currentTime-s.time)>0.6){  
-try{vid.currentTime=s.time;}catch(e){}  
-}  
-  
-if(s.action==="seek"){  
-  curtainOpenAndGo();  
-}  
-  
-if(s.action==="play"){  
-var p=vid.play();  
-if(p && p.catch)p.catch(()=>{});  
-}  
-if(s.action==="pause"){  
-vid.pause();  
-}  
-  
-setTimeout(()=>{isSyncing=false;},300);  
+  var s=snap.val();  
+  if(!s)return;  
+  isSyncing=true;  
+
+  if(typeof s.rate==="number" && vid.playbackRate!==s.rate){  
+    vid.playbackRate=s.rate;  
+  }  
+
+  if(typeof s.time==="number" && Math.abs(vid.currentTime-s.time)>0.6){  
+    try{vid.currentTime=s.time;}catch(e){}  
+  }  
+
+  if(s.action==="seek"){ curtainOpenAndGo(); }  
+
+  if(s.action==="play"){  
+    var p=vid.play();  
+    if(p && p.catch)p.catch(()=>{});  
+  }  
+  if(s.action==="pause"){ vid.pause(); }  
+
+  setTimeout(()=>{isSyncing=false;},300);  
 });  
 /* ===== END SYNC ===== */  
-  
-/* 🟢 PROFESSIONAL ONLINE SYSTEM */  
-var connectedRef = db.ref(".info/connected");  
-  
-connectedRef.on("value", function(snap) {  
-  if (snap.val() === true) {  
-    var con = db.ref("online/" + myId);  
-    con.set({  
-      user: username,  
-      ts: Date.now()  
-    });  
-    con.onDisconnect().remove();  
-  }  
-});  
-  
-db.ref("online").on("value", snap => {  
-  var count = 0;  
-  snap.forEach(child => {  
-    if(child.val()) count++;  
-  });  
-  document.getElementById("online").innerText = "Online: " + count;  
-});  
-  
-/*****************************/  
-/* ✅ REPLY PREVIEW SYSTEM ✅ */  
-/*****************************/  
+
+/* 🟢 PROFESSIONAL ONLINE SYSTEM */
+var connectedRef = db.ref(".info/connected");
+connectedRef.on("value", function(snap) {
+  if (snap.val() === true) {
+    var con = db.ref("online/" + myId);
+    con.set({user: username, ts: Date.now()});
+    con.onDisconnect().remove();
+  }
+});
+db.ref("online").on("value", snap => {
+  var count = 0;
+  snap.forEach(child => { if(child.val()) count++; });
+  document.getElementById("online").innerText = "Online: " + count;
+});
+
+/*****************************/
+/* ✅ REPLY PREVIEW SYSTEM ✅ */
+/*****************************/
 function setReply(text){  
-replyTo=text;  
-var box=document.getElementById("replyPreview");  
-var t=document.getElementById("replyPreviewText");  
-t.innerText=text;  
-box.style.display="block";  
-try{msg.focus();}catch(e){}  
+  replyTo=text;  
+  var box=document.getElementById("replyPreview");  
+  var t=document.getElementById("replyPreviewText");  
+  t.innerText=text;  
+  box.style.display="block";  
+  try{msg.focus();}catch(e){}  
 }  
-  
 function cancelReply(){  
-replyTo=null;  
-var box=document.getElementById("replyPreview");  
-box.style.display="none";  
-document.getElementById("replyPreviewText").innerText="";  
+  replyTo=null;  
+  var box=document.getElementById("replyPreview");  
+  box.style.display="none";  
+  document.getElementById("replyPreviewText").innerText="";  
 }  
-  
-/****************************/  
-/* ✅ EDIT MESSAGE SYSTEM ✅ */  
-/****************************/  
+
+/****************************/
+/* ✅ EDIT MESSAGE SYSTEM ✅ */
+/****************************/
 function setEdit(key,oldText){  
-editKey=key;  
-document.getElementById("editPreviewText").innerText=oldText;  
-document.getElementById("editPreview").style.display="block";  
-msg.value=oldText;  
-try{msg.focus();}catch(e){}  
-cancelReply();  
+  editKey=key;  
+  document.getElementById("editPreviewText").innerText=oldText;  
+  document.getElementById("editPreview").style.display="block";  
+  msg.value=oldText;  
+  try{msg.focus();}catch(e){}  
+  cancelReply();  
 }  
-  
 function cancelEdit(){  
-editKey=null;  
-document.getElementById("editPreview").style.display="none";  
-document.getElementById("editPreviewText").innerText="";  
-msg.value="";  
+  editKey=null;  
+  document.getElementById("editPreview").style.display="none";  
+  document.getElementById("editPreviewText").innerText="";  
+  msg.value="";  
 }  
-  
-/*****************************/  
-/* ✅ TYPING INDICATOR ✅     */  
-/*****************************/  
+
+/*****************************/
+/* ✅ TYPING INDICATOR ✅     */
+/*****************************/
 function setTyping(isTyping){  
-db.ref("typing/"+myId).set(isTyping?{user:username,typing:true,ts:Date.now()}:null);  
+  db.ref("typing/"+myId).set(isTyping?{user:username,typing:true,ts:Date.now()}:null);  
 }  
 db.ref("typing/"+myId).onDisconnect().remove();  
-  
+
 var typingTimer=null;  
 msg.addEventListener("input",()=>{  
-setTyping(true);  
-if(typingTimer)clearTimeout(typingTimer);  
-typingTimer=setTimeout(()=>{  
-setTyping(false);  
-},900);  
+  setTyping(true);  
+  if(typingTimer)clearTimeout(typingTimer);  
+  typingTimer=setTimeout(()=>{setTyping(false);},900);  
 });  
-msg.addEventListener("blur",()=>{  
-setTyping(false);  
-});  
-  
+msg.addEventListener("blur",()=>{setTyping(false);});  
+
 db.ref("typing").on("value",snap=>{  
-var names=[];  
-snap.forEach(c=>{  
-if(c.key!==myId && c.val() && c.val().typing){  
-names.push(c.val().user||"someone");  
-}  
+  var names=[];  
+  snap.forEach(c=>{  
+    if(c.key!==myId && c.val() && c.val().typing){  
+      names.push(c.val().user||"someone");  
+    }  
+  });  
+  var box=document.getElementById("typingIndicator");  
+  if(names.length){  
+    box.style.display="block";  
+    box.innerText=(names.length===1?names[0]:"چند نفر")+" در حال تایپ...";  
+  }else{  
+    box.style.display="none";  
+    box.innerText="";  
+  }  
 });  
-var box=document.getElementById("typingIndicator");  
-if(names.length){  
-box.style.display="block";  
-box.innerText=(names.length===1?names[0]:"چند نفر")+" در حال تایپ...";  
-}else{  
-box.style.display="none";  
-box.innerText="";  
-}  
-});  
-  
-/*****************************/  
-/* ✅ CLOSE ANY OPEN PICKER ✅ */  
-/*****************************/  
+
+/*****************************/
+/* ✅ CLOSE ANY OPEN PICKER ✅ */
+/*****************************/
 function closeAllPickers(){  
-document.querySelectorAll(".reaction-picker").forEach(p=>p.remove());  
+  document.querySelectorAll(".reaction-picker").forEach(p=>p.remove());  
 }  
-document.addEventListener("click",()=>{  
-closeAllPickers();  
-});  
-  
+document.addEventListener("click",()=>{closeAllPickers();});  
+
+/*****************************/
+/* ✅ SEND + DEVICE          */
+/*****************************/
 function send(){  
-if(!msg.value)return;  
-  
-if(editKey){  
-db.ref("chat/"+editKey+"/text").set(msg.value);  
-db.ref("chat/"+editKey+"/edited").set(true);  
-msg.value="";  
-cancelEdit();  
-setTyping(false);  
-return;  
+  if(!msg.value)return;  
+
+  if(editKey){  
+    db.ref("chat/"+editKey+"/text").set(msg.value);  
+    db.ref("chat/"+editKey+"/edited").set(true);  
+    msg.value="";  
+    cancelEdit();  
+    setTyping(false);  
+    return;  
+  }  
+
+  db.ref("chat").push({  
+    text:msg.value,  
+    user:username,  
+    device:myDevice,  
+    time:Date.now(),  
+    reply:replyTo,  
+    seen:false,  
+    edited:false,  
+    reactions:{}  
+  });  
+  msg.value="";  
+  cancelReply();  
+  setTyping(false);  
 }  
-  
-db.ref("chat").push({  
-text:msg.value,  
-user:username,  
-time:Date.now(),  
-reply:replyTo,  
-seen:false,  
-edited:false,  
-reactions:{}  
-});  
-msg.value="";  
-cancelReply();  
-setTyping(false);  
-}  
-  
-/********************************************/  
-/* ✅ DOUBLE TAP / DOUBLE CLICK TO REPLY ✅ */  
-/********************************************/  
+
+/********************************************/
+/* ✅ DOUBLE TAP / DOUBLE CLICK TO REPLY ✅ */
+/********************************************/
 var lastTapTimeByKey={};  
-  
 function attachReplyHandlers(div,key,text){  
-div.addEventListener("dblclick",function(e){  
-e.stopPropagation();  
-setReply(text);  
-});  
-  
-div.addEventListener("touchend",function(e){  
-var now=Date.now();  
-var last=lastTapTimeByKey[key]||0;  
-lastTapTimeByKey[key]=now;  
-if(now-last<320){  
-try{e.preventDefault();}catch(err){}  
-setReply(text);  
+  div.addEventListener("dblclick",function(e){  
+    e.stopPropagation();  
+    setReply(text);  
+  });  
+  div.addEventListener("touchend",function(e){  
+    var now=Date.now();  
+    var last=lastTapTimeByKey[key]||0;  
+    lastTapTimeByKey[key]=now;  
+    if(now-last<320){  
+      try{e.preventDefault();}catch(err){}  
+      setReply(text);  
+    }  
+  },{passive:false});  
 }  
-},{passive:false});  
-}  
-  
+
+/*****************************/
+/* ✅ DELETE SINGLE MESSAGE ✅ */
+/*****************************/
+function deleteMessage(key){
+  // remove from DB (sync to everyone)
+  db.ref("chat/"+key).remove();
+}
+
+/*****************************/
+/* ✅ CHAT RENDER            */
+/*****************************/
 db.ref("chat").on("child_added",snap=>{  
-var d=snap.val();  
-var key=snap.key;  
-if(d.user!==username){  
-db.ref("chat/"+key+"/seen").set(true);  
-}  
-var div=document.createElement("div");  
-div.className="message "+(d.user===username?"me":"other");  
-div.id="m_"+key;  
-  
-if(d.reply){  
-var rep=document.createElement("div");  
-rep.className="reply-box";  
-rep.innerText=d.reply;  
-div.appendChild(rep);  
-}  
-  
-var text=document.createElement("div");  
-text.innerText=d.text;  
-div.appendChild(text);  
-  
-var meta=document.createElement("div");  
-meta.className="meta";  
-  
-var reactBtn=document.createElement("span");  
-reactBtn.className="react-btn";  
-reactBtn.innerText="😊";  
-reactBtn.onclick=function(ev){  
-ev.stopPropagation();  
-closeAllPickers();  
-showReactions(key,div);  
-};  
-  
-if(d.user===username){  
-var editBtn=document.createElement("span");  
-editBtn.className="edit-btn";  
-editBtn.innerText="✎";  
-editBtn.onclick=function(ev){  
-ev.stopPropagation();  
-closeAllPickers();  
-setEdit(key,d.text);  
-};  
-}  
-  
-meta.innerHTML=new Date(d.time).toLocaleTimeString().slice(0,5)  
-+(d.edited?" <span style='opacity:.75'>(edited)</span>":"")  
-+(d.user===username?" <span id='s"+key+"'>✔</span>":"");  
-  
-if(d.user===username){  
-meta.appendChild(editBtn);  
-}  
-meta.appendChild(reactBtn);  
-div.appendChild(meta);  
-  
-var react=document.createElement("div");  
-react.className="reactions";  
-div.appendChild(react);  
-  
-div.onclick=function(e){  
-e.stopPropagation();  
-};  
-  
-attachReplyHandlers(div,key,d.text);  
-  
-chat.appendChild(div);  
-chat.scrollTop=chat.scrollHeight;  
-  
-if(d.user===username){  
-db.ref("chat/"+key+"/seen").on("value",s=>{  
-document.getElementById("s"+key).innerText=s.val()?"✔✔":"✔";  
+  var d=snap.val();  
+  var key=snap.key;  
+
+  if(d.user!==username){  
+    db.ref("chat/"+key+"/seen").set(true);  
+  }  
+
+  var div=document.createElement("div");  
+  div.className="message "+(d.user===username?"me":"other");  
+  div.id="m_"+key;  
+
+  // device tag
+  if(d.device){
+    var deviceTag=document.createElement("div");
+    deviceTag.className="device-tag";
+    deviceTag.innerText=d.device;
+    div.appendChild(deviceTag);
+  }
+
+  if(d.reply){  
+    var rep=document.createElement("div");  
+    rep.className="reply-box";  
+    rep.innerText=d.reply;  
+    div.appendChild(rep);  
+  }  
+
+  var text=document.createElement("div");  
+  text.innerText=d.text;  
+  div.appendChild(text);  
+
+  var meta=document.createElement("div");  
+  meta.className="meta";  
+
+  var reactBtn=document.createElement("span");  
+  reactBtn.className="react-btn";  
+  reactBtn.innerText="😊";  
+  reactBtn.onclick=function(ev){  
+    ev.stopPropagation();  
+    closeAllPickers();  
+    showReactions(key,div);  
+  };  
+
+  if(d.user===username){  
+    var editBtn=document.createElement("span");  
+    editBtn.className="edit-btn";  
+    editBtn.innerText="✎";  
+    editBtn.onclick=function(ev){  
+      ev.stopPropagation();  
+      closeAllPickers();  
+      setEdit(key,d.text);  
+    };  
+
+    var delBtn=document.createElement("span");
+    delBtn.className="del-btn";
+    delBtn.innerText="🗑";
+    delBtn.onclick=function(ev){
+      ev.stopPropagation();
+      if(confirm("پیام حذف بشه؟")){
+        deleteMessage(key);
+      }
+    };
+  }  
+
+  meta.innerHTML=new Date(d.time).toLocaleTimeString().slice(0,5)  
+  +(d.edited?" <span style='opacity:.75'>(edited)</span>":"")  
+  +(d.user===username?" <span id='s"+key+"'>✔</span>":"");  
+
+  if(d.user===username){  
+    meta.appendChild(editBtn);  
+    meta.appendChild(delBtn);
+  }  
+  meta.appendChild(reactBtn);  
+  div.appendChild(meta);  
+
+  var react=document.createElement("div");  
+  react.className="reactions";  
+  div.appendChild(react);  
+
+  div.onclick=function(e){ e.stopPropagation(); };  
+  attachReplyHandlers(div,key,d.text);  
+
+  chat.appendChild(div);  
+  chat.scrollTop=chat.scrollHeight;  
+
+  if(d.user===username){  
+    db.ref("chat/"+key+"/seen").on("value",s=>{  
+      var el=document.getElementById("s"+key);
+      if(el) el.innerText=s.val()?"✔✔":"✔";  
+    });  
+  }  
 });  
-}  
-});  
-  
+
+/* remove single message from UI when deleted */
+db.ref("chat").on("child_removed",snap=>{
+  var el=document.getElementById("m_"+snap.key);
+  if(el) el.remove();
+});
+
+/*****************************/
+/* ✅ REACTIONS PICKER       */
+/*****************************/
 function showReactions(key,div){  
-if(div.querySelector(".reaction-picker"))return;  
-var picker=document.createElement("div");  
-picker.className="reaction-picker";  
-  
-var close=document.createElement("span");  
-close.className="picker-close";  
-close.innerText="✕";  
-close.onclick=function(ev){  
-ev.stopPropagation();  
-picker.remove();  
-};  
-picker.appendChild(close);  
-  
-["😍","😎","🤣","🩷","👌","😭","😡","🔥","😜"].forEach(e=>{  
-var span=document.createElement("span");  
-span.innerText=e;  
-span.onclick=function(ev){  
-ev.stopPropagation();  
-db.ref("chat/"+key+"/reactions/"+myId).set(e);  
-picker.remove();  
-};  
-picker.appendChild(span);  
-});  
-div.appendChild(picker);  
+  if(div.querySelector(".reaction-picker"))return;  
+  var picker=document.createElement("div");  
+  picker.className="reaction-picker";  
+
+  var close=document.createElement("span");  
+  close.className="picker-close";  
+  close.innerText="✕";  
+  close.onclick=function(ev){  
+    ev.stopPropagation();  
+    picker.remove();  
+  };  
+  picker.appendChild(close);  
+
+  ["😍","😎","🤣","🩷","👌","😭","😡","🔥","😜"].forEach(e=>{  
+    var span=document.createElement("span");  
+    span.innerText=e;  
+    span.onclick=function(ev){  
+      ev.stopPropagation();  
+      db.ref("chat/"+key+"/reactions/"+myId).set(e);  
+      picker.remove();  
+    };  
+    picker.appendChild(span);  
+  });  
+  div.appendChild(picker);  
 }  
-  
+
 db.ref("chat").on("child_changed",snap=>{  
-var d=snap.val();  
-  
-var m=document.getElementById("m_"+snap.key);  
-if(m){  
-var mainText=m.querySelector("div:nth-child("+(d.reply?2:1)+")");  
-if(mainText)mainText.innerText=d.text;  
-  
-var meta=m.querySelector(".meta");  
-if(meta){  
-var timeStr=new Date(d.time).toLocaleTimeString().slice(0,5);  
-var editedStr=d.edited?" <span style='opacity:.75'>(edited)</span>":"";  
-if(d.user===username){  
-meta.innerHTML=timeStr+editedStr+" <span id='s"+snap.key+"'>"+(d.seen?"✔✔":"✔")+"</span>";  
-var editBtn=document.createElement("span");  
-editBtn.className="edit-btn";  
-editBtn.innerText="✎";  
-editBtn.onclick=function(ev){  
-ev.stopPropagation();  
-closeAllPickers();  
-setEdit(snap.key,d.text);  
-};  
-meta.appendChild(editBtn);  
-  
-var reactBtn=document.createElement("span");  
-reactBtn.className="react-btn";  
-reactBtn.innerText="😊";  
-reactBtn.onclick=function(ev){  
-ev.stopPropagation();  
-closeAllPickers();  
-showReactions(snap.key,m);  
-};  
-meta.appendChild(reactBtn);  
-}else{  
-meta.innerHTML=timeStr+editedStr;  
-var reactBtn=document.createElement("span");  
-reactBtn.className="react-btn";  
-reactBtn.innerText="😊";  
-reactBtn.onclick=function(ev){  
-ev.stopPropagation();  
-closeAllPickers();  
-showReactions(snap.key,m);  
-};  
-meta.appendChild(reactBtn);  
-}  
-}  
-}  
-  
-var react=document.querySelector("#m_"+snap.key+" .reactions");  
-if(react){  
-react.innerHTML="";  
-if(d.reactions){  
-Object.values(d.reactions).forEach(e=>{  
-react.innerHTML+=e+" ";  
+  var d=snap.val();  
+  var m=document.getElementById("m_"+snap.key);  
+  if(m){  
+    var mainText=m.querySelector("div:nth-child("+(d.reply? (d.device?3:2) : (d.device?2:1) )+")");  
+    if(mainText) mainText.innerText=d.text;  
+
+    var meta=m.querySelector(".meta");  
+    if(meta){  
+      var timeStr=new Date(d.time).toLocaleTimeString().slice(0,5);  
+      var editedStr=d.edited?" <span style='opacity:.75'>(edited)</span>":"";  
+      if(d.user===username){  
+        meta.innerHTML=timeStr+editedStr+" <span id='s"+snap.key+"'>"+(d.seen?"✔✔":"✔")+"</span>";  
+
+        var editBtn=document.createElement("span");  
+        editBtn.className="edit-btn";  
+        editBtn.innerText="✎";  
+        editBtn.onclick=function(ev){  
+          ev.stopPropagation();  
+          closeAllPickers();  
+          setEdit(snap.key,d.text);  
+        };  
+
+        var delBtn=document.createElement("span");
+        delBtn.className="del-btn";
+        delBtn.innerText="🗑";
+        delBtn.onclick=function(ev){
+          ev.stopPropagation();
+          if(confirm("پیام حذف بشه؟")){
+            deleteMessage(snap.key);
+          }
+        };
+
+        meta.appendChild(editBtn);  
+        meta.appendChild(delBtn);
+
+        var reactBtn=document.createElement("span");  
+        reactBtn.className="react-btn";  
+        reactBtn.innerText="😊";  
+        reactBtn.onclick=function(ev){  
+          ev.stopPropagation();  
+          closeAllPickers();  
+          showReactions(snap.key,m);  
+        };  
+        meta.appendChild(reactBtn);  
+      }else{  
+        meta.innerHTML=timeStr+editedStr;  
+        var reactBtn=document.createElement("span");  
+        reactBtn.className="react-btn";  
+        reactBtn.innerText="😊";  
+        reactBtn.onclick=function(ev){  
+          ev.stopPropagation();  
+          closeAllPickers();  
+          showReactions(snap.key,m);  
+        };  
+        meta.appendChild(reactBtn);  
+      }  
+    }  
+  }  
+
+  var react=document.querySelector("#m_"+snap.key+" .reactions");  
+  if(react){  
+    react.innerHTML="";  
+    if(d.reactions){  
+      Object.values(d.reactions).forEach(e=>{  
+        react.innerHTML+=e+" ";  
+      });  
+    }  
+  }  
 });  
-}  
-}  
-});  
-  
+
+/*****************************/
+/* ✅ CLEAR CHAT (SYNC) ✅    */
+/*****************************/
 function clearChat(){  
-db.ref("chat").remove();  
-chat.innerHTML="";  
-cancelReply();  
-cancelEdit();  
+  // removes from DB => sync for both
+  db.ref("chat").remove();  
+  chat.innerHTML="";  
+  cancelReply();  
+  cancelEdit();  
 }  
 </script>  
-  
+
 </body>  
 </html>
