@@ -25,6 +25,10 @@ overflow:hidden;
 background:linear-gradient(-45deg,#1f1c2c,#928dab,#0f2027,#2c5364);
 background-size:400% 400%;
 animation:bg 12s ease infinite;
+
+/* ✅ NEW: make background layers (shapes) render correctly */
+position:relative;
+isolation:isolate;
 }
 @keyframes bg{
 0%{background-position:0% 50%}
@@ -80,7 +84,7 @@ animation:t4 15s ease infinite;
 100%{background-position:0% 55%}
 }
 
-/* ✅ subtle telegram-like shapes for theme 2 & 3 */
+/* ✅ UPDATED: stronger telegram-like shapes for theme 2 & 3 (visible) */
 body.theme2::after,
 body.theme3::after{
 content:"";
@@ -88,16 +92,26 @@ position:fixed;
 inset:0;
 pointer-events:none;
 background-image:
-radial-gradient(circle at 18% 28%, rgba(255,255,255,.05) 0%, transparent 40%),
-radial-gradient(circle at 82% 68%, rgba(255,255,255,.04) 0%, transparent 45%),
-radial-gradient(circle at 52% 52%, rgba(255,255,255,.03) 0%, transparent 60%),
-radial-gradient(circle at 30% 75%, rgba(255,255,255,.035) 0%, transparent 55%);
-animation:shapeMove 20s linear infinite;
+  radial-gradient(circle at 18% 28%, rgba(255,255,255,.10) 0%, transparent 42%),
+  radial-gradient(circle at 82% 68%, rgba(255,255,255,.08) 0%, transparent 48%),
+  radial-gradient(circle at 52% 52%, rgba(255,255,255,.07) 0%, transparent 62%),
+  radial-gradient(circle at 30% 75%, rgba(255,255,255,.09) 0%, transparent 58%),
+  radial-gradient(circle at 70% 22%, rgba(255,255,255,.06) 0%, transparent 55%),
+
+  radial-gradient(circle, rgba(255,255,255,.08) 1px, transparent 1.2px);
+background-size:
+  auto, auto, auto, auto, auto,
+  26px 26px;
+opacity:.75;
+mix-blend-mode:overlay;
+filter: blur(.2px);
+z-index:1;
+animation:shapeMove 18s ease-in-out infinite;
 }
 @keyframes shapeMove{
-0%{transform:translateY(0)}
-50%{transform:translateY(-20px)}
-100%{transform:translateY(0)}
+0%{transform:translateY(0) translateX(0)}
+50%{transform:translateY(-18px) translateX(10px)}
+100%{transform:translateY(0) translateX(0)}
 }
 
 body.dark{background:#0b0b12}
@@ -173,7 +187,13 @@ flex-direction:column;
 padding:8px;  
 gap:8px;  
 overflow:hidden;  
-}  
+}
+
+/* ✅ NEW: ensure content stays above shapes layer */
+header, .main, #settings, #login, #welcomeOverlay{
+position:relative;
+z-index:2;
+}
 
 .video-container{  
 flex:0 0 40%;  
@@ -383,9 +403,8 @@ border:1px solid rgba(255,255,255,.25);
 background:rgba(255,255,255,.08);  
 cursor:pointer;  
 user-select:none;  
-}  
-
-#typingIndicator{  
+}
+  #typingIndicator{  
 display:none;  
 flex-shrink:0;  
 margin-top:6px;  
@@ -592,9 +611,19 @@ background:#e50914;
 color:white;  
 }  
 
+/* ✅ UPDATED: landscape layout fix (video not dropping down) */
 @media (orientation:landscape){  
-.main{flex-direction:row}  
-.video-container{flex:0 0 60%}  
+  .main{
+    flex-direction:row;
+    align-items:flex-start;   /* ✅ stick to top */
+  }  
+  .video-container{
+    flex:0 0 60%;
+    margin-top:-10px;         /* ✅ move video slightly up */
+  }  
+  .chat-container{
+    margin-top:-10px;         /* ✅ keep aligned (remove if you don't want chat up) */
+  }
 }  
 </style>  
 </head>
@@ -656,8 +685,7 @@ color:white;
   <button onclick="toggleDark()">دارک مود</button>  
   <button onclick="clearChat()">حذف تاریخچه</button>  
   <button onclick="toggleSettings()">بستن</button>  
-</div>  
-
+</div>
 <div class="main">  
   <div class="video-container glass">  
 
