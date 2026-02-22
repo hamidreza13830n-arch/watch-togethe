@@ -422,6 +422,45 @@ color:white;
   50%{opacity:.3}
   100%{opacity:1}
 }
+  /* 🎭 CINEMA CURTAIN */
+.video-container{position:relative;} /* اضافه: برای اینکه پرده روی ویدیو درست بشینه */
+
+#curtain{
+  position:absolute;
+  inset:10px;              /* هم‌راستا با پدینگ خود video-container */
+  border-radius:12px;      /* مثل ویدیو */
+  overflow:hidden;
+  z-index:5;
+  pointer-events:none;     /* کنترل‌های ویدیو رو قفل نکنه */
+}
+
+#curtain .half{
+  position:absolute;
+  top:0; bottom:0;
+  width:50%;
+  background:
+    linear-gradient(to right, rgba(0,0,0,.85), rgba(70,0,0,.65), rgba(0,0,0,.85));
+  box-shadow: inset 0 0 30px rgba(0,0,0,.6);
+}
+
+#curtain .left{left:0; border-right:1px solid rgba(255,255,255,.08);}
+#curtain .right{right:0; border-left:1px solid rgba(255,255,255,.08);}
+
+#curtain .shine{
+  position:absolute;
+  inset:0;
+  background: radial-gradient(circle at 50% 50%, rgba(255,255,255,.10), rgba(0,0,0,0) 55%);
+  opacity:.7;
+}
+
+#curtain.open .left{transform:translateX(-110%);}
+#curtain.open .right{transform:translateX(110%);}
+#curtain .left, #curtain .right{
+  transition:transform 1.35s ease-in-out;
+}
+
+#curtain.hide{display:none;}
+/* END CURTAIN */
 </style>  
 </head>  
   
@@ -477,8 +516,18 @@ style="width:100%;padding:8px;border-radius:10px;border:none;margin-bottom:8px">
   
 <div class="main">  
 <div class="video-container glass">  
-<video id="video" controls></video>  
-</div>  
+
+  <!-- 🎭 CINEMA CURTAIN -->
+  <div id="curtain">
+    <div class="half left"></div>
+    <div class="half right"></div>
+    <div class="shine"></div>
+  </div>
+  <!-- END CURTAIN -->
+
+  <video id="video" controls></video>  
+
+</div>
   
 <div class="chat-container glass">  
 <div class="chat-box" id="chat"></div>  
@@ -579,7 +628,26 @@ var lastSeekSend=0;
 function pushState(state){  
 db.ref("video/state").set(state);  
 }  
+vid.addEventListener("play",()=>{  
+  /* 🎭 CURTAIN OPEN (ADDED) */
+  if(!window.__curtainOpened){
+    window.__curtainOpened=true;
+    var c=document.getElementById("curtain");
+    if(c){
+      c.classList.add("open");
+      setTimeout(()=>{ c.classList.add("hide"); }, 1600);
+    }
+  }
+  /* END CURTAIN */
 
+  if(isSyncing)return;  
+  pushState({  
+    action:"play",  
+    time:vid.currentTime,  
+    rate:vid.playbackRate,  
+    ts:Date.now()  
+  });  
+});
 vid.addEventListener("play",()=>{  
 if(isSyncing)return;  
 pushState({  
