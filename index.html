@@ -115,11 +115,76 @@ flex:0 0 40%;
 padding:10px;  
 display:flex;  
 flex-direction:column;  
+position:relative;  
+overflow:hidden;  
 }  
 video{  
 width:100%;  
 flex:1;  
 border-radius:12px;  
+}  
+  
+/********************/
+/* 🎭 REAL CURTAIN  */
+/********************/
+#curtain{  
+position:absolute;  
+inset:10px;  
+border-radius:12px;  
+z-index:10;  
+pointer-events:none;  
+display:flex;  
+overflow:hidden;  
+}  
+  
+#curtain .side{  
+width:50%;  
+height:100%;  
+background:  
+repeating-linear-gradient(  
+90deg,  
+#7a0000 0px,  
+#b30000 20px,  
+#7a0000 40px  
+);  
+box-shadow: inset 0 0 40px rgba(0,0,0,.6);  
+transition:transform 1.6s cubic-bezier(.77,0,.18,1);  
+}  
+  
+#curtain .left{transform:translateX(0)}  
+#curtain .right{transform:translateX(0)}  
+  
+#curtain.open .left{transform:translateX(-105%)}  
+#curtain.open .right{transform:translateX(105%)}  
+#curtain.hide{display:none}  
+  
+/* 🥇 GOLD BAR */
+#curtain::before{  
+content:"";  
+position:absolute;  
+top:0;  
+left:0;  
+width:100%;  
+height:14px;  
+background:linear-gradient(90deg,#caa400,#ffd700,#fff3a0,#ffd700,#caa400);  
+box-shadow:0 2px 8px rgba(255,215,0,.6), inset 0 -2px 4px rgba(0,0,0,.4);  
+z-index:20;  
+}  
+#curtain::after{  
+content:"";  
+position:absolute;  
+top:2px;  
+left:0;  
+width:100%;  
+height:4px;  
+background:linear-gradient(90deg,rgba(255,255,255,.6),rgba(255,255,255,.1),rgba(255,255,255,.6));  
+animation:goldShine 3s linear infinite;  
+opacity:.7;  
+z-index:21;  
+}  
+@keyframes goldShine{  
+0%{transform:translateX(-100%)}  
+100%{transform:translateX(100%)}  
 }  
   
 .chat-container{  
@@ -188,8 +253,7 @@ gap:6px;
 font-size:18px;  
 align-items:center;  
 }  
-
-/* ✅ tiny reaction button on each message */
+  
 .react-btn{  
 font-size:11px;  
 opacity:.9;  
@@ -201,8 +265,7 @@ cursor:pointer;
 user-select:none;  
 }  
 .react-btn:active{transform:scale(.96)}  
-
-/* ✅ tiny edit button on my messages */
+  
 .edit-btn{  
 font-size:11px;  
 opacity:.9;  
@@ -214,8 +277,7 @@ cursor:pointer;
 user-select:none;  
 }  
 .edit-btn:active{transform:scale(.96)}  
-
-/* ✅ close button inside picker */
+  
 .picker-close{  
 font-size:12px;  
 padding:2px 6px;  
@@ -225,8 +287,7 @@ background:rgba(255,255,255,.08);
 cursor:pointer;  
 user-select:none;  
 }  
-
-/* ✅ typing indicator */
+  
 #typingIndicator{  
 display:none;  
 flex-shrink:0;  
@@ -239,8 +300,7 @@ backdrop-filter:blur(10px);
 font-size:12px;  
 opacity:.9;  
 }  
-
-/* ✅ Telegram-like reply preview above input */
+  
 #replyPreview{  
 display:none;  
 flex-shrink:0;  
@@ -278,8 +338,7 @@ color:white;
 cursor:pointer;  
 }  
 #cancelReply:active{transform:scale(.97)}  
-
-/* ✅ edit preview above input */
+  
 #editPreview{  
 display:none;  
 flex-shrink:0;  
@@ -403,113 +462,27 @@ background:#e50914;
 color:white;  
 }  
   
+/********************/
+/* 🟢 ONLINE DOT    */
+/********************/
+#onlineDot{  
+  width:8px;  
+  height:8px;  
+  border-radius:50%;  
+  background:#00ff66;  
+  box-shadow:0 0 6px #00ff66;  
+  animation:blinkOnline 1s infinite;  
+}  
+@keyframes blinkOnline{  
+  0%{opacity:1}  
+  50%{opacity:.3}  
+  100%{opacity:1}  
+}  
+  
 @media (orientation:landscape){  
 .main{flex-direction:row}  
 .video-container{flex:0 0 60%}  
 }  
-  /* 🟢 ONLINE STATUS DOT */
-#onlineDot{
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  background:#00ff66;
-  box-shadow:0 0 6px #00ff66;
-  animation:blinkOnline 1s infinite;
-}
-
-@keyframes blinkOnline{
-  0%{opacity:1}
-  50%{opacity:.3}
-  100%{opacity:1}
-}
-  /* 🎭 CINEMA CURTAIN */
-.video-container{position:relative;} /* اضافه: برای اینکه پرده روی ویدیو درست بشینه */
-
-#curtain{
-  position:absolute;
-  inset:10px;              /* هم‌راستا با پدینگ خود video-container */
-  border-radius:12px;      /* مثل ویدیو */
-  overflow:hidden;
-  z-index:5;
-  pointer-events:none;     /* کنترل‌های ویدیو رو قفل نکنه */
-}
-
-#curtain .half{
-  position:absolute;
-  top:0; bottom:0;
-  width:50%;
-  background:
-    linear-gradient(to right, rgba(0,0,0,.85), rgba(70,0,0,.65), rgba(0,0,0,.85));
-  box-shadow: inset 0 0 30px rgba(0,0,0,.6);
-}
-
-#curtain .left{left:0; border-right:1px solid rgba(255,255,255,.08);}
-#curtain .right{right:0; border-left:1px solid rgba(255,255,255,.08);}
-
-#curtain .shine{
-  position:absolute;
-  inset:0;
-  background: radial-gradient(circle at 50% 50%, rgba(255,255,255,.10), rgba(0,0,0,0) 55%);
-  opacity:.7;
-}
-
-#curtain.open .left{transform:translateX(-110%);}
-#curtain.open .right{transform:translateX(110%);}
-#curtain .left, #curtain .right{
-  transition:transform 1.35s ease-in-out;
-}
-
-#curtain.hide{display:none;}
-/* END CURTAIN */
-/* 🎬 REAL CINEMA CURTAIN */
-
-.video-container{
-  position:relative;
-  overflow:hidden;
-}
-
-#curtain{
-  position:absolute;
-  inset:10px;
-  border-radius:12px;
-  z-index:10;
-  pointer-events:none;
-  display:flex;
-}
-
-#curtain .side{
-  width:50%;
-  height:100%;
-  background:
-    repeating-linear-gradient(
-      90deg,
-      #7a0000 0px,
-      #b30000 20px,
-      #7a0000 40px
-    );
-  box-shadow: inset 0 0 40px rgba(0,0,0,.6);
-  transition:transform 1.6s cubic-bezier(.77,0,.18,1);
-}
-
-#curtain .left{
-  transform:translateX(0);
-}
-
-#curtain .right{
-  transform:translateX(0);
-}
-
-#curtain.open .left{
-  transform:translateX(-105%);
-}
-
-#curtain.open .right{
-  transform:translateX(105%);
-}
-
-#curtain.hide{
-  display:none;
-  }
 </style>  
 </head>  
   
@@ -532,16 +505,14 @@ color:white;
   
 <header>  
 <span>🎬 Watch Together</span>  
-<div>  
-<div style="display:flex;align-items:center;gap:8px;white-space:nowrap;">
-  <span id="onlineWrapper" style="display:flex;align-items:center;gap:6px;">
-  <span id="onlineDot"></span>
-  <span id="online">Online: 1</span>
-  </span>
-<button onclick="toggleSettings()">⚙️</button>  
+<div style="display:flex;align-items:center;gap:8px;white-space:nowrap;">  
+  <span id="onlineWrapper" style="display:flex;align-items:center;gap:6px;">  
+    <span id="onlineDot"></span>  
+    <span id="online">Online: 1</span>  
+  </span>  
+  <button onclick="toggleSettings()">⚙️</button>  
 </div>  
-</header>  
-  
+</header>
 <!-- 🎄 LIGHT STRING -->  
 <div class="light-wrapper">  
 <div class="light-wire">  
@@ -565,29 +536,24 @@ style="width:100%;padding:8px;border-radius:10px;border:none;margin-bottom:8px">
   
 <div class="main">  
 <div class="video-container glass">  
-<div class="video-container glass">
-
+  
   <!-- 🎬 REAL CURTAIN -->
-  <div id="curtain">
-    <div class="side left"></div>
-    <div class="side right"></div>
-  </div>
-
-  <video id="video" controls></video>
-
-</div>
-
+  <div id="curtain">  
+    <div class="side left"></div>  
+    <div class="side right"></div>  
+  </div>  
+  
   <video id="video" controls></video>  
-
-</div>
+  
+</div>  
   
 <div class="chat-container glass">  
 <div class="chat-box" id="chat"></div>  
-
-<!-- ✅ Typing indicator -->
-<div id="typingIndicator"></div>
-
-<!-- ✅ Edit preview -->
+  
+<!-- ✅ Typing indicator -->  
+<div id="typingIndicator"></div>  
+  
+<!-- ✅ Edit preview -->  
 <div id="editPreview">  
   <div class="ep-top">  
     <span>ویرایش پیام</span>  
@@ -595,8 +561,8 @@ style="width:100%;padding:8px;border-radius:10px;border:none;margin-bottom:8px">
   </div>  
   <div class="ep-text" id="editPreviewText"></div>  
 </div>  
-
-<!-- ✅ Reply preview (Telegram-like) -->
+  
+<!-- ✅ Reply preview (Telegram-like) -->  
 <div id="replyPreview">  
   <div class="rp-top">  
     <span>Reply</span>  
@@ -604,7 +570,7 @@ style="width:100%;padding:8px;border-radius:10px;border:none;margin-bottom:8px">
   </div>  
   <div class="rp-text" id="replyPreviewText"></div>  
 </div>  
-
+  
 <div class="input-area">  
 <input id="msg" placeholder="پیام...">  
 <button onclick="send()">Send</button>  
@@ -632,11 +598,9 @@ document.querySelectorAll(".bulb").forEach(b=>{
 b.style.color=colors[Math.floor(Math.random()*colors.length)];  
 });  
 },2000);  
-</script>  
-  
+</script>
 <script>  
-alert("JS OK");
-  var firebaseConfig={  
+var firebaseConfig={  
 apiKey:"AIzaSyCDHmmKIYPHDyvx4BXTb-7VP6lmVb8BCYw",  
 authDomain:"film-online-922c1.firebaseapp.com",  
 databaseURL:"https://film-online-922c1-default-rtdb.firebaseio.com/",  
@@ -650,16 +614,15 @@ var myId=Math.random().toString(36).substr(2,9);
 var replyTo=null;  
 var editKey=null;  
   
-function checkPass(){
-  var input = document.getElementById("pass").value.trim();
-
-  if(input === "bazsho20"){
-    document.getElementById("login").style.display = "none";
-    document.getElementById("welcomeOverlay").style.display = "flex";
-  } else {
-    alert("رمز اشتباهه");
-  }
-}
+function checkPass(){  
+  var input=document.getElementById("pass").value.trim();  
+  if(input==="bazsho20"){  
+    document.getElementById("login").style.display="none";  
+    document.getElementById("welcomeOverlay").style.display="flex";  
+  }else{  
+    alert("رمز اشتباهه");  
+  }  
+}  
 function closeWelcome(){welcomeOverlay.style.display="none"}  
 function toggleSettings(){settings.classList.toggle("open")}  
 function toggleDark(){document.body.classList.toggle("dark")}  
@@ -674,44 +637,36 @@ toggleSettings();
 db.ref("video/url").on("value",snap=>{  
 if(snap.val())video.src=snap.val();  
 });  
-
-/* ===================== */
-/* ✅ VIDEO SYNC ADDED ✅ */
-/* ===================== */
+  
+/* ===================== */  
+/* ✅ VIDEO SYNC ADDED ✅ */  
+/* ===================== */  
 var vid=document.getElementById("video");  
 var isSyncing=false;  
 var lastSeekSend=0;  
-
+  
 function pushState(state){  
 db.ref("video/state").set(state);  
 }  
+  
+function curtainReset(){  
+  var c=document.getElementById("curtain");  
+  if(!c)return;  
+  c.classList.remove("hide");  
+  c.classList.remove("open");  
+}  
+  
+function curtainOpenAndGo(){  
+  var c=document.getElementById("curtain");  
+  if(!c)return;  
+  c.classList.remove("hide");  
+  c.classList.remove("open");  
+  setTimeout(()=>{ c.classList.add("open"); },60);  
+  setTimeout(()=>{ c.classList.add("hide"); },1750);  
+}  
+  
 vid.addEventListener("play",()=>{  
-  /* 🎭 CURTAIN OPEN (ADDED) */
-  if(!window.__curtainOpened){
-    window.__curtainOpened=true;
-    var c=document.getElementById("curtain");
-    if(c){
-      c.classList.add("open");
-      setTimeout(()=>{ c.classList.add("hide"); }, 1600);
-    }
-  }
-  /* END CURTAIN */
-vid.addEventListener("pause",()=>{
-
-  var c=document.getElementById("curtain");
-  if(c){
-    c.classList.remove("hide");
-    c.classList.remove("open");
-  }
-
-if(isSyncing)return;
-pushState({
-action:"pause",
-time:vid.currentTime,
-rate:vid.playbackRate,
-ts:Date.now()
-});
-});
+  curtainOpenAndGo();  
   if(isSyncing)return;  
   pushState({  
     action:"play",  
@@ -719,49 +674,33 @@ ts:Date.now()
     rate:vid.playbackRate,  
     ts:Date.now()  
   });  
-});
-vid.addEventListener("play",()=>{  
-vid.addEventListener("play",()=>{
-
-  var c=document.getElementById("curtain");
-  if(c){
-    c.classList.remove("hide");
-    setTimeout(()=>{ c.classList.add("open"); },50);
-    setTimeout(()=>{ c.classList.add("hide"); },1700);
-  }
-
-if(isSyncing)return;
-pushState({
-action:"play",
-time:vid.currentTime,
-rate:vid.playbackRate,
-ts:Date.now()
-});
-});
-
+});  
+  
 vid.addEventListener("pause",()=>{  
-if(isSyncing)return;  
-pushState({  
-action:"pause",  
-time:vid.currentTime,  
-rate:vid.playbackRate,  
-ts:Date.now()  
+  curtainReset();  
+  if(isSyncing)return;  
+  pushState({  
+    action:"pause",  
+    time:vid.currentTime,  
+    rate:vid.playbackRate,  
+    ts:Date.now()  
+  });  
 });  
-});  
-
+  
 vid.addEventListener("seeked",()=>{  
-if(isSyncing)return;  
-var now=Date.now();  
-if(now-lastSeekSend<250)return;  
-lastSeekSend=now;  
-pushState({  
-action:"seek",  
-time:vid.currentTime,  
-rate:vid.playbackRate,  
-ts:now  
+  curtainOpenAndGo(); /* ✅ وقتی اسنپ/seek میدی پرده دوباره میاد */  
+  if(isSyncing)return;  
+  var now=Date.now();  
+  if(now-lastSeekSend<250)return;  
+  lastSeekSend=now;  
+  pushState({  
+    action:"seek",  
+    time:vid.currentTime,  
+    rate:vid.playbackRate,  
+    ts:now  
+  });  
 });  
-});  
-
+  
 vid.addEventListener("ratechange",()=>{  
 if(isSyncing)return;  
 pushState({  
@@ -771,20 +710,24 @@ rate:vid.playbackRate,
 ts:Date.now()  
 });  
 });  
-
+  
 db.ref("video/state").on("value",snap=>{  
 var s=snap.val();  
 if(!s)return;  
 isSyncing=true;  
-
+  
 if(typeof s.rate==="number" && vid.playbackRate!==s.rate){  
 vid.playbackRate=s.rate;  
 }  
-
+  
 if(typeof s.time==="number" && Math.abs(vid.currentTime-s.time)>0.6){  
 try{vid.currentTime=s.time;}catch(e){}  
 }  
-
+  
+if(s.action==="seek"){  
+  curtainOpenAndGo();  
+}  
+  
 if(s.action==="play"){  
 var p=vid.play();  
 if(p && p.catch)p.catch(()=>{});  
@@ -792,36 +735,36 @@ if(p && p.catch)p.catch(()=>{});
 if(s.action==="pause"){  
 vid.pause();  
 }  
-
+  
 setTimeout(()=>{isSyncing=false;},300);  
 });  
 /* ===== END SYNC ===== */  
   
-/* 🟢 PROFESSIONAL ONLINE SYSTEM */
-var connectedRef = db.ref(".info/connected");
-
-connectedRef.on("value", function(snap) {
-  if (snap.val() === true) {
-    var con = db.ref("online/" + myId);
-    con.set({
-      user: username,
-      ts: Date.now()
-    });
-    con.onDisconnect().remove();
-  }
-});
-
-db.ref("online").on("value", snap => {
-  var count = 0;
-  snap.forEach(child => {
-    if(child.val()) count++;
-  });
-  document.getElementById("online").innerText = "Online: " + count;
-});
-
-/*****************************/
-/* ✅ REPLY PREVIEW SYSTEM ✅ */
-/*****************************/
+/* 🟢 PROFESSIONAL ONLINE SYSTEM */  
+var connectedRef = db.ref(".info/connected");  
+  
+connectedRef.on("value", function(snap) {  
+  if (snap.val() === true) {  
+    var con = db.ref("online/" + myId);  
+    con.set({  
+      user: username,  
+      ts: Date.now()  
+    });  
+    con.onDisconnect().remove();  
+  }  
+});  
+  
+db.ref("online").on("value", snap => {  
+  var count = 0;  
+  snap.forEach(child => {  
+    if(child.val()) count++;  
+  });  
+  document.getElementById("online").innerText = "Online: " + count;  
+});  
+  
+/*****************************/  
+/* ✅ REPLY PREVIEW SYSTEM ✅ */  
+/*****************************/  
 function setReply(text){  
 replyTo=text;  
 var box=document.getElementById("replyPreview");  
@@ -830,17 +773,17 @@ t.innerText=text;
 box.style.display="block";  
 try{msg.focus();}catch(e){}  
 }  
-
+  
 function cancelReply(){  
 replyTo=null;  
 var box=document.getElementById("replyPreview");  
 box.style.display="none";  
 document.getElementById("replyPreviewText").innerText="";  
 }  
-
-/****************************/
-/* ✅ EDIT MESSAGE SYSTEM ✅ */
-/****************************/
+  
+/****************************/  
+/* ✅ EDIT MESSAGE SYSTEM ✅ */  
+/****************************/  
 function setEdit(key,oldText){  
 editKey=key;  
 document.getElementById("editPreviewText").innerText=oldText;  
@@ -849,22 +792,22 @@ msg.value=oldText;
 try{msg.focus();}catch(e){}  
 cancelReply();  
 }  
-
+  
 function cancelEdit(){  
 editKey=null;  
 document.getElementById("editPreview").style.display="none";  
 document.getElementById("editPreviewText").innerText="";  
 msg.value="";  
 }  
-
-/*****************************/
-/* ✅ TYPING INDICATOR ✅     */
-/*****************************/
+  
+/*****************************/  
+/* ✅ TYPING INDICATOR ✅     */  
+/*****************************/  
 function setTyping(isTyping){  
 db.ref("typing/"+myId).set(isTyping?{user:username,typing:true,ts:Date.now()}:null);  
 }  
 db.ref("typing/"+myId).onDisconnect().remove();  
-
+  
 var typingTimer=null;  
 msg.addEventListener("input",()=>{  
 setTyping(true);  
@@ -876,7 +819,7 @@ setTyping(false);
 msg.addEventListener("blur",()=>{  
 setTyping(false);  
 });  
-
+  
 db.ref("typing").on("value",snap=>{  
 var names=[];  
 snap.forEach(c=>{  
@@ -893,20 +836,20 @@ box.style.display="none";
 box.innerText="";  
 }  
 });  
-
-/*****************************/
-/* ✅ CLOSE ANY OPEN PICKER ✅ */
-/*****************************/
+  
+/*****************************/  
+/* ✅ CLOSE ANY OPEN PICKER ✅ */  
+/*****************************/  
 function closeAllPickers(){  
 document.querySelectorAll(".reaction-picker").forEach(p=>p.remove());  
 }  
 document.addEventListener("click",()=>{  
 closeAllPickers();  
 });  
-
+  
 function send(){  
 if(!msg.value)return;  
-
+  
 if(editKey){  
 db.ref("chat/"+editKey+"/text").set(msg.value);  
 db.ref("chat/"+editKey+"/edited").set(true);  
@@ -915,7 +858,7 @@ cancelEdit();
 setTyping(false);  
 return;  
 }  
-
+  
 db.ref("chat").push({  
 text:msg.value,  
 user:username,  
@@ -929,18 +872,18 @@ msg.value="";
 cancelReply();  
 setTyping(false);  
 }  
-
-/********************************************/
-/* ✅ DOUBLE TAP / DOUBLE CLICK TO REPLY ✅ */
-/********************************************/
+  
+/********************************************/  
+/* ✅ DOUBLE TAP / DOUBLE CLICK TO REPLY ✅ */  
+/********************************************/  
 var lastTapTimeByKey={};  
-
+  
 function attachReplyHandlers(div,key,text){  
 div.addEventListener("dblclick",function(e){  
 e.stopPropagation();  
 setReply(text);  
 });  
-
+  
 div.addEventListener("touchend",function(e){  
 var now=Date.now();  
 var last=lastTapTimeByKey[key]||0;  
@@ -951,7 +894,7 @@ setReply(text);
 }  
 },{passive:false});  
 }  
-
+  
 db.ref("chat").on("child_added",snap=>{  
 var d=snap.val();  
 var key=snap.key;  
@@ -975,10 +918,7 @@ div.appendChild(text);
   
 var meta=document.createElement("div");  
 meta.className="meta";  
-
-/*************************************/
-/* ✅ SMALL BUTTONS PER MSG ✅ */
-/*************************************/
+  
 var reactBtn=document.createElement("span");  
 reactBtn.className="react-btn";  
 reactBtn.innerText="😊";  
@@ -987,7 +927,7 @@ ev.stopPropagation();
 closeAllPickers();  
 showReactions(key,div);  
 };  
-
+  
 if(d.user===username){  
 var editBtn=document.createElement("span");  
 editBtn.className="edit-btn";  
@@ -998,11 +938,11 @@ closeAllPickers();
 setEdit(key,d.text);  
 };  
 }  
-
+  
 meta.innerHTML=new Date(d.time).toLocaleTimeString().slice(0,5)  
 +(d.edited?" <span style='opacity:.75'>(edited)</span>":"")  
 +(d.user===username?" <span id='s"+key+"'>✔</span>":"");  
-
+  
 if(d.user===username){  
 meta.appendChild(editBtn);  
 }  
@@ -1012,15 +952,11 @@ div.appendChild(meta);
 var react=document.createElement("div");  
 react.className="reactions";  
 div.appendChild(react);  
-
-/********************************************/
-/* ✅ CHANGE: click no longer sets reply ✅ */
-/* (reply only on double tap / dblclick)    */
-/********************************************/
+  
 div.onclick=function(e){  
 e.stopPropagation();  
 };  
-
+  
 attachReplyHandlers(div,key,d.text);  
   
 chat.appendChild(div);  
@@ -1037,10 +973,7 @@ function showReactions(key,div){
 if(div.querySelector(".reaction-picker"))return;  
 var picker=document.createElement("div");  
 picker.className="reaction-picker";  
-
-/*************************************/
-/* ✅ CANCEL/CLOSE BUTTON IN PANEL ✅ */
-/*************************************/
+  
 var close=document.createElement("span");  
 close.className="picker-close";  
 close.innerText="✕";  
@@ -1049,7 +982,7 @@ ev.stopPropagation();
 picker.remove();  
 };  
 picker.appendChild(close);  
-
+  
 ["😍","😎","🤣","🩷","👌","😭","😡","🔥","😜"].forEach(e=>{  
 var span=document.createElement("span");  
 span.innerText=e;  
@@ -1065,13 +998,12 @@ div.appendChild(picker);
   
 db.ref("chat").on("child_changed",snap=>{  
 var d=snap.val();  
-
-/********** update message text + edited label **********/
+  
 var m=document.getElementById("m_"+snap.key);  
 if(m){  
 var mainText=m.querySelector("div:nth-child("+(d.reply?2:1)+")");  
 if(mainText)mainText.innerText=d.text;  
-
+  
 var meta=m.querySelector(".meta");  
 if(meta){  
 var timeStr=new Date(d.time).toLocaleTimeString().slice(0,5);  
@@ -1087,7 +1019,7 @@ closeAllPickers();
 setEdit(snap.key,d.text);  
 };  
 meta.appendChild(editBtn);  
-
+  
 var reactBtn=document.createElement("span");  
 reactBtn.className="react-btn";  
 reactBtn.innerText="😊";  
@@ -1111,8 +1043,7 @@ meta.appendChild(reactBtn);
 }  
 }  
 }  
-
-/********** update reactions **********/
+  
 var react=document.querySelector("#m_"+snap.key+" .reactions");  
 if(react){  
 react.innerHTML="";  
