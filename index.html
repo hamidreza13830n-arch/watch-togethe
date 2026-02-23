@@ -680,6 +680,29 @@ video{
   height:100%;
   object-fit:contain;
 }
+.floating-video{
+  position:fixed !important;
+  top:80px;
+  left:20px;
+  width:320px;
+  height:auto;
+  z-index:9999;
+  resize:none;
+  overflow:hidden;
+  box-shadow:0 10px 30px rgba(0,0,0,.4);
+}
+
+.resize-handle{
+  position:absolute;
+  width:22px;
+  height:22px;
+  right:0;
+  bottom:0;
+  background:rgba(255,255,255,0.4);
+  border-radius:4px 0 0 0;
+  cursor:se-resize;
+  z-index:10000;
+}
 </style>  
 </head>
 <body>
@@ -754,7 +777,7 @@ video{
     <div id="videoEmoteLayer"></div>
 
     <video id="video" controls></video>  
-
+<div class="resize-handle" id="resizeHandle"></div>
     <!-- ✅ tiny button like chat reaction (now it sits in bottom space, not on video) -->
     <span id="videoReactBtn" class="react-btn" style="position:absolute;right:14px;bottom:14px;z-index:12;">😊</span>
 <span id="floatToggleBtn" class="react-btn" style="position:absolute;right:54px;bottom:14px;z-index:12;">🪄</span>
@@ -1464,6 +1487,62 @@ function stopDrag(){
   isDragging = false;
   document.removeEventListener("mousemove", moveDesktop);
   document.removeEventListener("mouseup", stopDrag);
+}
+  /* ===== MOBILE RESIZE SYSTEM ===== */
+
+const resizeHandle = document.getElementById("resizeHandle");
+
+let isResizing = false;
+
+resizeHandle.addEventListener("touchstart", (e) => {
+  if(!isFloating) return;
+  isResizing = true;
+  e.stopPropagation();
+});
+
+resizeHandle.addEventListener("touchmove", (e) => {
+  if(!isResizing) return;
+
+  const touch = e.touches[0];
+  const rect = videoBox.getBoundingClientRect();
+
+  let newWidth = touch.clientX - rect.left;
+  let newHeight = touch.clientY - rect.top;
+
+  if(newWidth > 200) videoBox.style.width = newWidth + "px";
+  if(newHeight > 150) videoBox.style.height = newHeight + "px";
+});
+
+resizeHandle.addEventListener("touchend", () => {
+  isResizing = false;
+});
+
+/* DESKTOP RESIZE */
+resizeHandle.addEventListener("mousedown", (e)=>{
+  if(!isFloating) return;
+
+  isResizing = true;
+  e.stopPropagation();
+
+  document.addEventListener("mousemove", resizeDesktop);
+  document.addEventListener("mouseup", stopResize);
+});
+
+function resizeDesktop(e){
+  if(!isResizing) return;
+
+  const rect = videoBox.getBoundingClientRect();
+  let newWidth = e.clientX - rect.left;
+  let newHeight = e.clientY - rect.top;
+
+  if(newWidth > 200) videoBox.style.width = newWidth + "px";
+  if(newHeight > 150) videoBox.style.height = newHeight + "px";
+}
+
+function stopResize(){
+  isResizing = false;
+  document.removeEventListener("mousemove", resizeDesktop);
+  document.removeEventListener("mouseup", stopResize);
 }
   </script>  
 
