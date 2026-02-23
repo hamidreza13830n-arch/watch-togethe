@@ -657,6 +657,29 @@ video{
     margin-top:auto;       /* بچسبه پایین */
   }
 }
+.floating-video{
+  position:fixed !important;
+  top:120px;
+  left:60px;
+  width:360px;
+  height:200px;
+  z-index:9999;
+  resize:both;
+  overflow:auto;
+  min-width:200px;
+  min-height:120px;
+  max-width:90vw;
+  max-height:90vh;
+  box-shadow:0 25px 50px rgba(0,0,0,.6);
+  border-radius:12px;
+  cursor:move;
+}
+
+.floating-video video{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
 </style>  
 </head>
 <body>
@@ -1363,7 +1386,57 @@ function clearChat(){
   cancelReply();  
   cancelEdit();  
 }  
+const floatBtn = document.getElementById("floatToggleBtn");
+const videoBox = document.querySelector(".video-container");
 
+let isFloating = false;
+let isDragging = false;
+let offsetX = 0;
+let offsetY = 0;
+
+floatBtn.addEventListener("click", () => {
+
+  if(!isFloating){
+    videoBox.classList.add("floating-video");
+    floatBtn.innerText = "✔";
+    isFloating = true;
+  }else{
+    videoBox.classList.remove("floating-video");
+    floatBtn.innerText = "🪄";
+    isFloating = false;
+
+    videoBox.style.top = "";
+    videoBox.style.left = "";
+    videoBox.style.width = "";
+    videoBox.style.height = "";
+  }
+
+});
+
+/* Drag */
+videoBox.addEventListener("mousedown", (e) => {
+  if(!isFloating) return;
+
+  isDragging = true;
+  offsetX = e.clientX - videoBox.offsetLeft;
+  offsetY = e.clientY - videoBox.offsetTop;
+
+  document.addEventListener("mousemove", moveVideo);
+  document.addEventListener("mouseup", stopDrag);
+});
+
+function moveVideo(e){
+  if(!isDragging) return;
+
+  videoBox.style.left = (e.clientX - offsetX) + "px";
+  videoBox.style.top = (e.clientY - offsetY) + "px";
+}
+
+function stopDrag(){
+  isDragging = false;
+  document.removeEventListener("mousemove", moveVideo);
+  document.removeEventListener("mouseup", stopDrag);
+}
 </script>  
 
 </body>  
