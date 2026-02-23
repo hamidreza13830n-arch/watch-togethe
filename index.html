@@ -1386,6 +1386,8 @@ function clearChat(){
   cancelReply();  
   cancelEdit();  
 }  
+/* ===== FLOAT VIDEO SYSTEM (MOBILE + DESKTOP) ===== */
+
 const floatBtn = document.getElementById("floatToggleBtn");
 const videoBox = document.querySelector(".video-container");
 
@@ -1413,7 +1415,8 @@ floatBtn.addEventListener("click", () => {
 
 });
 
-/* Drag */
+/* ===== DESKTOP DRAG ===== */
+
 videoBox.addEventListener("mousedown", (e) => {
   if(!isFloating) return;
 
@@ -1421,23 +1424,48 @@ videoBox.addEventListener("mousedown", (e) => {
   offsetX = e.clientX - videoBox.offsetLeft;
   offsetY = e.clientY - videoBox.offsetTop;
 
-  document.addEventListener("mousemove", moveVideo);
+  document.addEventListener("mousemove", moveDesktop);
   document.addEventListener("mouseup", stopDrag);
 });
 
-function moveVideo(e){
+function moveDesktop(e){
   if(!isDragging) return;
 
   videoBox.style.left = (e.clientX - offsetX) + "px";
   videoBox.style.top = (e.clientY - offsetY) + "px";
 }
 
+/* ===== MOBILE DRAG ===== */
+
+videoBox.addEventListener("touchstart", (e) => {
+  if(!isFloating) return;
+
+  isDragging = true;
+  const touch = e.touches[0];
+  offsetX = touch.clientX - videoBox.offsetLeft;
+  offsetY = touch.clientY - videoBox.offsetTop;
+});
+
+videoBox.addEventListener("touchmove", (e) => {
+  if(!isDragging) return;
+
+  const touch = e.touches[0];
+  videoBox.style.left = (touch.clientX - offsetX) + "px";
+  videoBox.style.top = (touch.clientY - offsetY) + "px";
+});
+
+videoBox.addEventListener("touchend", () => {
+  isDragging = false;
+});
+
+/* ===== STOP DESKTOP DRAG ===== */
+
 function stopDrag(){
   isDragging = false;
-  document.removeEventListener("mousemove", moveVideo);
+  document.removeEventListener("mousemove", moveDesktop);
   document.removeEventListener("mouseup", stopDrag);
 }
-</script>  
+  </script>  
 
 </body>  
 </html>
