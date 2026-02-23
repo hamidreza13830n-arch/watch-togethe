@@ -625,6 +625,31 @@ color:white;
     margin-top:-10px;         /* ✅ keep aligned (remove if you don't want chat up) */
   }
 }  
+/* ✅ Doodle background overlay (subtle + animated) */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+
+  background-image:url("file_00000000b56c720a854ca8320ec902b3.png");
+  background-repeat:repeat;
+
+  /* ریز و کم‌رنگ */
+  background-size:260px 260px;   /* هرچی کوچیک‌تر = ریزتر */
+  opacity:0.08;                 /* هرچی کمتر = کم‌رنگ‌تر */
+
+  /* بهتر با تم‌ها قاطی شه */
+  mix-blend-mode:overlay;
+
+  z-index:1; /* مهم: زیر محتوا، بالای بک‌گراند */
+  animation:doodleMove 30s linear infinite;
+}
+
+@keyframes doodleMove{
+  0%{ background-position:0 0; }
+  100%{ background-position:600px 300px; }
+}
 </style>  
 </head>
 <body>
