@@ -1072,23 +1072,32 @@ msg.addEventListener("input",()=>{
 });  
 msg.addEventListener("blur",()=>{setTyping(false);});  
 
-db.ref("typing").on("value",snap=>{  
-  var names=[];  
-  snap.forEach(c=>{  
-    if(c.key!==myId && c.val() && c.val().typing){  
-      names.push(c.val().user||"someone");  
-    }  
-  });  
-  var box=document.getElementById("typingIndicator");  
-  if(names.length){  
-    box.style.display="block";  
-    box.innerText=(names.length===1?names[0]:"چند نفر")+" در حال تایپ...";  
-  }else{  
-    box.style.display="none";  
-    box.innerText="";  
-  }  
-});  
+db.ref("typing").on("value", snap => {
+  const now = Date.now();
+  const names = [];
 
+  snap.forEach(c => {
+    const v = c.val();
+    if(!v) return;
+
+    // فقط دیگران
+    if(c.key === myId) return;
+
+    // فقط تایپ واقعی + تازه (مثلاً 3 ثانیه اخیر)
+    if(v.typing === true && typeof v.ts === "number" && (now - v.ts) < 3000){
+      names.push(v.user || "someone");
+    }
+  });
+
+  const box = document.getElementById("typingIndicator");
+  if(names.length){
+    box.style.display = "block";
+    box.innerText = (names.length === 1 ? names[0] : "چند نفر") + " در حال تایپ...";
+  }else{
+    box.style.display = "none";
+    box.innerText = "";
+  }
+});
 /*****************************/
 /* ✅ CLOSE ANY OPEN PICKER ✅ */
 /*****************************/
