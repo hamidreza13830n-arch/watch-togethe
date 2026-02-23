@@ -613,11 +613,12 @@ color:white;
 
 /* ✅ UPDATED: landscape layout fix (video not dropping down) */
 @media (orientation:landscape){  
-  .main{
+.main{
   flex-direction:row;
   align-items:stretch;
-  height:100dvh;
-  }
+  height:calc(100dvh - 42px - 36px);
+  padding:0;
+}
 
   .video-container{
     flex:0 0 60%;
