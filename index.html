@@ -625,14 +625,11 @@ video{
   object-fit:contain;
   background:black;
   }
-  .video-container{
-    flex:0 0 60%;
-    margin-top:0;          /* بدون شیفت */
-align-self:flex-start;
-height:100%;
-  .video-container{
+  .video-container:not(.floating-video){
   flex:0 0 60%;
   margin-top:0;
+  align-self:flex-start;
+  height:100%;
   display:flex;
   flex-direction:column;
   justify-content:flex-start;
@@ -702,6 +699,14 @@ video{
   border-radius:4px 0 0 0;
   cursor:se-resize;
   z-index:10000;
+}
+.floating-video{
+  position:fixed !important;
+  z-index:9999;
+}
+
+.floating-video ~ .chat-container{
+  flex:1 !important;
 }
 </style>  
 </head>
@@ -1422,13 +1427,38 @@ let offsetY = 0;
 floatBtn.addEventListener("click", () => {
 
   if(!isFloating){
+
     videoBox.classList.add("floating-video");
     floatBtn.innerText = "✔";
     isFloating = true;
+
+    // restore saved position
+    const saved = JSON.parse(localStorage.getItem("floatVideo"));
+    if(saved){
+      videoBox.style.top = saved.top;
+      videoBox.style.left = saved.left;
+      videoBox.style.width = saved.width;
+      videoBox.style.height = saved.height;
+    }
+
   }else{
+
+    // save position before exit
+    const data = {
+      top: videoBox.style.top,
+      left: videoBox.style.left,
+      width: videoBox.style.width,
+      height: videoBox.style.height
+    };
+
+    localStorage.setItem("floatVideo", JSON.stringify(data));
+
     videoBox.classList.remove("floating-video");
     floatBtn.innerText = "🪄";
     isFloating = false;
+  }
+
+});
 
     videoBox.style.top = "";
     videoBox.style.left = "";
