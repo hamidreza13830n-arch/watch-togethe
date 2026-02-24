@@ -989,9 +989,15 @@ db.ref("video/state").on("value",snap=>{
     vid.playbackRate=s.rate;  
   }  
 
-  if(typeof s.time==="number" && Math.abs(vid.currentTime-s.time)>0.6){  
-    try{vid.currentTime=s.time;}catch(e){}  
-  }  
+  if(
+  typeof s.time==="number" &&
+  Math.abs(vid.currentTime - s.time) > 1.5 &&
+  !vid.seeking
+){
+  try{
+    vid.currentTime = s.time;
+  }catch(e){}
+}
 
   if(s.action==="seek"){ curtainOpenAndGo(); }  
 
