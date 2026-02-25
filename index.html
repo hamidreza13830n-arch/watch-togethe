@@ -673,22 +673,7 @@ body::after{
 /* هر چند وقت یه بار چشمک */
 body::before{ animation-name:tgMove,tgBlink; animation-duration:22s,7s; animation-iteration-count:infinite,infinite; }
 body::after{  animation-name:tgMove2,tgBlink; animation-duration:26s,9s; animation-iteration-count:infinite,infinite; }
-/* ⚡ SOFT RANDOM FLASH EFFECT */
-
-@keyframes bgFlash {
-  0%   { filter:brightness(1); }
-  92%  { filter:brightness(1); }
-  94%  { filter:brightness(1.25); }
-  96%  { filter:brightness(0.9); }
-  98%  { filter:brightness(1.15); }
-  100% { filter:brightness(1); }
-}
-
-body::before,
-body::after{
-  animation:
-    bgMove 40s linear infinite,
-    bgFlash 12s ease-in-out infinite;
+  
 }
 </style>  
 </head>
