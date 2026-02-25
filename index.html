@@ -404,62 +404,212 @@ background:rgba(255,255,255,.08);
 cursor:pointer;  
 user-select:none;  
 }
+  #typingIndicator{  
+display:none;  
+flex-shrink:0;  
+margin-top:6px;  
+margin-bottom:4px;  
+padding:6px 10px;  
+border-radius:14px;  
+background:rgba(0,0,0,.16);  
+backdrop-filter:blur(10px);  
+font-size:12px;  
+opacity:.9;  
+}  
 
-/* ✅✅✅ GAME MODE CSS (اضافه شد - حذف نشده هیچ چیز) ✅✅✅ */
-#gameBox{
-  display:none;
-  width:100%;
-  height:100%;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
+#replyPreview{  
+display:none;  
+flex-shrink:0;  
+margin-top:6px;  
+margin-bottom:4px;  
+padding:8px 10px;  
+border-radius:14px;  
+border-left:4px solid #fff;  
+background:rgba(0,0,0,.18);  
+backdrop-filter:blur(10px);  
+}  
+#replyPreview .rp-top{  
+display:flex;  
+justify-content:space-between;  
+align-items:center;  
+gap:10px;  
+margin-bottom:4px;  
+font-size:11px;  
+opacity:.85;  
+}  
+#replyPreview .rp-text{  
+font-size:12px;  
+opacity:.9;  
+white-space:nowrap;  
+overflow:hidden;  
+text-overflow:ellipsis;  
+}  
+#cancelReply{  
+font-size:12px;  
+padding:2px 8px;  
+border-radius:10px;  
+border:1px solid rgba(255,255,255,.25);  
+background:rgba(255,255,255,.08);  
+color:white;  
+cursor:pointer;  
+}  
+#cancelReply:active{transform:scale(.97)}  
+
+#editPreview{  
+display:none;  
+flex-shrink:0;  
+margin-top:6px;  
+margin-bottom:4px;  
+padding:8px 10px;  
+border-radius:14px;  
+border-left:4px solid #ffd400;  
+background:rgba(0,0,0,.18);  
+backdrop-filter:blur(10px);  
+}  
+#editPreview .ep-top{  
+display:flex;  
+justify-content:space-between;  
+align-items:center;  
+gap:10px;  
+margin-bottom:4px;  
+font-size:11px;  
+opacity:.9;  
+}  
+#editPreview .ep-text{  
+font-size:12px;  
+opacity:.9;  
+white-space:nowrap;  
+overflow:hidden;  
+text-overflow:ellipsis;  
+}  
+#cancelEdit{  
+font-size:12px;  
+padding:2px 8px;  
+border-radius:10px;  
+border:1px solid rgba(255,255,255,.25);  
+background:rgba(255,255,255,.08);  
+color:white;  
+cursor:pointer;  
+}  
+#cancelEdit:active{transform:scale(.97)}  
+
+.input-area{  
+display:flex;  
+gap:6px;  
+margin-top:6px;  
+flex-shrink:0;  
+}  
+.input-area input{  
+flex:1;  
+padding:10px;  
+border-radius:12px;  
+border:none;  
+font-size:16px;  
+}  
+.input-area button{  
+padding:10px 12px;  
+border:none;  
+border-radius:12px;  
+background:#e50914;  
+color:white;  
+}  
+
+#settings{  
+position:fixed;  
+right:-260px;  
+top:0;  
+width:240px;  
+height:100%;  
+padding:20px;  
+transition:.3s;  
+z-index:100;  
+overflow-y:auto;  
+-webkit-overflow-scrolling:touch;  
+}  
+#settings.open{right:0}  
+#settings button{  
+width:100%;  
+margin-bottom:10px;  
+padding:8px;  
+border:none;  
+border-radius:10px;  
+background:#e50914;  
+color:white;  
+}  
+
+/* ✅ make settings easier in landscape */
+@media (orientation:landscape){
+  #settings{width:260px}
 }
 
-#board{
-  width:100%;
-  max-width:420px;
-  aspect-ratio:1;
-  display:grid;
-  grid-template-columns:repeat(10,1fr);
-  gap:2px;
-  background:#ffcc70;
-  padding:6px;
-  border-radius:18px;
-  box-shadow:0 10px 25px rgba(0,0,0,.4);
+#login{  
+position:fixed;  
+inset:0;  
+background:radial-gradient(circle at 50% 40%, rgba(229,9,20,.35), rgba(0,0,0,.92) 60%);  
+display:flex;  
+justify-content:center;  
+align-items:center;  
+flex-direction:column;  
+z-index:999;  
+}  
+
+/* ✅ Stylish Black/Red login */
+.login-box{  
+padding:26px;  
+text-align:center;  
+border-radius:20px;  
+border:1px solid rgba(229,9,20,.35);  
+background:linear-gradient(180deg, rgba(20,0,0,.82), rgba(0,0,0,.78));  
+box-shadow:0 10px 30px rgba(0,0,0,.55), 0 0 18px rgba(229,9,20,.25);  
+}  
+.login-box h3{margin-bottom:12px; letter-spacing:.2px}
+.login-box input{  
+width:220px;
+padding:12px;  
+border-radius:14px;  
+border:1px solid rgba(229,9,20,.35);  
+background:rgba(0,0,0,.45);  
+color:white;  
+outline:none;
+margin-bottom:12px;  
+}  
+.login-box button{
+padding:10px 18px;
+border:none;
+border-radius:14px;
+background:#e50914;
+color:white;
+box-shadow:0 8px 18px rgba(229,9,20,.25);
 }
 
-.cell{
-  background:#fff8dc;
-  border-radius:6px;
-  font-size:10px;
-  display:flex;
-  align-items:flex-start;
-  justify-content:flex-end;
-  padding:2px;
-  position:relative;
-}
+#welcomeOverlay{  
+position:fixed;  
+inset:0;  
+background:radial-gradient(circle at 50% 40%, rgba(229,9,20,.18), rgba(0,0,0,.78) 65%);  
+display:none;  
+justify-content:center;  
+align-items:center;  
+z-index:998;  
+}  
 
-.token{
-  position:absolute;
-  bottom:4px;
-  left:4px;
-  width:18px;
-  height:18px;
-  border-radius:50%;
-}
-
-.p1{ background:#ff4d6d; }
-.p2{ background:#3a86ff; }
-
-#rollDiceBtn, #resetGameBtn{
-  padding:8px 14px;
-  border:none;
-  border-radius:14px;
-  background:#ff4d6d;
-  color:white;
-  font-weight:bold;
-}
+/* ✅ Stylish welcome */
+.welcome-box{  
+padding:26px;  
+text-align:center;  
+width:300px;  
+border-radius:20px;  
+border:1px solid rgba(229,9,20,.28);  
+background:linear-gradient(180deg, rgba(20,0,0,.72), rgba(0,0,0,.72));  
+box-shadow:0 10px 30px rgba(0,0,0,.55), 0 0 18px rgba(229,9,20,.18);  
+}  
+.welcome-box h3{margin-bottom:14px}
+.welcome-box button{  
+padding:10px 20px;  
+border:none;  
+border-radius:14px;  
+background:#e50914;  
+color:white;  
+}  
 
 /* ✅ UPDATED: landscape layout fix (video not dropping down) */
 @media (orientation:landscape){  
@@ -536,23 +686,8 @@ user-select:none;
   <button onclick="clearChat()">حذف تاریخچه</button>  
   <button onclick="toggleSettings()">بستن</button>  
 </div>
-
 <div class="main">  
   <div class="video-container glass">  
-
-    <!-- ✅✅✅ GAME BOX (اضافه شد - داخل همون ویدیو کانتینر) ✅✅✅ -->
-    <div id="gameBox">
-      <div id="board"></div>
-
-      <div style="display:flex;gap:10px;align-items:center;">
-        <button id="rollDiceBtn">🎲 تاس بنداز</button>
-        <span id="diceResult">0</span>
-      </div>
-
-      <button id="resetGameBtn">🔄 ریست بازی</button>
-      <div id="myRole" style="font-size:12px;opacity:.85"></div>
-      <div id="turnInfo" style="font-size:12px;opacity:.85"></div>
-    </div>
 
     <!-- 🎬 REAL CURTAIN -->
     <div id="curtain">  
@@ -567,9 +702,6 @@ user-select:none;
 
     <!-- ✅ tiny button like chat reaction (now it sits in bottom space, not on video) -->
     <span id="videoReactBtn" class="react-btn" style="position:absolute;right:14px;bottom:14px;z-index:12;">😊</span>
-
-    <!-- ✅✅✅ GAME TOGGLE BUTTON (اضافه شد) ✅✅✅ -->
-    <span id="gameToggleBtn" class="react-btn" style="position:absolute;right:94px;bottom:14px;z-index:12;">🎮</span>
 
     <!-- ✅ panel for video reactions -->
     <div id="videoReactPanel" class="glass" style="display:none;position:absolute;right:14px;bottom:60px;z-index:12;padding:8px;border-radius:14px;">
@@ -1199,213 +1331,6 @@ function clearChat(){
   cancelReply();  
   cancelEdit();  
 }  
-
-/* ===================================================== */
-/* ✅✅✅ GAME MODE (مار و پله) — اضافه شد کامل ✅✅✅ */
-/* ===================================================== */
-
-const snakes = {
-  16:6, 48:26, 49:11, 56:53,
-  62:19, 64:60, 87:24,
-  93:73, 95:75, 98:78
-};
-
-const ladders = {
-  1:38, 4:14, 9:31,
-  21:42, 28:84,
-  36:44, 51:67,
-  71:91, 80:100
-};
-
-const board = document.getElementById("board");
-const gameBox = document.getElementById("gameBox");
-const videoEl = document.getElementById("video");
-const rollBtn = document.getElementById("rollDiceBtn");
-const diceResult = document.getElementById("diceResult");
-const resetBtn = document.getElementById("resetGameBtn");
-const myRoleEl = document.getElementById("myRole");
-const turnInfoEl = document.getElementById("turnInfo");
-
-let myPlayer = null;
-
-/* ساخت صفحه */
-function createBoard(){
-  if(!board) return;
-  board.innerHTML = "";
-  for(let i=100;i>=1;i--){
-    const cell = document.createElement("div");
-    cell.className="cell";
-    cell.dataset.num=i;
-    cell.innerText=i;
-    board.appendChild(cell);
-  }
-}
-createBoard();
-
-/* حالت بازی اولیه */
-function initGame(){
-  db.ref("game/state").once("value", snap=>{
-    if(!snap.exists()){
-      db.ref("game/state").set({
-        p1:1,
-        p2:1,
-        turn:"p1",
-        winner:null,
-        lastDice:0
-      });
-    }
-  });
-}
-
-/* گرفتن نقش بازیکن (p1/p2) به صورت امن‌تر */
-function claimPlayer(){
-  const ref = db.ref("game/players/"+myId);
-
-  ref.once("value").then(s=>{
-    if(s.exists()){
-      myPlayer = s.val();
-      if(myRoleEl) myRoleEl.innerText = "نقش شما: " + myPlayer;
-      return;
-    }
-
-    // اگر هنوز نقش نداره، بررسی کنیم p1/p2 پر هست یا نه
-    db.ref("game/players").once("value").then(ps=>{
-      const players = ps.val() || {};
-      const used = Object.values(players);
-
-      let role = null;
-      if(!used.includes("p1")) role = "p1";
-      else if(!used.includes("p2")) role = "p2";
-      else role = "spectator";
-
-      myPlayer = role;
-      ref.set(role);
-      ref.onDisconnect().remove();
-
-      if(myRoleEl) myRoleEl.innerText = "نقش شما: " + myPlayer;
-    });
-  });
-}
-
-/* رندر مهره‌ها */
-function renderTokens(p1Pos,p2Pos){
-  document.querySelectorAll(".token").forEach(t=>t.remove());
-  addToken(p1Pos,"p1");
-  addToken(p2Pos,"p2");
-}
-function addToken(pos,cls){
-  const cell = document.querySelector(`.cell[data-num='${pos}']`);
-  if(!cell) return;
-  const token = document.createElement("div");
-  token.className="token "+cls;
-  cell.appendChild(token);
-}
-
-/* دکمه روشن/خاموش گیم مود (سینک) */
-document.getElementById("gameToggleBtn").onclick = function(){
-  db.ref("game/mode").once("value").then(snap=>{
-    let current = snap.val();
-    if(current === null) current = false;
-    db.ref("game/mode").set(!current);
-  });
-};
-
-/* نمایش گیم مود یا ویدیو */
-db.ref("game/mode").on("value", snap=>{
-  let isGame = snap.val();
-  if(isGame === null) isGame = false;
-
-  const curtain = document.getElementById("curtain");
-
-  if(isGame){
-    // بازی
-    videoEl.style.display="none";
-    gameBox.style.display="flex";
-
-    // ایموجی پنل ویدیو رو هم پنهان کن (اختیاری)
-    try{ document.getElementById("videoReactPanel").style.display="none"; }catch(e){}
-    try{ document.getElementById("videoReactBtn").style.display="none"; }catch(e){}
-
-    if(curtain){
-      curtain.classList.add("hide");
-      curtain.classList.remove("open");
-    }
-
-    initGame();
-    claimPlayer();
-  }else{
-    // ویدیو
-    videoEl.style.display="block";
-    gameBox.style.display="none";
-
-    try{ document.getElementById("videoReactBtn").style.display="inline-block"; }catch(e){}
-
-    if(curtain){
-      curtain.classList.add("hide");
-    }
-  }
-});
-
-/* گوش دادن به state بازی */
-db.ref("game/state").on("value", snap=>{
-  const state = snap.val();
-  if(!state) return;
-
-  renderTokens(state.p1,state.p2);
-
-  if(diceResult) diceResult.innerText = state.lastDice || 0;
-  if(turnInfoEl) turnInfoEl.innerText = "نوبت: " + (state.turn || "-");
-
-  if(state.winner){
-    alert("🏆 برنده: "+state.winner);
-  }
-});
-
-/* تاس انداختن */
-rollBtn.onclick = ()=>{
-  db.ref("game/state").once("value", snap=>{
-    const state = snap.val();
-    if(!state || state.winner) return;
-
-    // اگر هنوز نقش معلوم نشده
-    if(!myPlayer) return;
-
-    // فقط p1/p2 می‌تونن بازی کنن
-    if(myPlayer !== "p1" && myPlayer !== "p2") return;
-
-    // نوبت
-    if(state.turn !== myPlayer) return;
-
-    let dice = Math.floor(Math.random()*6)+1;
-
-    let newPos = state[myPlayer] + dice;
-    if(newPos > 100) newPos = state[myPlayer]; // اگر بیشتر شد، همون‌جا بمونه
-
-    if(snakes[newPos]) newPos = snakes[newPos];
-    if(ladders[newPos]) newPos = ladders[newPos];
-
-    let nextTurn = myPlayer==="p1"?"p2":"p1";
-    let winner = newPos===100?myPlayer:null;
-
-    db.ref("game/state").update({
-      [myPlayer]:newPos,
-      turn: nextTurn,
-      winner: winner,
-      lastDice: dice
-    });
-  });
-};
-
-/* ریست بازی */
-resetBtn.onclick = ()=>{
-  db.ref("game/state").set({
-    p1:1,
-    p2:1,
-    turn:"p1",
-    winner:null,
-    lastDice:0
-  });
-};
 
 </script>  
 
