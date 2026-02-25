@@ -164,8 +164,8 @@ pointer-events:none;
 }  
 /* END LIGHTS */  
 
-.glass{  
-background:rgba(255,255,255,.08);  
+.glass{
+  background:rgba(255,255,255,.06); /* کمتر کن */
 backdrop-filter:blur(12px);  
 border:1px solid rgba(255,255,255,.1);  
 border-radius:18px;  
@@ -624,40 +624,47 @@ color:white;
   .chat-container{
     margin-top:-10px;         /* ✅ keep aligned (remove if you don't want chat up) */
   }
-}  
-/* ===== TELEGRAM STYLE ANIMATED BACKGROUND ===== */
+/* ===== SOFT FLOATING TELEGRAM ICONS ===== */
 
-body::before,
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+
+  background-image:url("file_00000000b56c720a854ca8320ec902b3.png");
+  background-size:280px;        /* کوچیک و ریز */
+  background-repeat:repeat;
+
+  opacity:0.05;                 /* خیلی کمرنگ */
+  animation:floatBg 60s linear infinite;
+}
+
 body::after{
   content:"";
   position:fixed;
   inset:0;
-  z-index:0;
   pointer-events:none;
-  background-size:cover;
-  background-position:center;
-  opacity:0.08;          /* شدت کم‌رنگ بودن */
-  animation: bgMove 40s linear infinite;
-}
+  z-index:0;
 
-/* تصویر اول */
-body::before{
-  background-image:url("file_00000000b56c720a854ca8320ec902b3.png");
-  animation-delay:0s;
-}
-
-/* تصویر دوم */
-body::after{
   background-image:url("file_0000000014047246807e04ecfad4a722.png");
-  animation-delay:20s;
+  background-size:320px;
+  background-repeat:repeat;
+
+  opacity:0.04;
+  animation:floatBgReverse 90s linear infinite;
 }
 
-@keyframes bgMove{
-  0%   { transform:translateY(0px) scale(1.05); opacity:0.08; }
-  45%  { opacity:0.08; }
-  50%  { opacity:0; }
-  55%  { opacity:0.08; }
-  100% { transform:translateY(-60px) scale(1.05); opacity:0.08; }
+/* حرکت روون */
+@keyframes floatBg{
+  from { background-position:0 0; }
+  to   { background-position:0 -1000px; }
+}
+
+@keyframes floatBgReverse{
+  from { background-position:0 0; }
+  to   { background-position:0 1000px; }
 }
 /* ⚡ SOFT RANDOM FLASH EFFECT */
 
