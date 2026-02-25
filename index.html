@@ -196,7 +196,7 @@ z-index:2;
 }
 
 .video-container{
-flex:0 0 60%;
+flex:0 0 50%;
 padding:10px;  
 display:flex;  
 flex-direction:column;  
@@ -207,11 +207,13 @@ overflow:hidden;
 /* ✅ NEW: create a little space below video so the button is NOT on the video frame */
 .video-container{padding:10px 10px 54px 10px;}
 
-video{  
-width:100%;  
-flex:1;  
-border-radius:12px;  
-}  
+video{
+  width:100%;
+  height:100%;
+  flex:1;
+  border-radius:12px;
+  object-fit:cover;
+}
 
 /********************/
 /* 🎭 REAL CURTAIN  */
