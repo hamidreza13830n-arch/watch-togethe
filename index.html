@@ -625,6 +625,57 @@ color:white;
     margin-top:-10px;         /* ✅ keep aligned (remove if you don't want chat up) */
   }
 }  
+/* ===== TELEGRAM STYLE ANIMATED BACKGROUND ===== */
+
+body::before,
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  background-size:cover;
+  background-position:center;
+  opacity:0.08;          /* شدت کم‌رنگ بودن */
+  animation: bgMove 40s linear infinite;
+}
+
+/* تصویر اول */
+body::before{
+  background-image:url("file_00000000b56c720a854ca8320ec902b3.png");
+  animation-delay:0s;
+}
+
+/* تصویر دوم */
+body::after{
+  background-image:url("file_0000000014047246807e04ecfad4a722.png");
+  animation-delay:20s;
+}
+
+@keyframes bgMove{
+  0%   { transform:translateY(0px) scale(1.05); opacity:0.08; }
+  45%  { opacity:0.08; }
+  50%  { opacity:0; }
+  55%  { opacity:0.08; }
+  100% { transform:translateY(-60px) scale(1.05); opacity:0.08; }
+}
+/* ⚡ SOFT RANDOM FLASH EFFECT */
+
+@keyframes bgFlash {
+  0%   { filter:brightness(1); }
+  92%  { filter:brightness(1); }
+  94%  { filter:brightness(1.25); }
+  96%  { filter:brightness(0.9); }
+  98%  { filter:brightness(1.15); }
+  100% { filter:brightness(1); }
+}
+
+body::before,
+body::after{
+  animation:
+    bgMove 40s linear infinite,
+    bgFlash 12s ease-in-out infinite;
+}
 </style>  
 </head>
 <body>
