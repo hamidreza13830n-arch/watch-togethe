@@ -1511,26 +1511,33 @@ function createBoard(){
 }
 
 createBoard();
-
+createBoard();
+initGame();
 /* Toggle Game Mode */
 /* Toggle Game Mode */
 document.getElementById("gameToggleBtn").onclick = function(){
 
-  db.ref("game/mode").once("value", snap=>{
-    const current = snap.val();
+  db.ref("game/mode").once("value").then(snap=>{
+    let current = snap.val();
+
+    if(current === null){
+      current = false;
+    }
+
     db.ref("game/mode").set(!current);
   });
 
 };
 
 db.ref("game/mode").on("value", snap=>{
-  const isGame = snap.val();
+  let isGame = snap.val();
+
+  if(isGame === null) isGame = false;
 
   const curtain = document.getElementById("curtain");
 
   if(isGame){
 
-    // 🎮 حالت بازی
     videoEl.style.display="none";
     gameBox.style.display="flex";
 
@@ -1541,7 +1548,6 @@ db.ref("game/mode").on("value", snap=>{
 
   }else{
 
-    // 🎬 برگشت به فیلم
     videoEl.style.display="block";
     gameBox.style.display="none";
 
@@ -1551,7 +1557,6 @@ db.ref("game/mode").on("value", snap=>{
 
   }
 });
-
 function initGame(){
   db.ref("game/state").once("value", snap=>{
     if(!snap.exists()){
