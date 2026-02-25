@@ -164,8 +164,8 @@ pointer-events:none;
 }  
 /* END LIGHTS */  
 
-.glass{
-  background:rgba(255,255,255,.06); /* کمتر کن */
+.glass{  
+background:rgba(255,255,255,.08);  
 backdrop-filter:blur(12px);  
 border:1px solid rgba(255,255,255,.1);  
 border-radius:18px;  
@@ -624,57 +624,7 @@ color:white;
   .chat-container{
     margin-top:-10px;         /* ✅ keep aligned (remove if you don't want chat up) */
   }
-/* ✅ TELEGRAM BG (2 PNGs) - smooth moving + blinking */
-body::before,
-body::after{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  background-repeat:repeat;
-  background-size:260px 260px;   /* ریز بودن شکلک‌ها */
-  opacity:0.10;                  /* کم‌رنگ بودن */
-  mix-blend-mode:overlay;
-  z-index:1;                     /* پشت محتوا، رو بک‌گراند */
-  animation:tgMove 22s linear infinite;
-  filter:blur(.2px);
-}
-
-/* تصویر 1 */
-body::before{
-  background-image:url("/watch-togethe/file_00000000b56c720a854ca8320ec902b3.png");
-}
-
-/* تصویر 2 (پشت هم میاد) */
-body::after{
-  background-image:url("/watch-togethe/file_0000000014047246807e04ecfad4a722.png");
-  opacity:0.08;
-  animation:tgMove2 26s linear infinite;
-}
-
-/* حرکت نرم و روون */
-@keyframes tgMove{
-  0%{background-position:0 0}
-  100%{background-position:700px 360px}
-}
-@keyframes tgMove2{
-  0%{background-position:0 0}
-  100%{background-position:-760px 420px}
-}
-
-/* ✅ برق زدن گاهی */
-@keyframes tgBlink{
-  0%,92%,100%{opacity:0.10}
-  94%{opacity:0.18}
-  96%{opacity:0.08}
-  98%{opacity:0.14}
-}
-
-/* هر چند وقت یه بار چشمک */
-body::before{ animation-name:tgMove,tgBlink; animation-duration:22s,7s; animation-iteration-count:infinite,infinite; }
-body::after{  animation-name:tgMove2,tgBlink; animation-duration:26s,9s; animation-iteration-count:infinite,infinite; }
-  
-}
+}  
 </style>  
 </head>
 <body>
