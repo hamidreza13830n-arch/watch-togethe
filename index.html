@@ -1514,17 +1514,40 @@ createBoard();
 
 /* Toggle Game Mode */
 document.getElementById("gameToggleBtn").onclick = ()=>{
-  db.ref("game/mode").set(true);
+
+  db.ref("game/mode").once("value", snap=>{
+    const current = snap.val();
+    db.ref("game/mode").set(!current);
+  });
+
 };
 
 db.ref("game/mode").on("value", snap=>{
-  if(snap.val()){
+  const isGame = snap.val();
+
+  const curtain = document.getElementById("curtain");
+
+  if(isGame){
+
+    // 🎮 حالت بازی
     videoEl.style.display="none";
     gameBox.style.display="flex";
-    initGame();
+
+    if(curtain){
+      curtain.classList.add("hide");
+      curtain.classList.remove("open");
+    }
+
   }else{
+
+    // 🎬 برگشت به فیلم
     videoEl.style.display="block";
     gameBox.style.display="none";
+
+    if(curtain){
+      curtain.classList.add("hide");
+    }
+
   }
 });
 
