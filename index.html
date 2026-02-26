@@ -1210,22 +1210,35 @@ msg.addEventListener("input",()=>{
 });  
 msg.addEventListener("blur",()=>{setTyping(false);});  
 
-db.ref("typing").on("value",snap=>{  
-  var names=[];  
-  snap.forEach(c=>{  
-    if(c.key!==myId && c.val() && c.val().typing){  
-      names.push(c.val().user||"someone");  
-    }  
-  });  
-  var box=document.getElementById("typingIndicator");  
-  if(names.length){  
-    box.style.display="block";  
-    box.innerText=(names.length===1?names[0]:"چند نفر")+" در حال تایپ...";  
-  }else{  
-    box.style.display="none";  
-    box.innerText="";  
-  }  
-});  
+db.ref("typing").on("value",snap=>{
+  var names=[];
+  var now = Date.now();
+
+  snap.forEach(c=>{
+    var val = c.val();
+
+    if(c.key!==myId && val && val.typing){
+
+      // فقط اگر کمتر از ۲.۵ ثانیه گذشته باشه
+      if(val.ts && (now - val.ts < 2500)){
+        names.push(val.user || "someone");
+      }else{
+        // اگر قدیمی بود پاکش کن
+        db.ref("typing/"+c.key).remove();
+      }
+    }
+  });
+
+  var box=document.getElementById("typingIndicator");
+
+  if(names.length){
+    box.style.display="block";
+    box.innerText=(names.length===1?names[0]:"چند نفر")+" در حال تایپ...";
+  }else{
+    box.style.display="none";
+    box.innerText="";
+  }
+});
 
 /*****************************/
 /* ✅ CLOSE ANY OPEN PICKER ✅ */
