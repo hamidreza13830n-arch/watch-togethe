@@ -1230,7 +1230,16 @@ function setVideoLink(){
   toggleSettings();  
 }  
 db.ref("video/url").on("value", snap => {  
-  if (snap.val()) vid.src = snap.val();  
+  const url = snap.val();
+  if (!url) return;
+
+  vid.src = url;
+  vid.load();
+
+  // وقتی آماده شد پلی کن
+  vid.onloadedmetadata = function () {
+    vid.play().catch(()=>{});
+  };
 });
 /*****************************/
 /* 🎭 CURTAIN HELPERS        */
