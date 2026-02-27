@@ -1242,7 +1242,6 @@ function setVideoLink(){
   toggleSettings();  
 }
 db.ref("video/url").on("value", snap => {  
-db.ref("video/url").on("value",snap=>{
   var url = snap.val();
   if(!url) return;
 
