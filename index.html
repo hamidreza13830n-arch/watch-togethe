@@ -1226,16 +1226,17 @@ function setVideoLink(){
   var link = document.getElementById("videoLinkInput").value;  
   if(!link) return;  
 
-  // لینک رو ذخیره کن
   db.ref("video/url").set(link);  
 
-  // وضعیت اولیه پخش رو هم ذخیره کن
-  pushState({
-    action: "play",
-    time: 0,
-    rate: 1,
-    ts: Date.now()
-  });
+  // 300ms صبر کن بعد state بفرست
+  setTimeout(() => {
+    pushState({
+      action: "play",
+      time: 0,
+      rate: 1,
+      ts: Date.now()
+    });
+  }, 300);
 
   videoLinkInput.value = "";  
   toggleSettings();  
@@ -1244,13 +1245,14 @@ db.ref("video/url").on("value", snap => {
   const url = snap.val();
   if (!url) return;
 
+  // اگر لینک همونه دوباره لود نکن
+  if (vid.src === url) return;
+
   vid.src = url;
   vid.load();
 
-  // وقتی آماده شد پلی کن
-  vid.onloadedmetadata = function () {
-    vid.play().catch(()=>{});
-  };
+  // فقط لینک لود بشه
+  // play توسط video_state کنترل میشه
 });
 /*****************************/
 /* 🎭 CURTAIN HELPERS        */
