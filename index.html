@@ -1229,10 +1229,9 @@ function setVideoLink(){
   videoLinkInput.value="";  
   toggleSettings();  
 }  
-db.ref("video/url").on("value",snap=>{  
-  if(snap.val())video.src=snap.val();  
-});  
-
+db.ref("video/url").on("value", snap => {  
+  if (snap.val()) vid.src = snap.val();  
+});
 /*****************************/
 /* 🎭 CURTAIN HELPERS        */
 /*****************************/
