@@ -1223,12 +1223,23 @@ db.ref("video/emotes").limitToLast(30).on("child_added",snap=>{
 /* 🎬 VIDEO LINK             */
 /*****************************/
 function setVideoLink(){  
-  var link=document.getElementById("videoLinkInput").value;  
-  if(!link)return;  
+  var link = document.getElementById("videoLinkInput").value;  
+  if(!link) return;  
+
+  // لینک رو ذخیره کن
   db.ref("video/url").set(link);  
-  videoLinkInput.value="";  
+
+  // وضعیت اولیه پخش رو هم ذخیره کن
+  pushState({
+    action: "play",
+    time: 0,
+    rate: 1,
+    ts: Date.now()
+  });
+
+  videoLinkInput.value = "";  
   toggleSettings();  
-}  
+}
 db.ref("video/url").on("value", snap => {  
   const url = snap.val();
   if (!url) return;
