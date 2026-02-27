@@ -1242,10 +1242,10 @@ function setVideoLink(){
   toggleSettings();  
 }
 db.ref("video/url").on("value", snap => {  
-  var url = snap.val();
-  if(!url) return;
+  var data = snap.val();
+  if(!data || !data.url) return;
 
-  vid.src = url;
+  vid.src = data.url;
   vid.load();
 
   vid.onloadedmetadata = function(){
