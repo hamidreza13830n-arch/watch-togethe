@@ -1306,28 +1306,55 @@ vid.addEventListener("ratechange",()=>{
   pushState({action:"rate",time:vid.currentTime,rate:vid.playbackRate,ts:Date.now()});  
 });  
 
-db.ref("video/state").on("value",snap=>{  
-  var s=snap.val();  
-  if(!s)return;  
-  isSyncing=true;  
+db.ref("video/state").on("value", snap => {
+  var s = snap.val();
+  if (!s) return;
 
-  if(typeof s.rate==="number" && vid.playbackRate!==s.rate){  
-    vid.playbackRate=s.rate;  
-  }  
+  isSyncing = true;
 
-  if(typeof s.time==="number" && Math.abs(vid.currentTime-s.time)>0.6){  
-    try{vid.currentTime=s.time;}catch(e){}  
-  }  
+  const now = Date.now();
+  const delay = s.ts ? (now - s.ts) / 1000 : 0;
 
-  if(s.action==="seek"){ curtainOpenAndGo(); }  
+  // تنظیم سرعت
+  if (typeof s.rate === "number" && vid.playbackRate !== s.rate) {
+    vid.playbackRate = s.rate;
+  }
 
-  if(s.action==="play"){  
-    var p=vid.play();  
-    if(p && p.catch)p.catch(()=>{});  
-  }  
-  if(s.action==="pause"){ vid.pause(); }  
+  // اگر در حالت پلی هست
+  if (s.action === "play") {
 
-  setTimeout(()=>{isSyncing=false;},300);  
+    let targetTime = s.time;
+
+    // اگر ts داریم یعنی کسی دیر وارد شده
+    if (s.ts && delay > 0) {
+      targetTime = s.time + (delay * (s.rate || 1));
+    }
+
+    if (Math.abs(vid.currentTime - targetTime) > 0.7) {
+      try { vid.currentTime = targetTime; } catch (e) {}
+    }
+
+    var p = vid.play();
+    if (p && p.catch) p.catch(() => {});
+  }
+
+  // اگر pause
+  if (s.action === "pause") {
+    vid.pause();
+    if (typeof s.time === "number") {
+      try { vid.currentTime = s.time; } catch (e) {}
+    }
+  }
+
+  // اگر seek
+  if (s.action === "seek") {
+    curtainOpenAndGo();
+    if (typeof s.time === "number") {
+      try { vid.currentTime = s.time; } catch (e) {}
+    }
+  }
+
+  setTimeout(() => { isSyncing = false; }, 300);
 });  
 /* ===== END SYNC ===== */  
 
