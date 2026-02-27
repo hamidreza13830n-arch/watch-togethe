@@ -1241,11 +1241,24 @@ function setVideoLink(){
   videoLinkInput.value = "";  
   toggleSettings();  
 }
-db.ref("video/url").on("value", snap => {  
-  var data = snap.val();
-  if(!data || !data.url) return;
+/* LOAD EXISTING URL ON START */
+(async function(){
+  const { data } = await supabaseClient
+    .from("video_url")
+    .select("*")
+    .eq("id",1)
+    .single();
 
-  vid.src = data.url;
+  if(data && data.url){
+    vid.src = data.url;
+    vid.load();
+  }
+})();
+  db.ref("video/url").on("value", snap => {  
+  var url = snap.val();
+  if(!url) return;
+
+  vid.src = url;
   vid.load();
 
   vid.onloadedmetadata = function(){
