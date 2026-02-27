@@ -1242,17 +1242,17 @@ function setVideoLink(){
   toggleSettings();  
 }
 db.ref("video/url").on("value", snap => {  
-  const url = snap.val();
-  if (!url) return;
-
-  // اگر لینک همونه دوباره لود نکن
-  if (vid.src === url) return;
+db.ref("video/url").on("value",snap=>{
+  var url = snap.val();
+  if(!url) return;
 
   vid.src = url;
   vid.load();
 
-  // فقط لینک لود بشه
-  // play توسط video_state کنترل میشه
+  vid.onloadedmetadata = function(){
+    var p = vid.play();
+    if(p && p.catch) p.catch(()=>{});
+  };
 });
 /*****************************/
 /* 🎭 CURTAIN HELPERS        */
